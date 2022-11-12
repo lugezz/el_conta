@@ -1,0 +1,35 @@
+{% extends 'export_lsd/list.html' %}
+{% load static %}
+{% block list_title %} Configuración Exportación Básica{% endblock %}
+{% block head_list %}
+{% endblock %}
+
+{% block messages %}
+{% if messages %}
+{% include 'export_lsd/messages.html' %}
+{% endif %}
+{% endblock messages %}
+
+{% block columns %}
+    <tr>
+        <th scope="col" style="width: 20%;">Nombre</th>
+        <th scope="col" style="width: 12%;">Conc.Sueldo</th>
+        <th scope="col" style="width: 12%;">Conc.No Rem</th>
+        <th scope="col" style="width: 12%;">Conc.SIJP</th>
+        <th scope="col" style="width: 12%;">Conc.INSJJP</th>
+        <th scope="col" style="width: 12%;">Conc.OS</th>
+        <th scope="col" style="width: 15%;">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function() {
+            $("#buttonClose").on('click', function(event) {
+                $(".alert-dismissible").remove()
+            });
+        });
+
+    </script>
+    <script src="{% static 'js/config_eb_list.js' %}"></script>
+{% endblock %}

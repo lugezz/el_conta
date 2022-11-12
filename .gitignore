@@ -1,0 +1,27 @@
+# Virtual environment
+/env
+
+# Flake 8
+/.vscode
+
+# DB
+*.sqlite3
+
+# Otros
+Todo.txt
+__pycache__/
+temp/
+local_settings.py
+/carpetas
+*.log
+
+/static
+profile_images/
+
+# Entiendo que tiene que estar
+migrations/
+
+# LSD
+SD_20*.txt
+exp_*.txt
+*.xlsx

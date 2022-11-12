@@ -1,0 +1,84 @@
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="{% url 'export_lsd:home' %}">
+          <i class="fas fa-th"></i>
+          <span>Panel de Control</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <!-- Configuraciones Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="fas fa-toolbox"></i>
+          <span>Configuraciones</span>
+          <i class="fas fa-chevron-down fa-sm mx-2"></i>
+        </a>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'export_lsd:config_eb_list' %}">
+              <i class="far fa-circle"></i></i><span>Config.Export.Básica</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'export_lsd:empresa_list' %}">
+              <i class="far fa-circle"></i></i><span>Empresas</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'export_lsd:empleado_list' %}">
+              <i class="far fa-circle"></i><span>Empleados</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Components Nav -->
+
+      <!-- Exportaciones Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="fas fa-file-export"></i><span>Exportaciones</span>
+          <i class="fas fa-chevron-down fa-sm mx-2"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{% url 'export_lsd:basic'  %}">
+              <i class="far fa-circle"></i></i><span>Exportación Básica</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'export_lsd:advanced'  %}">
+              <i class="far fa-circle"></i></i><span>Exportación Avanzada</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Exportaciones -->
+
+      <li class="nav-heading">Otros</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'export_lsd:presentacion_list'  %}">
+          <i class="fas fa-history"></i>
+          <span>Historial</span>
+        </a>
+      </li><!-- End Profile Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="fas fa-question"></i>
+          <span>Preguntas Frecuentes</span>
+        </a>
+      </li><!-- End F.A.Q Page Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="mailto:elconta@eugeniovazquez.com.ar">
+          <i class="fas fa-envelope"></i>
+          <span>Contacto</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
+
+    </ul>
+
+  </aside><!-- End Sidebar-->

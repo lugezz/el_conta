@@ -1,0 +1,112 @@
+{% extends "export_lsd/base.html" %}
+{% load static %}
+
+{% block title %} Importador Empleados {% endblock title%}
+{% block content %}
+
+    <form method="post" enctype="multipart/form-data" class="mb-3">  
+        {% csrf_token %}
+        <div class="container">
+            <p>Seleccione el archivo de exportación</p>
+            <div class="input-group mb-1" style="width: 58.33%;">
+                <input class="form-control" type="file" id="formFile" name="xlsfile" width="50%" accept=".xlsx">
+                <button type="submit" class="button_submit input-group-text">Subir</button>
+            </div>
+            <a href="{% static 'other/Import_empleados.xlsx' %}">
+                <small>Descargar modelo</small>
+            </a>
+        </div>
+    </form>
+
+    <!-- Resultados correctos -->
+    <div class="container my-3">
+        <div class="row">
+            <div class="col-7">
+                <div class="card top-selling overflow-auto">
+                    <div class="card-body pb-0">
+                    <h5 class="card-title text-center">Resultados de Exportación</h5>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center" scope="col" style="width: 20%">CUIT</th>
+                            <th class="text-center" scope="col" style="width: 10%">Leg</th>
+                            <th class="text-center" scope="col" style="width: 50%">Nombre</th>
+                            <th class="text-center" scope="col" style="width: 20%">CUIL</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% if results %}
+                              {% for result in results %}
+                                <tr>
+                                    {% for item in result %}
+                                        {% if forloop.counter == 3 %}
+                                            <td><small>{{ item }}</small></td>
+                                        {% else %}
+                                            <td class='text-center'><small>{{ item|stringformat:"i" }}</small></td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </small></tr>
+                                {% endfor %}
+                            {% endif %}    
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                    {% if results %}
+                    <div class="container my-3 text-center">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="has_confirmation" value="Yes">
+                            <button class="btn btn-primary btn-flat btnTest">
+                                <i class="fa-solid fa-file-import"></i> Confirmar Importación
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div><!-- End Resultados ok -->
+            <!-- Resultados incorrectos -->
+            <div class="col-5"> 
+                {% if invalid_data %}
+                <div class="card top-selling overflow-auto">
+                    <h5 class="card-title text-center">Errores en el proces de Exportación</h5>
+                        <ul class="list-group list-group-flush">
+                            {% for data in invalid_data %}
+                            <li class="list-group-item text-center text-info"><small>{{ data }}</small></li>
+                            {% endfor %}
+                        </ul>
+                </div>
+                {% endif %}
+            </div><!-- Resultados incorrectos -->
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block footer_js %}
+    <script>
+        {% if error %}
+            var errors = '';
+            errors = '{{ error }}';
+            Swal.fire({
+                title: 'Error!',
+                text: errors,
+                icon: 'error'
+            });
+        {% endif %}
+
+    $(document).ready(
+    function(){
+        $('.button_submit').attr('disabled',true);
+        $('input:file').change(
+            function(){
+                if ($(this).val()){
+                    $('.button_submit').removeAttr('disabled'); 
+                }
+                else {
+                    $('.button_submit').attr('disabled',true);
+                }
+            });
+    });
+    </script>
+{% endblock %}

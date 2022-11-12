@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Proceso Exitoso{% endblock title%}
+{% block content %}
+<div class="jumbotron">
+    <h2 class="display-5 text-primary mb-3">{{ titulo }}</h2>
+    
+    <p>Se procesaron <b>{{ archproc }}</b> registros exitosamente </p>
+    
+    <a class="btn btn-success mr-1 mt-2 .btn-lg" href="{{ url_to_file }}">Descargar el archivo</a>
+    <a class="btn btn-secondary mr-1 mt-2 .btn-lg" href="javascript:history.back()">Volver Atrás</a>
+    <a class="btn btn-dark mr-1 mt-2 .btn-lg" href="{% url 'siradig'%}">Nuevo Proceso</a>
+</div>
+
+{% endblock content %}

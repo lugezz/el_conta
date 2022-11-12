@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Usuario no autorizado{% endblock title%}
+{% block content %}
+<div class="container">
+    <h2 class="display-5 text-primary mb-5 mt-3" style="display: inline">Usuario no autorizado</h2>
+    <a class="btn btn-dark mx-4 my-3 .btn-lg" href="javascript:history.back()">Volver</a>
+
+    <img src="{% static 'images/usuario_no_autorizado.jpg' %}" class="img-fluid" alt="Responsive image">
+</div>
+
+{% endblock content %}

@@ -1,0 +1,24 @@
+{% load static %}
+
+<!-- ======= Header ======= -->
+ <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="{% url 'export_lsd:home' %}" class="logo d-flex align-items-center">
+        <img src="{% static 'img/logo.png' %}" alt="Logo">
+        <span class="d-none d-lg-block">Exporta LSD</span>
+      </a>
+      <i class="fas fa-bars toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto px-3">
+        <a href="#">
+          {% if user.first_name %}
+              {{ user.first_name|capfirst }} {{ user.last_name|capfirst }}
+            {% else %}
+              {{ user.username }}
+            {% endif %}
+        </a>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->

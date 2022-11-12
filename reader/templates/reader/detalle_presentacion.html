@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load my_filters %}
+{% block title %}{{ titulo }}{% endblock title%}
+{% block content %}
+<div class="jumbotron">
+    <h2 class="display-5 text-primary mb-5" style="display: inline">{{ titulo }}</h2>
+    <a class="btn btn-dark mx-4 mb-3 .btn-lg" href="javascript:history.back()">Volver</a>
+    <a class="btn btn-success mb-3 .btn-lg" href="{{ url }}">Exportar</a>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">CUIL</th>
+            <th scope="col">Deducción</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Dato1</th>
+            <th scope="col">Dato2</th>
+            <th scope="col">Porc</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for item in query %}
+            <tr>
+                <td>{{ item.cuil }}</td>
+                <td>{{ item.deduccion }}</td>
+                <td>{{ item.tipo }}</td>
+                <td>{{ item.dato1 }}</td>
+                <td>{% if item.deduccion != 'cargaFamilia' %}
+                        {{ item.dato2 | currency }}
+                    {% else %}
+                        {{ item.dato2 }}
+                    {% endif %}
+                </td>
+                <td>{{ item.porc }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock content %}

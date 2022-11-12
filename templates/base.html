@@ -1,0 +1,74 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'lib/bootstrap-4.6.1-dist/css/bootstrap.min.css' %}" crossorigin="anonymous">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+    <!--Font awesome icons -->
+    <link rel="stylesheet" href="{% static 'lib/fontawesome-5.15.4/css/all.css' %}" crossorigin="anonymous">
+	
+    <title>El Conta - {% block title %}{% endblock %} </title>
+</head>
+<body>
+  <div class="container p-3 my-3">
+    <div class="row">
+      <div class="col-md-12">
+        <nav class="navbar navbar-expand-md navbar-light " style="background-color: #f0f5f5">
+          <a href="/" class="navbar-brand">Home</a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ml-auto">
+                  {% if user.is_authenticated %}
+                    <a href="{% url 'users-profile' %}" class="nav-item nav-link hovertext" data-hover="Perfil">
+                      <i class="fa fa-user fa-xl" aria-hidden="true"></i>
+                    </a>
+                    <a href="mailto:elconta@eugeniovazquez.com.ar" class="nav-item nav-link hovertext" data-hover="Contactame">
+                      <i class="fas fa-envelope fa-xl"></i>
+                    </a>
+                    <a href="{% url 'logout' %}" class="nav-item nav-link hovertext" data-hover="Cerrar Sesión">
+                      <i class="fa fa-power-off fa-xl"></i>
+                    </a>
+                  {% else %}
+                    <a href="{% url 'login' %}" class="nav-item nav-link">Iniciar Sesión</a>
+                  {% endif %}
+
+                </div>
+            </div>
+        </nav>
+        <!--Any flash messages pop up in any page because this is the base template-->
+        {% if messages %}
+          <div class="alert alert-dismissible" role="alert">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+
+    {% include 'footer.html' %}
+  </div>
+  </body>
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="{% static 'lib/jquery-3.6.0.min.js' %}"</script>
+    <script src="{% static 'lib/popper.min.js' %}"</script>
+    <script src="{% static 'lib/bootstrap-4.6.1-dist/js/bootstrap.min.js' %}"</script>
+  
+    <!-- A plugin for password show/hide  -->
+    <script src="{% static 'lib/bootstrap-4.6.1-dist/js/bootstrap-show-password.min.js' %}"</script>
+    
+</html>

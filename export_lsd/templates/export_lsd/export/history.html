@@ -1,0 +1,56 @@
+{% extends "export_lsd/base.html" %}
+{% load static %}
+
+{% block title %} Presentaciones Históricas {% endblock title%}
+
+{% block content %}
+
+<div class="container my-3">
+    {% if messages %}
+        {% include 'export_lsd/messages.html' %}
+    {% endif %}
+   
+    <div class="row">
+        <div class="col-12">
+            <div class="card top-selling overflow-auto">
+
+                <div class="card-body pb-0">
+                    <h5 class="card-title">Presentaciones Históricas</h5>
+
+                    <table class="table table-borderless">
+                        <thead>
+                        <tr>
+                            <th scope="col" class="text-center" style="width: 15%;">Fecha</th>
+                            <th scope="col" class="text-center" style="width: 40%;">Empresa</th>
+                            <th scope="col" class="text-center" style="width: 10%;">Período</th>
+                            <th scope="col" class="text-center" style="width: 10%;">Liqs.</th>
+                            <th scope="col" class="text-center" style="width: 10%;">Empleados</th>
+                            <th scope="col" class="text-center" style="width: 15%;">Acción</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for presentacion in presentacion_list %}
+                            <tr>
+                              <td class="text-center">{{ presentacion.created|date:"d/m/Y" }}</td>
+                              <td>{{ presentacion.empresa.name }}</td>
+                              <td class="text-center">{{ presentacion.periodo|date:"m/Y" }}</td>
+                              <td class="text-center">{{ presentacion.get_children }}</td>
+                              <td class="text-center">{{ presentacion.employees }}</td>
+                              <td class="text-center">
+                                <a 
+                                  class="btn btn-outline-success btn-sm"
+                                  href="{% static presentacion.get_download_url %}"
+                                >
+                                  <i class="fas fa-file-download"></i>
+                                </a>
+                            </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!-- End Detalle Liquidaciones -->
+    </div>
+</div>
+{% endblock content %}

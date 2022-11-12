@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load my_filters %}
+{% block title %} Siradig Individual - CUIT: {{ siradig_empleado.cuit }}{% endblock title%}
+{% block content %}
+<div class="jumbotron">
+    <h2 class="display-5 text-primary mb-5" style="display: inline">CUIL: {{ siradig_empleado.cuit }}</h2>
+    <a class="btn btn-dark mx-4 mb-3 .btn-lg" href="javascript:history.back()">Volver</a>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Deducción</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Dato1</th>
+            <th scope="col">Dato2</th>
+            <th scope="col">Porc</th>
+            <th scope="col">Descripción</th>
+        </tr>
+        </thead>
+        <tbody>
+            <!-- Deducciones !-->
+            {% for deduccion in siradig_empleado.deducciones %}
+            <tr>
+                <td>{{ deduccion.nombre }}</td>
+                <td>{{ deduccion.tipo }}</td>
+                <td>{{ deduccion.subtipo }}</td>
+                <td>{{ deduccion.importe | currency }}</td>
+                <td>-</td>
+                <td>{{ deduccion.descripcion }}</td>
+            </tr>
+            {% endfor %}
+            <!-- Fin Deducciones !-->
+
+            <!-- Cargas de Familia !-->
+            {% for cargas_flia in siradig_empleado.cargasFamilia %}
+            <tr>
+                <td>{{ cargas_flia.nombre }}</td>
+                <td>{{ cargas_flia.tipo }}</td>
+                <td>{{ cargas_flia.desde }}</td>
+                <td>{{ cargas_flia.hasta }}</td>
+                <td>{{ cargas_flia.porc }} </td>
+                <td>{{ cargas_flia.descripcion }}</td>
+            </tr>
+            {% endfor %}
+            <!-- Cargas de Familia !-->
+
+            <!-- Ganancia Otros Empleadores !-->
+            {% for ganancia_oe in siradig_empleado.ganLiqOtrosEmpEnt %}
+            <tr>
+                <td>{{ ganancia_oe.nombre }}</td>
+                <td>{{ ganancia_oe.tipo }}</td>
+                <td> 0 </td>
+                <td>{{ ganancia_oe.importe | currency }}</td>
+                <td> - </td>
+                <td> - </td>
+            </tr>
+            {% endfor %}
+            <!-- Fin Otros Empleadores !-->
+
+            <!-- Percepciones !-->
+            {% for percepcion in siradig_empleado.retPerPagos %}
+            <tr>
+                <td>{{ percepcion.nombre }}</td>
+                <td>{{ percepcion.tipo }}</td>
+                <td> 0 </td>
+                <td>{{ percepcion.importe | currency }}</td>
+                <td> - </td>
+                <td>{{ percepcion.descripcion }}</td>
+            </tr>
+            {% endfor %}
+            <!-- Fin Percepciones !-->
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %} Siradig Reader {% endblock title%}
+{% block content %}
+    <div class="container jumbotron2">
+        <h1 class="display-4 mb-3">Siradig Reader</h1>
+        <p class="lead">
+            Este es el sistema <b>Siradig Reader</b> desarrollado con la finalidad de simplificar
+            el proceso de lectura masiva de formularios Siradig de AFIP de los empleados.
+        </p>
+
+        <!--Selección de archivo zip con Siradigs -->
+        <div class="container">
+            <div class="row">
+                <!--Descarga-->
+                <div class="col-sm">
+                    <!--Formulario -->
+                    <h4 class="mt-2 text-info">Seleccione archivo zip descargado de AFIP</h4>
+                    <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <input type="file" name="upload" accept=".zip">
+                        <br>
+                        <button class="btn btn-dark my-3" type="submit">Descomprimir</button>
+                    </form>
+        
+                    <!--Ver Archivos descargados-->
+                    <u><h5 class="mt-1 ml-1 text-info">Archivos descargados</h5></u>
+                        {% if listado %}
+                        <div class="container">
+                            <a class="btn btn-dark mr-4 mt-2 .btn-lg" href="{% url 'siradig'%} ">Limpiar</a>
+                            <a class="btn btn-success mt-2 .btn-lg" href="{% url 'procesa-siradig'%}">Exportar</a>
+                            <p class="card-text"><small class="text-muted">{{ listado|length }} archivos descargados</small></p>
+                        </div>
+                        <div class="card" style="width: 80%;">
+                            <ul class="list-group list-group-flush">
+                                {% for file_name in listado %}
+                                    <li class="list-group-item">
+                                        <a href="{% url 'archivoxml' file_name %}">{{ file_name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <p class="card-text"><small class="text-muted">Sin archivos aun</small></p>
+                    {% endif %}
+                </div>
+                <!--Historial-->    
+                <div class="col-sm">
+                    <h5 class="mt-2 ml-5 text-info">Presentaciones Anteriores</h4>
+                    <div class="container">
+                        {% if query_historia %}
+                        <div class="card" style="width: 80%;">
+                            <ul class="list-group list-group-flush">
+                                {% for registro in query_historia %}
+                                    <li class="list-group-item text-center">
+                                        <a href="{% url 'presentaciones' registro.id %}">{{ registro.fecha|date:"d/m/Y h:i a" }}</a>
+                                        <small class="text-muted">{{ registro.registers.count }} registros</small>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <p class="card-text"><small class="text-muted">Sin procesos registrados aun</small></p>
+                    {% endif %}
+                    </div>            
+                </div>
+            </div>
+        </div>
+        <!--Fin selección-->
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,38 @@
+{% extends 'export_lsd/list.html' %}
+{% load static %}
+{% block list_title %} Lista de Empleados{% endblock %}
+{% block head_list %}
+{% endblock %}
+
+{% block messages %}
+{% if messages %}
+{% include 'export_lsd/messages.html' %}
+{% endif %}
+{% endblock messages %}
+
+{% block columns %}
+    <tr>
+        <th scope="col" style="width: 10%;">Leg</th>
+        <th scope="col" style="width: 30%;">Nombre</th>
+        <th scope="col" style="width: 30%;">Empresa</th>
+        <th scope="col" style="width: 15%;">CUIL</th>
+        <th scope="col" style="width: 15%;">Opciones</th>
+    </tr>
+{% endblock %}
+
+{% block buttons_list %}
+    <a href="{{ import_url }}" class="btn btn-primary btn-flat btnTest">
+        <i class="fa-solid fa-file-import"></i> Importar
+    </a>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+    $(document).ready(function() {
+        $("#buttonClose").on('click', function(event) {
+            $(".alert-dismissible").remove()
+        });
+    });
+    </script>
+    <script src="{% static 'js/empleado_list.js' %}"></script>
+{% endblock %}

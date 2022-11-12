@@ -1,0 +1,254 @@
+{% extends "export_lsd/base.html" %}
+{% load static %}
+{% load l10n %}
+
+{% block title %} Exportador Avanzado {% endblock title%}
+{% block head%}
+<!-- Bootstrap Date-Picker Plugin -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<script src="{% static 'lib/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'lib/bootstrap-datepicker/bootstrap-datepicker3.css' %}"/>
+{% endblock %}
+
+{% block content %}
+
+<div class="container my-3">
+    {% if messages %}
+        {% include 'export_lsd/messages.html' %}
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-8">
+        <p class="h1 text-center mb-5">Exportación Avanzada</p>
+        <form method="post" enctype="multipart/form-data" class="mb-3" id="F931form">  
+        {% csrf_token %}
+            <!-- Selección Empresa -->
+            {{ form.empresa.label_tag }}
+            {{ form.empresa }}
+            <!-- Fin Selección Empresa -->
+            <div class="row">
+                <div class="col-6">
+                    {{ form.periodo.label_tag }}
+                    {{ form.periodo }}
+                </div>
+                <div class="col-6">
+                    {{ form.txtF931.label_tag }}
+                    {{ form.txtF931 }}
+                </div>
+                {% if F931_result %}
+                    <div class="col-12 text-center">
+                        <input id="employees" name="employees" type="hidden" value="{{ F931_result.Empleados }}">
+                        <input id="remuneracion" name="remuneracion" type="hidden" value="{{ F931_result.Remuneracion_T }}">
+                        <button class="btn btn-primary btn-flat my-3 button_submit">
+                            <i class="fas fa-arrow-alt-circle-right"></i> Crear Presentacion
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+        </div>
+    
+        <!-- Export Config Detailed  -->
+        <div class="col-4"> 
+            {% if F931_result %}
+            <div class="card top-selling overflow-auto f931-result">
+                <h5 id="configTitle" class="card-title text-center">Resumen</h5>
+                <ul id="F.931">
+                    {% for key, value in F931_result.items %}
+                    <li class="list-group-item text-info">
+                        <small><b>{{ key }}:</b>
+                            {% if key == "Empleados" or key == "Eventuales" %}
+                                {{ value }}
+                            {% else %}
+                                ${{ value|floatformat:2|localize  }}
+                            {% endif %}
+                        </small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if presentaciones_en_pr %}
+    <!-- Presentaciones abiertas -->
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <div class="card top-selling overflow-auto">
+                <div class="card-body pb-0">
+                    <h5 class="card-title text-center">Presentaciones en proceso</h5>
+                    <table class="table table-borderless">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="width: 30%" class="text-center">Período</th>
+                            <th scope="col" style="width: 55%" class="text-center">Empresa</th>
+                            <th scope="col" style="width: 15%" class="text-center">Acción</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for presentacion in presentaciones_en_pr %}
+                        <tr>
+                            <td class="text-center">{{ presentacion.periodo|date:"d/m/Y" }}</td>
+                            <td>{{ presentacion.empresa.name }}</td>
+                            <td>
+                                <a 
+                                  class="btn btn-outline-danger btn-sm" id="btn_delete_advanced"
+                                  href="{% url 'export_lsd:advanced_delete' pk=presentacion.id %}"
+                                >
+                                  <i class="fa-solid fa-trash"></i>
+                                </a>
+                                <a 
+                                  class="btn btn-outline-success btn-sm"
+                                  href="{% url 'export_lsd:advanced_liqs' presentacion.id %}"
+                                >
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!-- End Presentaciones abiertas -->
+        {% endif %}
+    </div>
+{% endblock content %}
+
+{% block footer_js %}
+    <script>
+    function formatDate(inputDate, ismonth=false) {
+        let date, month, year;
+        
+        date = inputDate.getDate();
+        month = inputDate.getMonth() + 1;
+        year = inputDate.getFullYear();
+        
+            date = date
+                .toString()
+                .padStart(2, '0');
+        
+            month = month
+                .toString()
+                .padStart(2, '0');
+        
+        if (ismonth){
+            return `${year}-${month}`;
+        } else {
+            return `${date}/${month}/${year}`;
+        }
+    }
+
+    // ---------------------
+    {% if error %}
+        var errors = '';
+        errors = '{{ error }}';
+        Swal.fire({
+            title: 'Error!',
+            text: errors,
+            icon: 'error'
+        });
+    {% endif %}
+
+    $('#btn_delete_advanced').on('click', function (e) {
+        e.preventDefault();
+        $.confirm({
+            theme: 'material',
+            title: 'Notificación',
+            icon: 'fa fa-info',
+            content: '¿Estas seguro de eliminar el registro?<br>',
+            columnClass: 'small',
+            typeAnimated: true,
+            cancelButtonClass: 'btn-primary',
+            draggable: true,
+            dragWindowBorder: false,
+            buttons: {
+                info: {
+                    text: "Si",
+                    btnClass: 'btn-primary',
+                    action: function() {
+                        $('form').submit();
+                    }
+                },
+                danger: {
+                    text: "No",
+                    btnClass: 'btn-red',
+                    action: function() {
+                    }
+                },
+            }
+        })
+    });
+
+    // Hide button and f931 if change date or company
+    $(function() {
+        $('#id_periodo').on('change', function(e) {
+            $('.button_submit').hide();
+            $('.f931-result').hide();
+        });
+    });
+
+    $(function() {
+        $('#id_empresa').on('change', function(e) {
+            $('.button_submit').hide();
+            $('.f931-result').hide();
+        });
+    });
+
+    $('.button_submit').on('click', function (e) {
+        e.preventDefault();
+        let content = "¿Estas seguro de avanzar a la carga de liquidaciones?"
+
+        if ({{ existe_presentacion }} === 1) {
+            content = "Existe ya una presentación para esta empresa y período, ¿Desea sobrescribirla?"
+        }
+        $.confirm({
+            theme: 'material',
+            title: 'Notificación',
+            icon: 'fa fa-info',
+            content: content + '<br>',
+            columnClass: 'small',
+            typeAnimated: true,
+            cancelButtonClass: 'btn-primary',
+            draggable: true,
+            dragWindowBorder: false,
+            buttons: {
+                info: {
+                    text: "Si",
+                    btnClass: 'btn-primary',
+                    action: function() {
+                        $('form').submit();
+                    }
+                },
+                danger: {
+                    text: "No",
+                    btnClass: 'btn-red',
+                    action: function() {
+                    }
+                },
+            }
+        })
+    });
+
+    $('#id_txtF931').change(function() {
+        $('#F931form').submit();
+    });
+
+    $(document).ready(
+        function(){    
+            var lastDayPrevMonth = new Date();
+            // Completar sólo si no está compelto
+            if (!$('#id_periodo').val()) {
+                lastDayPrevMonth.setDate(0);
+                final_date = formatDate(lastDayPrevMonth);
+                final_date_mth = formatDate(lastDayPrevMonth, true);
+                $('#id_periodo').val(final_date_mth);
+                }
+            $("#id_empresa").children().first().remove() // Delete empty element
+
+            $("#buttonClose").on('click', function(event) {
+                $(".alert-dismissible").remove()
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Home Page {% endblock title%}
+{% block content %}
+    <div class="jumbotron">
+        <h1 class="display-4">Bienvenido, 
+            {% if user.first_name.title %}
+                {{ user.first_name.title }}
+            {% else %}
+                {{user.username.title|default:'Invitado'}}
+            {% endif %}
+        </h1>
+        <p class="lead">
+            Este es el portal <b>El Conta</b> desarrollado con la finalidad de simplificar
+            diversos procesos utilizado por contadores en Argentina
+        </p>
+        <hr class="my-4">
+        <p class="lead">
+            {% if not user.is_authenticated %}
+                <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Iniciar Sesión</a>
+            {% endif %}
+        </p>
+
+        <!-- Comienza las cards con las apps -->
+        <div class="card-deck">
+            <!-- Siradig -->
+            <div class="card">
+                <a href="{% url 'siradig' %}"><img src="{% static 'images/siradig.png' %}" class="card-img-top" alt="lector-siradig"></a>
+                <div class="card-body">
+                    <a href="{% url 'siradig' %}"><h5 class="card-title text-center">Siradig Reader</h5></a>
+                    <p class="card-text text-justify">El sistema <b>Siradig Reader</b> fue desarrollado con la finalidad de simplificar
+                        el proceso de lectura masiva de formularios Siradig de AFIP de los empleados.</p>
+                </div>
+            </div>
+            
+            <!-- F.1357 -->
+            <div class="card">
+                <a href="#"><img src="{% static 'images/f1357.png' %}" class="card-img-top" alt="f1357"></a>
+                <div class="card-body">
+                    <a href="#"><h5 class="card-title text-center">Generador txt F.1357</h5></a>
+                    <p class="card-text text-muted">En construcción</p>
+                </div>
+            </div>
+            
+            <!-- Cálculo Ganancias -->
+            <div class="card">
+                <a href="#"><img src="{% static 'images/ganancias.png' %}" class="card-img-top" alt="f1357"></a>
+                <div class="card-body">
+                    <a href="#"><h5 class="card-title text-center">Cálculo Ganancias</h5></a>
+                    <p class="card-text text-muted">En construcción</p>
+                </div>
+            </div>
+        </div>
+        <!-- Finalizan las cards con las apps -->
+    </div>
+
+{% endblock content %}

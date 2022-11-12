@@ -1,0 +1,48 @@
+{% extends 'export_lsd/base.html' %} {% load static %}
+{% block title %}{% block list_title %}{% endblock list_title %}{% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'lib/datatables-1.11.3/css/dataTables.bootstrap5.min.css' %}" />
+<link rel="stylesheet" href="{% static 'lib/datatables-1.11.3/responsive-2.2.9/css/responsive.bootstrap5.min.css' %}" />
+{% block head_list %} {% endblock %} {% endblock %}
+{% block content %}
+{% block messages %}
+{% endblock messages %}
+
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-search"></i> {{ title }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered" id="data">
+            <thead>
+                {% block columns %} {% endblock %}
+            </thead>
+            <tbody>
+                {% block rows %} {% endblock %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <a href="{{ create_url }}" class="btn btn-primary btn-flat btnTest">
+            <i class="fas fa-plus"></i> Nuevo registro
+        </a>
+        <a href="{{ list_url }}" class="btn btn-success btn-flat">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+        {% block buttons_list %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_js %}
+    <script src="{% static 'lib/datatables-1.11.3/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'lib/datatables-1.11.3/js/dataTables.bootstrap5.min.js' %}"></script>
+    <script src="{% static 'lib/datatables-1.11.3/responsive-2.2.9/js/dataTables.responsive.js' %}"></script>
+    <script src="{% static 'lib/datatables-1.11.3/responsive-2.2.9/js/responsive.bootstrap5.min.js' %}"></script>
+    {% block javascript %}
+    {% endblock %}
+{% endblock %}

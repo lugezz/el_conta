@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Cerrar Sesión{% endblock title %}
+{% block content %}
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+        <h5 class="card-title">Has sido deslogueado</h5>
+        <p class="card-text">
+            Gracias por tu tiempo, contáctame por comentarios y sugerencias.
+        </p>
+        <br><hr><a href="{% url 'login' %}" class="btn btn-primary">Iniciar sesión otra vez</a>
+        </div>
+    </div>
+
+
+{% endblock content %}

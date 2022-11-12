@@ -1,0 +1,142 @@
+{% extends "export_lsd/base.html" %}
+{% load static %}
+
+{% block title %} Exportador LSD {% endblock title%}
+{% block content %}
+
+    <div class="pagetitle">
+      <h1>Panel de Control</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'export_lsd:home' %}">Home</a></li>
+          <li class="breadcrumb-item active">Panel de Control</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Empresas Card -->
+        <div class="col-xxl-4 col-md-4">
+          <div class="card info-card sales-card">
+
+            <div class="filter">
+              <a class="icon" href="{% url 'export_lsd:empresa_list' %}">
+                <i class="fa-solid fa-pencil"></i>
+              </a>
+            </div>
+
+            <div class="card-body">
+              <h5 class="card-title">Empresas</h5>
+
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="fas fa-building"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>{{ empresas }}</h6>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- End Empresas -->
+
+        <!-- Empleados Card -->
+        <div class="col-xxl-4 col-md-4">
+          <div class="card info-card revenue-card">
+
+            <div class="filter">
+              <a class="icon" href="{% url 'export_lsd:empleado_list' %}">
+                <i class="fa-solid fa-pencil"></i>
+              </a>
+            </div>
+
+            <div class="card-body">
+              <h5 class="card-title">Empleados</h5>
+
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="fas fa-user-friends"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>{{ empleados }}</h6>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- End Empleados -->
+
+        <!-- Presentaciones Card -->
+        <div class="col-xxl-4 col-md-4">
+          <div class="card info-card">
+
+            <div class="card-body">
+              <h5 class="card-title">Presentaciones</h5>
+
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                  <i class="fas fa-history"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>{{ presentaciones.count }}</h6>
+                  <span class="text-success small pt-1 fw-bold">{{ presentaciones_this_year }}</span>
+                  <span class="text-muted small pt-2 ps-1">en este año</span>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- End Presentaciones -->
+
+        <!-- Últimas presentaciones -->
+        <div class="col-12">
+          <div class="card top-selling overflow-auto">
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">Últimas presentaciones</h5>
+
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col" class="text-center" style="width: 15%;">Fecha</th>
+                    <th scope="col" class="text-center" style="width: 40%;">Empresa</th>
+                    <th scope="col" class="text-center" style="width: 10%;">Período</th>
+                    <th scope="col" class="text-center" style="width: 10%;">Liqs.</th>
+                    <th scope="col" class="text-center" style="width: 10%;">Empleados</th>
+                    <th scope="col" class="text-center" style="width: 15%;">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for presentacion in presentaciones_top5 %}
+                    <tr>
+                      <td class="text-center">{{ presentacion.created|date:"d/m/Y" }}</td>
+                      <td>{{ presentacion.empresa.name }}</td>
+                      <td class="text-center">{{ presentacion.periodo|date:"m/Y" }}</td>
+                      <td class="text-center">{{ presentacion.get_children }}</td>
+                      <td class="text-center">{{ presentacion.employees }}</td>
+                      <td class="text-center">
+                        <a 
+                          class="btn btn-outline-success btn-sm"
+                          href="{% static presentacion.get_download_url %}"
+                        >
+                          <i class="fas fa-file-download"></i>
+                        </a>
+                    </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+
+            </div>
+
+          </div>
+        </div><!-- End Top Presentaciones -->
+
+      </div>
+    </section>
+
+{% endblock content %}
