@@ -506,8 +506,8 @@ def process_presentacion(presentacion_qs: Presentacion) -> Path:
     per_liq = presentacion_qs.periodo.strftime('%Y%m')
 
     fname = f'finaltxt_{username}_{cuit}_{per_liq}'
-    fpath = f'static/temp/{fname}'
-    f931_txt_path = f'export_lsd/static/temp/{fname}.txt'.replace('finaltxt', 'temptxt')
+    fpath = f'static/export_lsd/temp/{fname}'
+    f931_txt_path = f'export_lsd/static/export_lsd/temp/{fname}.txt'.replace('finaltxt', 'temptxt')
 
     with open(f931_txt_path, encoding='latin-1') as f:
         txt_info = f.readlines()
@@ -560,10 +560,10 @@ def process_presentacion(presentacion_qs: Presentacion) -> Path:
     if len(liquidaciones_list) == 1:
         resp = liquidaciones_list[0]
     else:
-        liquidaciones_list_2 = [f'static/{x}' for x in liquidaciones_list]
+        liquidaciones_list_2 = [f'static/export_lsd/{x}' for x in liquidaciones_list]
         zip_output_file_name = f'{fpath}.zip'
         file_compress(liquidaciones_list_2, zip_output_file_name)
-        resp = zip_output_file_name.replace('static/', '')
+        resp = zip_output_file_name.replace('static/export_lsd/', '')
 
         # Borro txts
         delete_list_of_liles(liquidaciones_list_2)
@@ -586,7 +586,7 @@ def get_final_txts(user: SimpleLazyObject, id_presentacion: int) -> Path:
     per_liq = presentacion_qs.periodo.strftime('%Y%m')
 
     fname = f'temptxt_{username}_{cuit}_{per_liq}'
-    fpath = f'export_lsd/static/temp/{fname}.txt'
+    fpath = f'export_lsd/static/export_lsd/temp/{fname}.txt'
     info_txt = get_summary_txtF931(fpath)
 
     # 1) Valido empleados

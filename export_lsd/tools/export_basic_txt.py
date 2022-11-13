@@ -180,6 +180,8 @@ def process_reg4(txt_info: str, export_config: dict) -> str:
                     tmp_linea = tmp_linea.replace('T', '1').replace('F', '0')
 
                 linea += tmp_linea
+                if 'T' in tmp_linea:
+                    print('aquí')
 
             else:
                 # Si no está, cargo los casos específicos y dejo vacío el resto (0 números y " " texto)

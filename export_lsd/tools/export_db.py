@@ -9,7 +9,7 @@ def exportaDB(request):
     # First delete all records
     OrdenRegistro.objects.all().delete()
 
-    reader = csv.DictReader(open("orden_registros.csv"))
+    reader = csv.DictReader(open("export_lsd/static/export_lsd/other/orden_registros.csv"))
     for raw in reader:
         tr = TipoRegistro.objects.get(id=raw['Tipo'])
         print(raw)
@@ -31,7 +31,7 @@ def exportaDB_f931(request):
     # First delete all records
     Formato931.objects.all().delete()
 
-    reader = csv.DictReader(open("formato_f931.csv"))
+    reader = csv.DictReader(open("export_lsd/static/export_lsd/other/formato_f931.csv"))
     for raw in reader:
         print(raw)
         p = Formato931(

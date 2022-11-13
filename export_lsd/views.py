@@ -1,8 +1,10 @@
 import datetime
+import os
 
 import pandas as pd
 
 from django.shortcuts import redirect, render
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -355,21 +357,22 @@ def basic_export(request):
             archivo disponible para la descarga")
 
         # 1) Grabo el txt temporalmente
-        fs = FileSystemStorage()
+        fs = FileSystemStorage(location=settings.TEMP_ROOT)
         now_str = datetime.datetime.now().strftime('%Y%m%d%H%M')
         fname = f'{request.user.username}_{now_str}.txt'
-        file_temp_path = fs.save(f'export_lsd/static/temp/{fname}', txt_original)
+        file_temp_path = fs.save(f'export_lsd/{fname}', txt_original)
 
         # 2) Proceso el archivo enviando el path como argumento
-        txt_final_export_filepath = export_txt(file_temp_path, cuit, fecha_pago, export_config)
+        txt_final_export_filepath = export_txt(f'temp/{file_temp_path}', cuit, fecha_pago, export_config)
 
         # 3) Elimino el archivo temporal
         fs.delete(file_temp_path)
 
-        # 4) Agrego el path del txt generado al context
-        txt_final_export_filepath_static = txt_final_export_filepath.split('/')
-        txt_final_export_filepath_static = '/'.join(txt_final_export_filepath_static[-2:])
-        context['txt_export_filepath'] = txt_final_export_filepath_static
+        # 4) Agrego la url del txt generado al context
+        # Quito el temp/, por eso el [4:]
+        txt_final_export_filepath = txt_final_export_filepath[5:]
+        url_txt_final_export = os.path.join(settings.TEMP_URL, txt_final_export_filepath)
+        context['url_txt_export'] = url_txt_final_export
 
     return render(request, 'export_lsd/export/basic.html', context)
 
@@ -442,7 +445,7 @@ def advanced_export(request):
             # 1) Grabo el txt temporalmente
             fs = FileSystemStorage()
             fname = f'temptxt_{request.user.username}_{cuit}_{per_liq}.txt'
-            fpath = f'export_lsd/static/temp/{fname}'
+            fpath = f'export_lsd/static/export_lsd/temp/{fname}'
             fs.delete(fpath)
             fs.save(fpath, request.FILES['txtF931'])
 

@@ -133,6 +133,7 @@ TEMP_URL = '/temp/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
+
 # Email configs --------------------------------------
 # Usar local-settings para actualizar estos valores
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

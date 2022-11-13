@@ -1,0 +1,61 @@
+Concepto,Desde,Largo
+CUIL,1,11
+Apellido y Nombre,12,30
+Cónyuge,42,1
+Cantidad de Hijos,43,2
+Codigo de Situación,45,2
+Codigo de Condición,47,2
+Código de Actividad,49,3
+Código de Zona,52,2
+Porcentaje de Aporte Adicional SS,54,5
+Código de Modalidad de Contratación,59,3
+Código de Obra Social,62,6
+Cantidad de Adherentes,68,2
+Remuneración Total,70,12
+Remuneración Imponible 1,82,12
+Asignaciones Familiares Pagadas,94,9
+Importe Aporte Voluntario,103,9
+Importe Adicional OS,112,9
+Importe Excedentes Aportes SS,121,9
+Importe Excedentes Aportes OS,130,9
+Provincia Localidad,139,50
+Remuneración Imponible 2,189,12
+Remuneración Imponible 3,201,12
+Remuneración Imponible 4,213,12
+Código de Siniestrado,225,2
+Marca de Corresponde Reducción,227,1
+Capital de Recomposición de LRT,228,9
+Tipo de empresa,237,1
+Aporte Adicional de Obra Social,238,9
+Regimen,247,1
+Situación de Revista 1,248,2
+Dia inicio Situación de Revista 1,250,2
+Situación de Revista 2,252,2
+Dia inicio Situación de Revista 2,254,2
+Situación de Revista 3,256,2
+Dia inicio Situación de Revista 3,258,2
+Sueldo + Adicionales,260,12
+SAC,272,12
+Horas Extra,284,12
+Zona desfavorable,296,12
+Vacaciones,308,12
+Cantidad de días trabajados,320,9
+Remuneración Imponible 5,329,12
+Trabajador Convencionado 0-No 1-Si,341,1
+Remuneración Imponible 6,342,12
+Tipo de Operación,354,1
+Adicionales,355,12
+Premios,367,12
+Rem.Dec.788/05 - Rem Impon. 8,379,12
+Remuneración Imponible 7,391,12
+Cantidad de Horas Extras,403,3
+Conceptos no remunerativos,406,12
+Maternidad,418,12
+Rectificación de remuneración,430,9
+Remuneración Imponible 9,439,12
+Contribucion tarea diferencial (%),451,9
+Horas trabajadas,460,3
+Seguro Colectivo de Vida Obligatorio,463,1
+Importe a detraer Ley 27430,464,12
+Incremento Salarial,476,12
+Remuneración Imponible 11,488,12

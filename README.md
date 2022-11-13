@@ -60,6 +60,23 @@ _Eventuales: Pendiente fecha de ingreso y de egreso_
 _No está alcanzado el pago por CBU_
 
 ---
+### Paso a paso puesta en marcha
+
+* Crear estos registros en TipoLiquidación
+
+    1: Datos referenciales del envío (Liquidación de SyJ y datos para DJ F931)
+    2: Datos referenciales de la Liquidación de SyJ del trabajador
+    3: Detalle de los conceptos de sueldo liquidados al trabajador
+    4: Datos del trabajador para el calculo de la DJ F931
+    5: Datos del trabajador de la empresa de servicios eventuales - Dec 342/1992
+
+* Acceder a exportadb-f931/
+
+* Acceder a exportadb
+
+* Vincular registros 4 con lo detallado en F.931
+
+---
 
 ### TODO List
 

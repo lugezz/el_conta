@@ -12,6 +12,7 @@
     </div><!-- End Logo -->
 
     <nav class="header-nav ms-auto px-3">
+        Bienvenido 
         <a href="#">
           {% if user.first_name %}
               {{ user.first_name|capfirst }} {{ user.last_name|capfirst }}
@@ -19,6 +20,8 @@
               {{ user.username }}
             {% endif %}
         </a>
+        -
+        <a href="{% url 'homepage' %}">Home</a>
     </nav><!-- End Icons Navigation -->
 
   </header><!-- End Header -->

@@ -72,8 +72,8 @@
                 </button>
             </form>
 
-            {% if txt_export_filepath %}
-                <a href="{% static txt_export_filepath %}" class="btn btn-success btn-flat" download>Descargar el archivo</a>
+            {% if url_txt_export %}
+                <a href="{{ url_txt_export }}" class="btn btn-success btn-flat" download>Descargar el archivo</a>
             {% endif %}
         </div>
 
