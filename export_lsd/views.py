@@ -28,7 +28,7 @@ def error_404(request, exception):
 
 
 # ------------- DASHBOARD ------------------------------------------------
-class HomeView(TemplateView):
+class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'export_lsd/home.html'
 
     def get_context_data(self, **kwargs):

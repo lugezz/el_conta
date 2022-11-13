@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from django.contrib.messages import constants as messages
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Add
+    # Third party apps
+    'widget_tweaks',
 
     # Own
     'homepage',
@@ -42,6 +45,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # Agregados
+    'crum.CurrentRequestUserMiddleware'
 ]
 
 ROOT_URLCONF = 'el_conta.urls'
@@ -73,7 +79,7 @@ WSGI_APPLICATION = 'el_conta.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'el_conta.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -99,15 +105,25 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'es-AR'
-TIME_ZONE = 'America/Argentina/Cordoba'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LANGUAGE_CODE = 'es-ar'
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 USE_I18N = True
-USE_TZ = True
+USE_L10N = True
+pioUSE_TZ = True
+USE_THOUSAND_SEPARATOR = True
 
 # more custom folders STATICFILES_DIRS = ['siradig/static']
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / "static",
+    ]
+else:
+    STATIC_ROOT = BASE_DIR / 'static'
+    
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -170,3 +186,11 @@ LOGGING = {
         'propagate': True,
     },
 }
+
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary',
+        messages.INFO: 'alert-info',
+        messages.SUCCESS: 'alert-success',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: 'alert-danger',
+ }

@@ -25,17 +25,28 @@
         <div class="card-deck">
             <!-- Siradig -->
             <div class="card">
-                <a href="{% url 'siradig' %}"><img src="{% static 'images/siradig.png' %}" class="card-img-top" alt="lector-siradig"></a>
+                <a href="{% url 'siradig' %}"><img src="{% static 'homepage/images/siradig.png' %}" class="card-img-top" alt="lector-siradig"></a>
                 <div class="card-body">
                     <a href="{% url 'siradig' %}"><h5 class="card-title text-center">Siradig Reader</h5></a>
                     <p class="card-text text-justify">El sistema <b>Siradig Reader</b> fue desarrollado con la finalidad de simplificar
                         el proceso de lectura masiva de formularios Siradig de AFIP de los empleados.</p>
                 </div>
             </div>
+
+            <!-- Libro Sueldos Digital -->
+            <div class="card">
+                <a href="{% url 'export_lsd:home' %}"><img src="{% static 'homepage/images/LSD.png' %}" class="card-img-top" alt="f1357"></a>
+                <div class="card-body">
+                    <a href="{% url 'export_lsd:home' %}"><h5 class="card-title text-center">Libro Sueldos Digital</h5></a>
+                    <p class="card-text text-muted">El sistema <b>Exportador LSD</b> fue creado para de simplificar
+                    para generar el txt exportador para LSD desde txt F.931 para quienes no cuenten con un sistema para este fin
+                    </p>
+                </div>
+            </div>
             
             <!-- F.1357 -->
             <div class="card">
-                <a href="#"><img src="{% static 'images/f1357.png' %}" class="card-img-top" alt="f1357"></a>
+                <a href="#"><img src="{% static 'homepage/images/f1357.png' %}" class="card-img-top" alt="f1357"></a>
                 <div class="card-body">
                     <a href="#"><h5 class="card-title text-center">Generador txt F.1357</h5></a>
                     <p class="card-text text-muted">En construcción</p>
@@ -44,7 +55,7 @@
             
             <!-- Cálculo Ganancias -->
             <div class="card">
-                <a href="#"><img src="{% static 'images/ganancias.png' %}" class="card-img-top" alt="f1357"></a>
+                <a href="#"><img src="{% static 'homepage/images/ganancias.png' %}" class="card-img-top" alt="f1357"></a>
                 <div class="card-body">
                     <a href="#"><h5 class="card-title text-center">Cálculo Ganancias</h5></a>
                     <p class="card-text text-muted">En construcción</p>
