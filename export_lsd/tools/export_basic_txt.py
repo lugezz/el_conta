@@ -81,6 +81,7 @@ def process_reg3(txt_info: str, export_config: dict) -> str:
         mod_cont = int(get_value_from_txt(legajo, 'Código de Modalidad de Contratación'))
         cond = int(get_value_from_txt(legajo, 'Codigo de Condición'))
         convenc = get_value_from_txt(legajo, 'Trabajador Convencionado 0-No 1-Si')
+        tipo_nr = int(export_config['tipo_nr'])
 
         rem2 = amount_txt_to_integer(get_value_from_txt(legajo, 'Remuneración Imponible 2'))
         rem4 = amount_txt_to_integer(get_value_from_txt(legajo, 'Remuneración Imponible 4'))
@@ -88,7 +89,7 @@ def process_reg3(txt_info: str, export_config: dict) -> str:
 
         remun = rem2
 
-        no_rem_especial = rem9 - remun
+        no_rem_especial = 0 if tipo_nr == 0 else rem9 - remun
         no_remun = amount_txt_to_integer(get_value_from_txt(legajo, 'Conceptos no remunerativos')) - no_rem_especial
         # Detectados redondeos, lo quito
         if no_remun < 5:
@@ -106,8 +107,7 @@ def process_reg3(txt_info: str, export_config: dict) -> str:
         ccn_os = export_config['ccn_os'].ljust(10)
         ccn_sindicato = export_config['ccn_sindicato'].ljust(10)
         porc_sindicato = int(export_config['porc_sindicato'])
-        tipo_nr = int(export_config['tipo_nr'])
-
+        
         # Sueldo
         item = f'03{cuil}{ccn_sueldo}{ds_trab}D{str(remun).zfill(15)}C{" " * 6}'
         resp.append(item)

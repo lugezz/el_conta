@@ -10,6 +10,7 @@ import datetime
 import os
 from pathlib import Path
 
+from django.conf import settings
 from django.db.models import Sum
 from django.db.models.query import QuerySet
 from django.utils.functional import SimpleLazyObject
@@ -22,6 +23,9 @@ from export_lsd.utils import (amount_txt_to_integer, amount_txt_to_float,
                               delete_list_of_liles,
                               file_compress, get_value_from_txt,
                               NOT_SIJP, sync_format)
+
+
+MULTIP_100 = ['Contribucion tarea diferencial (%)']
 
 
 def get_summary_txtF931(txt_file: Path) -> dict:
@@ -205,7 +209,7 @@ def process_reg3(concepto_liq: QuerySet) -> str:
     for concepto in concepto_liq:
         cuil = concepto.empleado.cuil
         cod_con = concepto.concepto.ljust(10)
-        cantidad = str(concepto.cantidad*100).zfill(5)
+        cantidad = str(concepto.cantidad).zfill(5)
         importe = round(abs(concepto.importe), 2) * 100
         importe = str(int(importe)).zfill(15)
         tipo = 'D' if concepto.tipo[:2] == 'Ap' else 'C'
@@ -234,7 +238,8 @@ def process_reg4_line(txt_info_line: str) -> str:
     for reg in reg4_qs:
         if reg.formatof931:
             # Si está lo vinculo puliendo formato
-            tmp_linea = sync_format(get_value_from_txt(txt_info_line, reg.formatof931.name), reg.long, reg.type)
+            multip = 100 if reg.formatof931.name in MULTIP_100 else 1
+            tmp_linea = sync_format(get_value_from_txt(txt_info_line, reg.formatof931.name), reg.long, reg.type, multip)
             if (reg.formatof931.name == 'Cónyuge' or
                     reg.formatof931.name == 'Trabajador Convencionado 0-No 1-Si' or
                     reg.formatof931.name == 'Seguro Colectivo de Vida Obligatorio' or
@@ -506,8 +511,8 @@ def process_presentacion(presentacion_qs: Presentacion) -> Path:
     per_liq = presentacion_qs.periodo.strftime('%Y%m')
 
     fname = f'finaltxt_{username}_{cuit}_{per_liq}'
-    fpath = f'static/export_lsd/temp/{fname}'
-    f931_txt_path = f'export_lsd/static/export_lsd/temp/{fname}.txt'.replace('finaltxt', 'temptxt')
+    fpath = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}')
+    f931_txt_path = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.txt'.replace('finaltxt', 'temptxt'))
 
     with open(f931_txt_path, encoding='latin-1') as f:
         txt_info = f.readlines()
@@ -555,15 +560,16 @@ def process_presentacion(presentacion_qs: Presentacion) -> Path:
         with open(txt_output_file, 'w', encoding='cp1252') as f:
             f.write(final_result)
 
-        liquidaciones_list.append(f'temp/{txt_output_file_name}')
+        liquidaciones_list.append(f'{txt_output_file_name}')
 
     if len(liquidaciones_list) == 1:
-        resp = liquidaciones_list[0]
+        resp = os.path.join(settings.TEMP_URL, 'export_lsd/', liquidaciones_list[0])
     else:
-        liquidaciones_list_2 = [f'static/export_lsd/{x}' for x in liquidaciones_list]
+        liquidaciones_list_2 = [f'temp/export_lsd/{x}' for x in liquidaciones_list]
         zip_output_file_name = f'{fpath}.zip'
         file_compress(liquidaciones_list_2, zip_output_file_name)
-        resp = zip_output_file_name.replace('static/export_lsd/', '')
+        zip_url = zip_output_file_name.split('/')[-1]
+        resp = os.path.join(settings.TEMP_URL, 'export_lsd/', zip_url)
 
         # Borro txts
         delete_list_of_liles(liquidaciones_list_2)
@@ -586,7 +592,7 @@ def get_final_txts(user: SimpleLazyObject, id_presentacion: int) -> Path:
     per_liq = presentacion_qs.periodo.strftime('%Y%m')
 
     fname = f'temptxt_{username}_{cuit}_{per_liq}'
-    fpath = f'export_lsd/static/export_lsd/temp/{fname}.txt'
+    fpath = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.txt')
     info_txt = get_summary_txtF931(fpath)
 
     # 1) Valido empleados

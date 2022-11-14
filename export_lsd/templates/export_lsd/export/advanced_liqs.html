@@ -111,8 +111,8 @@
                             <i class="fa-solid fa-download"></i> Generar archivos
                         </button>
                     </form>
-                    {% if path_txts %}
-                        <a href="{% static path_txts %}" id="download_final_file" download>
+                    {% if url_txts %}
+                        <a href="{{ url_txts }}" id="download_final_file" download>
                             Descargar Archivos Finales
                         </a>
                     {% endif %}        

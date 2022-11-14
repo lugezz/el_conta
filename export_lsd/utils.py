@@ -51,13 +51,14 @@ def just_eventuales(txt_info: str) -> str:
     return resp
 
 
-def sync_format(info: str, expected_len: int, type_info: str) -> str:
+def sync_format(info: str, expected_len: int, type_info: str, multiplicador: int = 1) -> str:
     resp = info
 
     if len(info) != expected_len or ',' in info:
         if len(info) > expected_len:
             resp = round(float(info.replace(',', '.').strip()))
-            resp = str(resp).zfill(expected_len)
+            # Ver si está ok multiplicar por 100
+            resp = str(resp * multiplicador).zfill(expected_len)
         else:
             if type_info == 'NU':
                 resp = str(int(float(info.replace(',', '.').strip()) * 100))
