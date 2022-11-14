@@ -345,6 +345,8 @@ def basic_export(request):
             cuit = request.POST.get('selectEmpresa')
             fecha_pago_str = request.POST.get('payDay')
             fecha_pago = datetime.datetime.strptime(fecha_pago_str, '%d/%m/%Y')
+            periodo_str = request.POST.get('periodo')
+            periodo = datetime.datetime.strptime(periodo_str, '%Y-%m')
             export_config = eval(request.POST.get('selectBasicConfig'))
 
         except ValueError:
@@ -363,7 +365,7 @@ def basic_export(request):
         file_temp_path = fs.save(f'export_lsd/{fname}', txt_original)
 
         # 2) Proceso el archivo enviando el path como argumento
-        txt_final_export_filepath = export_txt(f'temp/{file_temp_path}', cuit, fecha_pago, export_config)
+        txt_final_export_filepath = export_txt(f'temp/{file_temp_path}', cuit, fecha_pago, export_config, periodo)
 
         # 3) Elimino el archivo temporal
         fs.delete(file_temp_path)
@@ -402,7 +404,7 @@ def import_empleados(request):
             except ValueError:
                 result['error'] = "Formato de archivo incorrecto"
             except Exception as err:
-                result['error'] = type(err)
+                result['error'] = f'{type(err)} - {err}'
 
             request.session['all_data'] = result['results']
 

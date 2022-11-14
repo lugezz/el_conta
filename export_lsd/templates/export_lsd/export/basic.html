@@ -21,7 +21,7 @@
             <form method="post" enctype="multipart/form-data" class="mb-3">  
                 {% csrf_token %}
                 <!-- Selección Configuración -->
-                <p class="mb-1">Seleccione configuración de Exportación Básica</p>
+                <label class="mb-1">Seleccione configuración de Exportación Básica</label>
                 <select
                     id="selectBasicConfig"
                     name="selectBasicConfig"
@@ -40,32 +40,41 @@
                 <!-- Fin Selección Configuración -->
 
                 <!-- Selección Empresa -->
-                <p class="mb-1">Seleccione Empresa</p>
-                <select
-                    id="selectEmpresa"
-                    name="selectEmpresa"
-                    class="form-select mb-3"
-                    aria-label="Seleccione Empresa"
-                >
-                    {% for item in empresa_config %}
-                        <option
-                            value="{{ item.cuit }}"
-                        >
-                            {{ item.name }}
-                        </option>
-                    {% endfor %}
-                </select>
+                <div class="form-group mb-3">
+                    <label class="mb-1">Seleccione Empresa</label>
+                    <select
+                        id="selectEmpresa"
+                        name="selectEmpresa"
+                        class="form-select mb-3"
+                        aria-label="Seleccione Empresa"
+                    >
+                        {% for item in empresa_config %}
+                            <option
+                                value="{{ item.cuit }}"
+                            >
+                                {{ item.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <!-- Fin Selección Empresa -->
 
-                <!-- Fecha de pago -->
-                <div class="form-group mb-3"> 
-                    <label class="control-label" for="date">Fecha de Pago</label>
-                    <input class="form-control" id="payDay" name="payDay" placeholder="DD/MM/YYY" type="text"/>
+                <!-- Fecha de pago y período -->
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-md-6">
+                        <label class="control-label" for="payDay">Fecha de Pago</label>
+                        <input class="form-control" id="payDay" name="payDay" placeholder="DD/MM/YYY" type="text"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label" for="id_periodo">Período</label>
+                        <input type="month" name="periodo" placeholder="MM/YYYY" class="form-control" required id="id_periodo">
+                    </div>
+                  </div>
+                <!-- Fin Fecha de pago y período -->
+                <div class="form-group">
+                    <label class="mb-1" for="formGroupExampleInput">Seleccione el txt tradicional para exportación de F.931</label>
+                    <input class="form-control mb-3" type="file" id="formFile" name="txtfile" accept=".txt">
                 </div>
-                <!-- Fin Fecha de pago -->
-
-                <p>Seleccione el txt tradicional para exportación de F.931</p>
-                <input class="form-control mb-3" type="file" id="formFile" name="txtfile" accept=".txt">
 
                 <button class="btn btn-primary btn-flat my-3 button_submit">
                     <i class="fa-solid fa-arrow-right-from-arc"></i> Procesar
@@ -117,7 +126,7 @@
     
     }
 
-    function formatDate(inputDate) {
+    function formatDate(inputDate, ismonth=false) {
         let date, month, year;
         
         date = inputDate.getDate();
@@ -132,13 +141,15 @@
                 .toString()
                 .padStart(2, '0');
         
-        return `${date}/${month}/${year}`;
+        if (ismonth){
+            return `${year}-${month}`;
+        } else {
+            return `${date}/${month}/${year}`;
+        }
     }
-
     // ---------------------
     {% if error %}
-        var errors = '';
-        errors = '{{ error }}';
+        var errors = decodeURI('{{ error }}');
         Swal.fire({
             title: 'Error!',
             text: errors,
@@ -173,6 +184,15 @@
         };
         date_input.datepicker(options);
         // End Date picker
+
+        var lastDayPrevMonth = new Date();
+            // Completar sólo si no está compelto
+            if (!$('#id_periodo').val()) {
+                lastDayPrevMonth.setDate(0);
+                final_date = formatDate(lastDayPrevMonth);
+                final_date_mth = formatDate(lastDayPrevMonth, true);
+                $('#id_periodo').val(final_date_mth);
+                }
 
         $('.button_submit').attr('disabled',true);
         $('input:file').change(

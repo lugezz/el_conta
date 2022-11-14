@@ -6,7 +6,7 @@ from export_lsd.utils import (amount_txt_to_integer, exclude_eventuales,
                               just_eventuales, sync_format)
 
 
-def process_reg1(cuit: str, pay_day: date, employees: int, export_config: dict) -> str:
+def process_reg1(cuit: str, periodo: date, employees: int, export_config: dict) -> str:
     """
     Identificacion del tipo de registro	2	1	2	Alfabético
     CUIT del empleador	11	3	13	Numérico
@@ -19,7 +19,7 @@ def process_reg1(cuit: str, pay_day: date, employees: int, export_config: dict) 
     """
 
     resp = f'01{cuit}SJ'
-    resp += pay_day.strftime('%Y%m')
+    resp += periodo.strftime('%Y%m')
     resp += 'M00001'
 
     ds_base = export_config['dias_base']
@@ -248,7 +248,7 @@ def process_reg5(txt_info: str, export_config: dict) -> str:
     return resp_final
 
 
-def export_txt(txt_file, cuit: str, pay_day: date, export_config: dict) -> str:
+def export_txt(txt_file, cuit: str, pay_day: date, export_config: dict, periodo: date) -> str:
     temp_sp = txt_file.split('/')
     txt_output_file = f'{("/").join(temp_sp[:-1])}/exp_{temp_sp[-1]}'
 
@@ -259,7 +259,7 @@ def export_txt(txt_file, cuit: str, pay_day: date, export_config: dict) -> str:
     txt_no_eventuales = exclude_eventuales(txt_clean_info)
     txt_just_eventuales = just_eventuales(txt_clean_info)
 
-    reg1 = process_reg1(cuit, pay_day, len(txt_clean_info), export_config)
+    reg1 = process_reg1(cuit, periodo, len(txt_clean_info), export_config)
     reg2 = process_reg2(txt_no_eventuales, pay_day, export_config)
     reg3 = process_reg3(txt_no_eventuales, export_config)
     reg4 = process_reg4(txt_clean_info, export_config)

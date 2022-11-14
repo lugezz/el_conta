@@ -86,8 +86,7 @@
 {% block footer_js %}
     <script>
         {% if error %}
-            var errors = '';
-            errors = '{{ error }}';
+            var errors = "{{ error|safe }}";
             Swal.fire({
                 title: 'Error!',
                 text: errors,
