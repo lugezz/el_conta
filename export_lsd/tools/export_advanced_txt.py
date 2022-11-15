@@ -80,8 +80,8 @@ def update_presentacion_info(id_presentacion: int) -> dict:
     if liquidaciones:
         conc_liqs = ConceptoLiquidacion.objects.filter(liquidacion__presentacion__id=id_presentacion)
 
-        resp['remunerativos'] = liquidaciones.aggregate(Sum('remunerativos'))['remunerativos__sum']
-        resp['no_remunerativos'] = liquidaciones.aggregate(Sum('no_remunerativos'))['no_remunerativos__sum']
+        resp['remunerativos'] = round(liquidaciones.aggregate(Sum('remunerativos'))['remunerativos__sum'], 2)
+        resp['no_remunerativos'] = round(liquidaciones.aggregate(Sum('no_remunerativos'))['no_remunerativos__sum'], 2)
         resp['empleados'] = conc_liqs.values('empleado').distinct().count()
 
     Presentacion.objects.update(
@@ -127,8 +127,8 @@ def process_liquidacion(id_presentacion: int, nro_liq: int, payday: datetime, df
 
     # Update Liquidación
     liquidacion.employees = len(empleados)
-    liquidacion.remunerativos = remunerativo
-    liquidacion.no_remunerativos = no_remunerativo
+    liquidacion.remunerativos = round(remunerativo, 2)
+    liquidacion.no_remunerativos = round(no_remunerativo, 2)
     liquidacion.save()
 
     # Update Presentación
@@ -209,7 +209,8 @@ def process_reg3(concepto_liq: QuerySet) -> str:
     for concepto in concepto_liq:
         cuil = concepto.empleado.cuil
         cod_con = concepto.concepto.ljust(10)
-        cantidad = str(concepto.cantidad).zfill(5)
+        temp_cant = str(round(concepto.cantidad * 100))[:5]
+        cantidad = temp_cant.zfill(5)
         importe = round(abs(concepto.importe), 2) * 100
         importe = str(int(importe)).zfill(15)
         tipo = 'D' if concepto.tipo[:2] == 'Ap' else 'C'
@@ -235,6 +236,15 @@ def process_reg4_line(txt_info_line: str) -> str:
     rem10 = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Remuneración Imponible 2'))
     detr = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Importe a detraer Ley 27430'))
 
+    # Porque da error SR consecutivas iguales
+    sr1 = get_value_from_txt(txt_info_line, 'Situación de Revista 1')
+    sr2 = get_value_from_txt(txt_info_line, 'Situación de Revista 2')
+    sr3 = get_value_from_txt(txt_info_line, 'Situación de Revista 3')
+
+    tmp_sr2 = '  ' if sr1 == sr2 else sr2
+    sr3 = '  ' if sr2 == sr3 else sr3
+    sr2 = tmp_sr2
+
     for reg in reg4_qs:
         if reg.formatof931:
             # Si está lo vinculo puliendo formato
@@ -246,6 +256,12 @@ def process_reg4_line(txt_info_line: str) -> str:
                     reg.formatof931.name == 'Marca de Corresponde Reducción'):
 
                 tmp_linea = tmp_linea.replace('T', '1').replace('F', '0')
+
+            elif reg.formatof931.name == 'Situación de Revista 2':
+                tmp_linea = sr2
+
+            elif reg.formatof931.name == 'Situación de Revista 3':
+                tmp_linea = sr3
 
             resp += tmp_linea
 
@@ -342,7 +358,6 @@ def get_basic_f931_info(txt_line: str) -> dict:
         'Código de Obra Social': '',
         'Cantidad de Adherentes': ''
     }
-    # TODO Next: Obtener de txt
 
     for item in resp.keys():
         resp[item] = get_value_from_txt(txt_line, item)
@@ -433,11 +448,17 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
         # Día de inicio situación de revista 1,2,38,39,NU,2 enteros.
         this_line += basic_info_legal['Dia inicio Situación de Revista 1']
         # Situación de revista 2,2,40,41,AN
-        this_line += basic_info_legal['Situación de Revista 2']
+        if basic_info_legal['Situación de Revista 1'] == basic_info_legal['Situación de Revista 2']:
+            this_line += '  '
+        else:
+            this_line += basic_info_legal['Situación de Revista 2']
         # Día de inicio situación de revista 2,2,42,43,NU,2 enteros.
         this_line += basic_info_legal['Dia inicio Situación de Revista 2']
         # Situación de revista 3,2,445,AN
-        this_line += basic_info_legal['Situación de Revista 3']
+        if basic_info_legal['Situación de Revista 2'] == basic_info_legal['Situación de Revista 3']:
+            this_line += '  '
+        else:
+            this_line += basic_info_legal['Situación de Revista 3']
         # Día de inicio situación de revista 3,2,46,47,NU,2 enteros.
         this_line += basic_info_legal['Dia inicio Situación de Revista 3']
         # Cantidad de días trabajados,2,48,49,NU,2 enteros.
