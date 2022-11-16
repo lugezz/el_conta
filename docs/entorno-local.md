@@ -66,6 +66,9 @@ Creación Base de Datos MySQL
 ```
 mysql -u root -p
 CREATE DATABASE el_conta_db CHARACTER SET utf8;
+CREATE USER my_user IDENTIFIED BY 'my_password';
+GRANT ALL PRIVILEGES ON *.* TO my_user ;
+exit
 ```
 
 En local_settings.py
@@ -75,8 +78,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'el_conta_db',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'USER': 'my_user',
+        'PASSWORD': 'my_password',
         'HOST': 'localhost',
         'PORT': '3306',
     }

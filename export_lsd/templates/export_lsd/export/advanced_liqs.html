@@ -16,51 +16,74 @@
     {% if messages %}
         {% include 'export_lsd/messages.html' %}
     {% endif %}
-   
-    <form method="post" enctype="multipart/form-data" class="mb-3">
-    {% csrf_token %}
     <div class="row">
-        <div class="col-12">
-            <p class="h1 text-center mb-5">{{ empresa }} - {{ periodo|date:"Y/m" }}</p>
-        </div>
-        <div class="col-3">
-            <!-- Fecha de pago -->
-            <div class="form-group mb-3">
-                <p class="mb-1">Fecha Pago</p>
-                {{ form.payday }}
+        <div class="col-8">
+        <form method="post" enctype="multipart/form-data" class="mb-3">
+        {% csrf_token %}
+        <div class="row px-3">
+            <div class="col-12">
+                <p class="h1 text-center mb-5">{{ empresa }} - {{ periodo|date:"m/Y" }}</p>
             </div>
-            <!-- Fin Fecha de pago -->
-        </div>
+            <div class="col-6">
+                <!-- Fecha de pago -->
+                <div class="form-group mb-3">
+                    <p class="mb-1">Fecha Pago</p>
+                    {{ form.payday }}
+                </div>
+                <!-- Fin Fecha de pago -->
+            </div>
 
-        <div class="col-2">
-            <p class="mb-1">N°Liq.</p>
-            {{ form.nroLiq }}
+            <div class="col-6">
+                <p class="mb-1">N°Liq.</p>
+                {{ form.nroLiq }}
+            </div>
         </div>
+        <div class="row px-3">
+            <div class="col-4">
+                <p class="mb-1">Tipo</p>
+                {{ form.tipo_liq }}
+            </div>
 
-        <div class="col-2">
-            <p class="mb-1">Tipo</p>
-            {{ form.tipo_liq }}
+            <div class="col-8">
+                <p class="mb-1">Seleccione planilla liquidación</p>
+                {{ form.xlsx_liq}}
+                <a href="{% static 'export_lsd/other/Import_Liquidacion.xlsx' %}">
+                    <small class="text-center">Descargar modelo</small>
+                </a>
+            </div>
+            <div class="col-12 text-center">
+                <a class="btn btn-primary btn-flat my-3 button_submit"
+                href="{% url 'export_lsd:advanced' %}"
+                >
+                    <i class="fa-solid fa-arrow-left"></i> Regresar
+                </a>
+                <button class="btn btn-success btn-flat my-3 button_submit">
+                    <i class="fa-solid fa-check-double"></i> Procesar
+                </button>
+            </div>
         </div>
-
-        <div class="col-4">
-            <p class="mb-1">Seleccione planilla liquidación</p>
-            {{ form.xlsx_liq}}
-            <a href="{% static 'export_lsd/other/Import_Liquidacion.xlsx' %}">
-                <small class="text-center">Descargar modelo</small>
-            </a>
-        </div>
-        <div class="col-12 text-center">
-            <a class="btn btn-primary btn-flat my-3 button_submit"
-               href="{% url 'export_lsd:advanced' %}"
-            >
-                <i class="fa-solid fa-arrow-left"></i> Regresar
-            </a>
-            <button class="btn btn-success btn-flat my-3 button_submit">
-                <i class="fa-solid fa-check-double"></i> Procesar
-            </button>
+        </form>
+    </div>
+    <div class="col-4">
+        <div class="callout callout-info my-1">
+            <h5>Exportación Liquidaciones</h4>
+            <small>
+                <p class="my-1">
+                    Aquí debe ingresarse cada una de las liquidaciones que corresponden a <b>{{ empresa }}</b>
+                    por el período <b>{{ periodo|date:"m/Y" }}</b>
+                </p>
+                <p class="my-1">
+                    En cada una de las liquidaciones debe detallarse fecha de pago, número de liquidación y tipo.
+                </p>
+                <p class="my-1">
+                    Debe utilizarse el formato establecido que puede descargarse
+                    <a href="{% static 'export_lsd/other/Import_Liquidacion.xlsx' %}">
+                        aquí.
+                    </a>
+                </p>
+            </small>
         </div>
     </div>
-    </form>
     <!-- Detalle Liquidaciones -->
     <div class="row">
         <div class="col-8">

@@ -62,7 +62,7 @@ _No está alcanzado el pago por CBU_
 ---
 ### Paso a paso puesta en marcha
 
-* Crear estos registros en TipoLiquidación
+* Crear estos registros en TipoRegistro
 
     1: Datos referenciales del envío (Liquidación de SyJ y datos para DJ F931)
     2: Datos referenciales de la Liquidación de SyJ del trabajador
@@ -72,7 +72,7 @@ _No está alcanzado el pago por CBU_
 
 * Acceder a exportadb-f931/
 
-* Acceder a exportadb
+* Acceder a exportadb/
 
 * Vincular registros 4 con lo detallado en F.931
 

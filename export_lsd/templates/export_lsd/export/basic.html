@@ -76,9 +76,23 @@
                     <input class="form-control mb-3" type="file" id="formFile" name="txtfile" accept=".txt">
                 </div>
 
-                <button class="btn btn-primary btn-flat my-3 button_submit">
-                    <i class="fa-solid fa-arrow-right-from-arc"></i> Procesar
-                </button>
+                <div class="text-center">
+                    <button class="btn btn-primary btn-flat my-1 button_submit">
+                        <i class="fa-solid fa-arrow-right-from-arc"></i> Procesar
+                    </button>
+                </div>
+    
+                <div class="callout callout-info my-1">
+                    <h5>Exportación Básica</h4>
+                    <p><small>
+                        Herramienta mediante la cual puedes generar el archivo txt para presentación
+                        de Libro de Sueldos Digital de AFIP a partir del formato de txt F.931
+                        utilizado anteriormente.
+                        Esto se complementa con la configuración para este fin, donde debemos detallar
+                        qué conceptos serán utilizados.
+                    </small></p>
+                </div>
+    
             </form>
 
             {% if url_txt_export %}
