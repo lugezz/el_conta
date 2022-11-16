@@ -2,6 +2,14 @@ from pathlib import Path
 
 from django.contrib.messages import constants as messages
 
+try:
+    from el_conta.local_settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DATABASES
+except ImportError:
+    EMAIL_HOST_USER = ''
+    EMAIL_HOST_PASSWORD = ''
+    DATABASES = {}
+    print('No local settings found')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -76,12 +84,13 @@ WSGI_APPLICATION = 'el_conta.wsgi.application'
 # Reemplaza esto en el archivo local_settings.py acorde a la base de datos
 # que quieres usar (por ejemplo PostgreSQL o MySQL)
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if not DATABASES:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -140,8 +149,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-relay.sendinblue.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = ''  # definir-en-local-settings.py
-EMAIL_HOST_PASSWORD = ''  # definir-en-local-settings.py
+if not EMAIL_HOST_PASSWORD:
+    EMAIL_HOST_USER = ''  # definir-en-local-settings.py
+    EMAIL_HOST_PASSWORD = ''  # definir-en-local-settings.py
 # ------------------------------------------------------
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30

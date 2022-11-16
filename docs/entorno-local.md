@@ -4,7 +4,7 @@
 
 ```bash
 # Descargar repositorio
-git clone git@github.com:lugezz/siradig.git
+git clone git@github.com:lugezz/el_conta.git
 
 # Crear entorno virtual
 python3 -m venv env
@@ -32,26 +32,31 @@ pip install -r requirements.psql.txt
 
 ### PostgreSQL
 
-Crear usuario y base de datos
+Crear usuario y base de datos por terminal
 
-```
-CREATE USER siradig WITH PASSWORD 'siradig';
-ALTER ROLE siradig SUPERUSER;
-CREATE DATABASE siradig OWNER siradig;
-```
 
-En local-settings.py
+sudo -u postgres psql\
+**postgres=#** CREATE DATABASE myproject;\
+**postgres=#** CREATE USER el_conta_db WITH my_user 'my_password';\
+**postgres=#** ALTER ROLE my_user SET client_encoding TO 'utf8';\
+**postgres=#** ALTER ROLE my_user SET default_transaction_isolation TO 'read committed';\
+**postgres=#** ALTER ROLE my_user SET timezone TO 'UTC';\
+**postgres=#** GRANT ALL PRIVILEGES ON DATABASE el_conta_db TO my_user;
+**postgres=#** ```\q```\
+
+
+En local_settings.py
 
 ```python
-DATABASES = {
+MY_DATABASES = {
     'default': {
-         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-         'NAME': 'siradig',
-         'USER': 'siradig',
-         'PASSWORD': 'siradig',
-         'HOST': 'localhost',
-         'PORT': 5432
-    },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'el_conta_db',
+        'USER': 'my_user',
+        'PASSWORD': 'my_password',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
 }
 ```
 
@@ -60,30 +65,20 @@ DATABASES = {
 Creación Base de Datos MySQL
 ```
 mysql -u root -p
-CREATE DATABASE siradig CHARACTER SET utf8;
-```
-En archivo my_db.cnf cambiar usuario y contraseña del usuario de MySQL con privilegios
-Ejemplo de archivo my_db.cnf:
-
-```ini
-[client]
-database = siradig
-user = root
-password = root
-HOST = localhost
-PORT = 3306
+CREATE DATABASE el_conta_db CHARACTER SET utf8;
 ```
 
-En local-settings.py
+En local_settings.py
 
 ```python
-BD_CONFIG_PATH = str(BASE_DIR / 'my_db.cnf')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': BD_CONFIG_PATH,
-        },
+        'NAME': 'el_conta_db',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 ```

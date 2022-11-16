@@ -99,6 +99,13 @@ class ConfigEBForm(ModelForm):
         model = BasicExportConfig
         fields = '__all__'
         exclude = ['user']
+        widgets = {
+            'cuit_empleador_eventuales': TextInput(
+                attrs={
+                    'placeholder': '(Opcional) Ingrese de la empresa de servicios eventuales, en caso que la haya',
+                }
+            ),
+        }
 
     def save(self, commit=True):
         data = {}
