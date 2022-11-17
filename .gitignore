@@ -18,9 +18,6 @@ local_settings.py
 /static
 profile_images/
 
-# Entiendo que tiene que estar
-migrations/
-
 # LSD
 SD_20*.txt
 exp_*.txt

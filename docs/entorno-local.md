@@ -67,7 +67,7 @@ Creación Base de Datos MySQL
 mysql -u root -p
 CREATE DATABASE el_conta_db CHARACTER SET utf8;
 CREATE USER my_user IDENTIFIED BY 'my_password';
-GRANT ALL PRIVILEGES ON *.* TO my_user ;
+GRANT ALL PRIVILEGES ON el_conta_db.* TO my_user ;
 exit
 ```
 
