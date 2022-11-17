@@ -82,7 +82,6 @@ _No está alcanzado el pago por CBU_
 
 #### Exportación avanzada
 
-* Configurar 'M'=mes; 'Q'=quincena; 'S'=semanal
 
 ---
 
