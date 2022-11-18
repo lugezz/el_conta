@@ -1,5 +1,5 @@
 """
-WSGI config for siradig project.
+WSGI config for el_conta project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

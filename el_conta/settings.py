@@ -123,7 +123,7 @@ USE_L10N = True
 pioUSE_TZ = True
 USE_THOUSAND_SEPARATOR = True
 
-# more custom folders STATICFILES_DIRS = ['siradig/static']
+# more custom folders STATICFILES_DIRS = ['el_conta/static']
 STATIC_URL = '/static/'
 
 if DEBUG:

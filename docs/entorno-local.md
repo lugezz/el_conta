@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## Base de datos
 
-Crea el archivo `siradig/local_settings.py` y actualiza `DATABASES`
+Crea el archivo `el_conta/local_settings.py` y actualiza `DATABASES`
 segun tu entorno y el motor que quieres usar (por ejemplo PostgreSQL o MySQL)
 
 ```

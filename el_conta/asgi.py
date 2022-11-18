@@ -1,5 +1,5 @@
 """
-ASGI config for siradig project.
+ASGI config for el_conta project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
