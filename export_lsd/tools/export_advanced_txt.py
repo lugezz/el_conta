@@ -224,7 +224,7 @@ def process_reg3(concepto_liq: QuerySet) -> str:
     return resp_final
 
 
-def process_reg4_line(txt_info_line: str) -> str:
+def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
     resp = ''
     reg4_qs = OrdenRegistro.objects.filter(tiporegistro__order=4)
 
@@ -281,8 +281,7 @@ def process_reg4_line(txt_info_line: str) -> str:
                 # Valido R4
                 # R4 = Rem + NR OS y Sind + Ap.Ad.OS
                 # Ap.Ad.OS = R4 - Rem - NR OS y Sind
-                tipo_nr = '2'
-                resta = rem2 if tipo_nr != '2' else rem9
+                resta = rem2 + no_rem_os
                 aa_os = max(0, rem4 - resta)
                 resp += str(aa_os).zfill(15)
 
@@ -290,8 +289,7 @@ def process_reg4_line(txt_info_line: str) -> str:
                 # Valido R8
                 # R8 = Rem + NR OS y Sind + Ct.Ad.OS
                 # Ct.Ad.OS = R8 - Rem - NR OS y Sind
-                tipo_nr = '2'
-                resta = rem2 if tipo_nr != '2' else rem9
+                resta = rem2 + no_rem_os
                 aa_os = max(0, rem8 - resta)
                 resp += str(aa_os).zfill(15)
 
@@ -301,14 +299,28 @@ def process_reg4_line(txt_info_line: str) -> str:
     return resp
 
 
-def process_reg4(txt_info: str) -> str:
-    resp = []
+def get_nros_from_liq(cuil: str, id_liq: int) -> float:
+    resp_qs = ConceptoLiquidacion.objects.filter(tipo='NROS', empleado__cuil=cuil, liquidacion__id=id_liq)
+    resp = resp_qs.aggregate(Sum('importe'))
+    final_resp = resp.get('importe__sum', 0)
+    if not final_resp:
+        final_resp = 0
 
+    return round(final_resp, 2)
+
+def process_reg4(txt_info: str, nro_liq: int = 0) -> str:
+    resp = []
+    
     for legajo in txt_info:
+        nros = 0.0
+
         if not legajo:
             continue
 
-        linea = process_reg4_line(legajo)
+        if nro_liq > 0:
+            nros = get_nros_from_liq(legajo[:11], nro_liq)
+
+        linea = process_reg4_line(legajo, nros)
 
         resp.append(linea)
 
@@ -381,7 +393,9 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
             liquidacion__nroLiq__gt=nro_liq
             ).count()
         if fut_liq == 0:
-            this_line = process_reg4_line(txt_legajo)
+            tmp_value = concepto_liq.filter(tipo='NROS', empleado=empleado).aggregate(Sum('importe'))
+            this_no_rem_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
+            this_line = process_reg4_line(txt_legajo, this_no_rem_os)
             resp.append(this_line)
             continue
         # ---------------------------------------------------------------
@@ -391,10 +405,10 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
 
         tmp_value = concepto_liq.filter(tipo='Rem').aggregate(Sum('importe'))
         remuneracion = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
-        tmp_value = concepto_liq.filter(tipo='NROS').aggregate(Sum('importe'))
-        no_remunerativo_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         tmp_value = concepto_liq.filter(tipo='NR').aggregate(Sum('importe'))
         no_remunerativo = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
+        tmp_value = concepto_liq.filter(tipo='NROS').aggregate(Sum('importe'))
+        no_remunerativo_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         no_remunerativo += no_remunerativo_os
         tmp_value = concepto_liq.filter(tipo='ApJb').aggregate(Sum('importe'))
         aporte_jb = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
@@ -561,7 +575,7 @@ def process_presentacion(presentacion_qs: Presentacion) -> Path:
         if liquidaciones.count() == 1 or i == len(liquidaciones) - 1:
             if not specific_F931_txt_lines:
                 raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
-            reg4 = process_reg4(specific_F931_txt_lines)
+            reg4 = process_reg4(specific_F931_txt_lines, liquidacion.id)
         else:
             reg4 = process_reg4_from_liq(legajos, conceptos, specific_F931_txt_lines)
 
