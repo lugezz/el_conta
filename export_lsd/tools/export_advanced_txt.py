@@ -299,14 +299,17 @@ def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
     return resp
 
 
-def get_nros_from_liq(cuil: str, id_liq: int) -> float:
+def get_nros_from_liq(cuil: str, id_liq: int) -> int:
     resp_qs = ConceptoLiquidacion.objects.filter(tipo='NROS', empleado__cuil=cuil, liquidacion__id=id_liq)
     resp = resp_qs.aggregate(Sum('importe'))
     final_resp = resp.get('importe__sum', 0)
+    
     if not final_resp:
         final_resp = 0
 
-    return round(final_resp, 2)
+    final_resp = int(round(final_resp * 100))
+
+    return final_resp
 
 def process_reg4(txt_info: str, nro_liq: int = 0) -> str:
     resp = []
