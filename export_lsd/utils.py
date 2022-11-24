@@ -3,7 +3,7 @@ import zipfile
 
 from export_lsd.models import Formato931
 
-NOT_SIJP = [27, 48, 99]
+NOT_SIJP = [27, 48, 99, '027', '048', '099']
 NOT_OS_INSSJP = [27, 99]
 
 

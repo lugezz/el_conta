@@ -34,6 +34,9 @@
                 <div class="col-6">
                     {{ form.txtF931.label_tag }}
                     {{ form.txtF931 }}
+                    <a class="mt-0" href="{% static 'export_lsd/other/Info_Empleados.xlsx' %}">
+                        <small class="text-center">Descargar modelo formato Excel</small>
+                    </a>
                 </div>
                 {% if F931_result %}
                     <div class="col-12 text-center">

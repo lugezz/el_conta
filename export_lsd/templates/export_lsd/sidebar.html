@@ -1,4 +1,5 @@
-  <!-- ======= Sidebar ======= -->
+{% load static %}
+<!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
@@ -66,9 +67,9 @@
       </li><!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link collapsed" href="{% static 'export_lsd/other/Manual_Exportador_Libro_Sueldos_Digital.pdf' %}" download>
           <i class="fas fa-question"></i>
-          <span>Preguntas Frecuentes</span>
+          <span>Descargar Manual</span>
         </a>
       </li><!-- End F.A.Q Page Nav -->
 

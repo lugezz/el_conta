@@ -7,14 +7,16 @@
 
 
 import datetime
+import math
 import os
 from pathlib import Path
+import re
 
 from django.conf import settings
 from django.db.models import Sum
 from django.db.models.query import QuerySet
 from django.utils.functional import SimpleLazyObject
-from pandas import DataFrame
+import pandas as pd
 
 from export_lsd.models import (BulkCreateManager, ConceptoLiquidacion,
                                Empleado, Liquidacion,
@@ -93,7 +95,7 @@ def update_presentacion_info(id_presentacion: int) -> dict:
     return resp
 
 
-def process_liquidacion(id_presentacion: int, nro_liq: int, payday: datetime, df_liq: DataFrame, tipo_liq: str) -> dict:
+def process_liquidacion(id_presentacion: int, nro_liq: int, payday: datetime, df_liq: pd.DataFrame, tipo_liq: str) -> dict:
     bulk_mgr = BulkCreateManager()
     presentacion = Presentacion.objects.get(id=id_presentacion)
     payday_str = payday.strftime('%Y-%m-%d')
@@ -406,21 +408,21 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
         basic_info_legal = get_basic_f931_info(txt_legajo)
         mod_cont = basic_info_legal['Código de Modalidad de Contratación']
 
-        tmp_value = concepto_liq.filter(tipo='Rem').aggregate(Sum('importe'))
+        tmp_value = concepto_liq.filter(tipo='Rem', empleado=empleado).aggregate(Sum('importe'))
         remuneracion = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
-        tmp_value = concepto_liq.filter(tipo='NR').aggregate(Sum('importe'))
+        tmp_value = concepto_liq.filter(tipo='NR', empleado=empleado).aggregate(Sum('importe'))
         no_remunerativo = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
-        tmp_value = concepto_liq.filter(tipo='NROS').aggregate(Sum('importe'))
+        tmp_value = concepto_liq.filter(tipo='NROS', empleado=empleado).aggregate(Sum('importe'))
         no_remunerativo_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         no_remunerativo += no_remunerativo_os
-        tmp_value = concepto_liq.filter(tipo='ApJb').aggregate(Sum('importe'))
+        tmp_value = concepto_liq.filter(tipo='ApJb', empleado=empleado).aggregate(Sum('importe'))
         aporte_jb = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
-        tmp_value = concepto_liq.filter(tipo='ApOS').aggregate(Sum('importe'))
+        tmp_value = concepto_liq.filter(tipo='ApOS', empleado=empleado).aggregate(Sum('importe'))
         aporte_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
 
         remuneracion_1 = remuneracion if aporte_jb == 0 else int(round(aporte_jb / 0.11))
         remuneracion_4 = max(remuneracion, int(round(aporte_os / 0.03)))
-        remuneracion_9 = remuneracion + no_remunerativo + no_remunerativo_os
+        remuneracion_9 = remuneracion + no_remunerativo
         remuneracion_10 = 0 if mod_cont in NOT_SIJP else remuneracion
 
         if abs(remuneracion - remuneracion_1) < 100:
@@ -538,7 +540,213 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
     return resp_final
 
 
-def process_presentacion(presentacion_qs: Presentacion) -> Path:
+def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, xlsx_info: dict) -> str:
+    resp = []
+    for id_legajo in leg_liqs:
+        empleado = Empleado.objects.get(id=id_legajo['empleado'])
+        cuil = empleado.cuil
+        info_legajo = xlsx_info.get(int(cuil), '')
+        
+        mod_cont = info_legajo['mod_cont'][:3]
+
+        tmp_value = concepto_liq.filter(tipo='Rem', empleado=empleado).aggregate(Sum('importe'))
+        remuneracion = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
+        tmp_value = concepto_liq.filter(tipo='NR', empleado=empleado).aggregate(Sum('importe'))
+        no_remunerativo = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
+        tmp_value = concepto_liq.filter(tipo='NROS', empleado=empleado).aggregate(Sum('importe'))
+        no_remunerativo_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
+        no_remunerativo += no_remunerativo_os
+        tmp_value = concepto_liq.filter(tipo='ApJb', empleado=empleado).aggregate(Sum('importe'))
+        aporte_jb = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
+        tmp_value = concepto_liq.filter(tipo='ApOS', empleado=empleado).aggregate(Sum('importe'))
+        aporte_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
+
+        remuneracion_1 = remuneracion if aporte_jb == 0 else int(round(aporte_jb / 0.11))
+        remuneracion_4 = max(remuneracion, int(round(aporte_os / 0.03)))
+        remuneracion_9 = remuneracion + no_remunerativo
+        detraccion = round(info_legajo['mni_ss'] * 100)
+        remuneracion_10 = 0 if mod_cont in NOT_SIJP else remuneracion - detraccion
+
+        if abs(remuneracion - remuneracion_1) < 100:
+            remuneracion_1 = remuneracion
+        if abs(remuneracion - remuneracion_4) < 100:
+            remuneracion_4 = remuneracion
+
+        adicional_os = max(0, remuneracion_4 - remuneracion - no_remunerativo_os)
+
+        # Completado de fila --------------------------------------------------
+        # Identificación del tipo de registro,2,1,2,AL,Fijo '04'
+        # CUIL del trabajador,11,3,13,NU,11 enteros. CUIL del empleado sin guiones.
+        this_line = f'04{cuil}'
+        # Cónyuge,1,11NU,
+        this_line += info_legajo['conyuge'][:1]
+        # Cant Hijos,2,15,16,NU,
+        this_line += str(info_legajo['hijos']).zfill(2)
+        # CCT,1,17,17,AN,0 y 1 ó F y T
+        this_line += info_legajo['cct'][:1]
+        # SVO,1,18,18,AN,0 y 1 ó F y T
+        this_line += info_legajo['svo'][:1]
+        # Reducción,1,19,19,AN,0 y 1 ó F y T
+        this_line += info_legajo['red'][:1]
+        # código de tipo de empleador asociado al trabajador,1,20,20,AN,
+        this_line += info_legajo['tipo_e'][:1]
+        # código de tipo de operación,1,21,21,AN,Valor fijo: ?0?
+        this_line += "0"
+        # código de situación de revista,2,22,23,AN,
+        this_line += info_legajo['situacion'][:2]
+        # código de condición,2,225,AN
+        this_line += info_legajo['condicion'][:2]
+        # código de actividad,3,26,28,AN,
+        this_line += info_legajo['actividad'][:3]
+        # código de modalidad de contratación,3,29,31,AN
+        this_line += mod_cont
+        # código de siniestrado,2,32,33,AN
+        this_line += info_legajo['siniestrado'][:2]
+        # código de localidad,2,34,35,AN
+        this_line += info_legajo['localidad'][:2]
+        # Situación de revista 1,2,36,37,AN
+        this_line += str(info_legajo['sr1'])[:2]
+        # Día de inicio situación de revista 1,2,38,39,NU,2 enteros.
+        this_line += str(int(info_legajo['dia1'])).zfill(2)
+        # Situación de revista 2,2,40,41,AN
+        if str(info_legajo['sr2']) == 'nan':
+            this_line += '00'
+        else:
+            this_line += str(info_legajo['sr2'])[:2]
+        # Día de inicio situación de revista 2,2,42,43,NU,2 enteros.
+        if str(info_legajo['dia2']) == 'nan':
+            this_line += '00'
+        else:
+            this_line += str(int(info_legajo['dia2'])).zfill(2)
+        # Situación de revista 3,2,44,45,AN
+        if str(info_legajo['sr3']) == 'nan':
+            this_line += '00'
+        else:
+            this_line += str(info_legajo['sr3'])[:2]
+        # Día de inicio situación de revista 3,2,46,47,NU,2 enteros.
+        if str(info_legajo['dia3']) == 'nan':
+            this_line += '00'
+        else:
+            this_line += str(int(info_legajo['dia3'])).zfill(2)
+        # Cantidad de días trabajados,2,48,49,NU,2 enteros.
+        this_line += str(info_legajo['dias']).zfill(2)
+        # Cantidad de horas trabajadas,3,50,52,NU,"3 enteros.
+        this_line += "000"
+        # Porcentaje de aporte adicional de seguridad social,5,53,57,NU,3 enteros y 2 decimales
+        this_line += str(int(info_legajo['por_apo']) * 100).zfill(5)
+        # Porcentaje de contribución por tarea diferencial,5,58,62,NU,3 enteros y 2 decimales.
+        this_line += str(int(info_legajo['cont_dif']) * 100).zfill(5)
+        # código de obra social del trabajador,6,63,68,AN,Según tabla de codificación RNOS
+        this_line += info_legajo['os'][:6]
+        # Cantidad de adherentes de obra social,2,69,70,NU,2 enteros.
+        this_line += str(info_legajo['adh']).zfill(2)
+
+        # Importes ---------------------------------------------
+        # Aporte adicional de obra social,15,71,85,NU,
+        # Contribución adicional de obra social,15,86,100,NU,
+        this_line += "0" * 30
+        # Base para el cálculo diferencial de aporte de obra social y FSR (1),15,101,115,NU,
+        this_line += str(adicional_os).zfill(15)
+        # Base para el cálculo diferencial de contribuciones de obra social y FSR (1),15,116,130,NU,
+        this_line += str(adicional_os).zfill(15)
+        # Base para el cálculo diferencial Ley de Riesgos del Trabajo (1),15,131,145,NU,
+        # Remuneración maternidad para ANSeS,15,146,160,NU,
+        this_line += "0" * 30
+        # Remuneración bruta,15,161,175,NU,
+        this_line += str(remuneracion + no_remunerativo).zfill(15)
+        # Base imponible 1,15,176,190,NU,
+        this_line += str(remuneracion_1).zfill(15)
+        # Base imponible 2,15,191,205,NU,
+        this_line += str(remuneracion).zfill(15)
+        # Base imponible 3,15,206,220,NU,
+        this_line += str(remuneracion).zfill(15)
+        # Base imponible 4 15,221,235,NU,
+        this_line += str(remuneracion_4).zfill(15)
+        # Base imponible 5,15,236,250,NU,
+        this_line += str(remuneracion_1).zfill(15)
+        # Base imponible 6,15,251,265,NU,
+        # Base imponible 7,15,266,280,NU,
+        this_line += "0" * 30
+        # Base imponible 8,15,281,295,NU,
+        this_line += str(remuneracion_4).zfill(15)
+        # Base imponible 9,15,296,310,NU,
+        this_line += str(remuneracion_9).zfill(15)
+        # Base para el cálculo diferencial de aporte de Seg. Social,15,311,325,NU,
+        # Base para el cálculo diferencial de contribuciones de Seg. Social,15,326,340,NU,
+        this_line += "0" * 30
+        # Base imponible 10,15,341,355,NU,
+        # Pongo $ 1 de detracción porque da error si no hay error en AFIP!
+        this_line += str(remuneracion_10).zfill(15)
+        # Importe a detraer (Ley 26.473),15,356,370,NU,
+        # Pongo $ 1 porque da error si no hay error en AFIP!
+        this_line += str(detraccion).zfill(15)
+
+        resp.append(this_line)
+
+    resp_final = '\r\n'.join(resp)
+
+    return resp_final
+
+
+def is_positive_number(str_num: str) -> bool:
+    num_format = "^\\d+$"
+
+    return re.match(num_format, str_num)
+
+
+def employess_info_from_excel(file_import: Path, this_user: SimpleLazyObject) -> dict:
+    employees_dict = {
+        'error': '',
+        'results': {},
+        'invalid_data': [],
+    }
+
+    df = pd.read_excel(file_import)
+
+    for index, row in df.iterrows():
+
+        if not is_positive_number(str(row['Leg'])):
+            employees_dict['invalid_data'].append(f"Línea: {index} - Legajo {row['Leg']} Inválido")
+            continue
+
+        if not is_positive_number(str(row['CUIL'])) or len(str(row['CUIL'])) != 11:
+            employees_dict['invalid_data'].append(f"Línea: {index} - CUIL {row['CUIL']} Inválido")
+            continue
+
+        # Todo ok aquí
+        employees_dict['results'][row['CUIL']] = {
+            'leg': row['Leg'],
+            'mni_ss': row['Detracción SS'],
+            'conyuge': row['Cónyuge'],
+            'hijos': row['Cant Hijos'],
+            'cct': row['CCT'],
+            'svo': row['SVO'],
+            'red': row['Reducción'],
+            'tipo_e': row['Tipo de empresa'],
+            'situacion': row['Codigo de Situación'],
+            'condicion': row['Codigo de Condición'],
+            'actividad': row['Código de Actividad'],
+            'mod_cont': row['Modalidad de Contratación'],
+            'siniestrado': row['Código de Siniestrado'],
+            'localidad': row['Localidad'],
+            'sr1': row['Sit. Revista 1'],
+            'dia1': row['Día 1'],
+            'sr2': row['Sit. Revista 2'],
+            'dia2': row['Día 2'],
+            'sr3': row['Sit. Revista 3'],
+            'dia3': row['Día 3'],
+            'dias': row['Días Trab'],
+            'por_apo': row['% Ap. Adic SS'],
+            'cont_dif': row['% Contrib. Dif'],
+            'adh': row['Cant. Adher.'],
+            'os': row['Código de Obra Social']
+        }
+
+    return employees_dict
+
+
+
+def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool = False) -> Path:
     # Devuelve el path del archivo comprimido con todas las liquidaciones en txt
     liquidaciones_list = []
     resp = ''
@@ -550,23 +758,34 @@ def process_presentacion(presentacion_qs: Presentacion) -> Path:
 
     fname = f'finaltxt_{username}_{cuit}_{per_liq}'
     fpath = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}')
-    f931_txt_path = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.txt'.replace('finaltxt', 'temptxt'))
+    
+    if empleados_en_excel:
+        info_empleados_xlsx = os.path.join(settings.TEMP_ROOT, f'export_lsd/temptxt_{username}_{cuit}_{per_liq}.xlsx')
+        info_empleados_dict = employess_info_from_excel(info_empleados_xlsx, presentacion_qs.user)
+    else:
+        f931_txt_path = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.txt'.replace('finaltxt', 'temptxt'))
+        with open(f931_txt_path, encoding='latin-1') as f:
+            txt_info = f.readlines()
 
-    with open(f931_txt_path, encoding='latin-1') as f:
-        txt_info = f.readlines()
-
-    txt_clean_info = [x for x in txt_info if len(x) > 2]
+        txt_clean_info = [x for x in txt_info if len(x) > 2]
 
     for i, liquidacion in enumerate(liquidaciones):
         conceptos = ConceptoLiquidacion.objects.filter(liquidacion=liquidacion)
         legajos = conceptos.values('empleado').distinct()
         specific_F931_txt_lines = []
+        specific_xlsx_info = {}
 
         for legajo in legajos:
             legajo_cuil = Empleado.objects.get(id=legajo['empleado']).cuil
-            this_line = get_specific_F931_txt_line(legajo_cuil, txt_clean_info)
-            if this_line:
-                specific_F931_txt_lines.append(this_line)
+            
+            if not empleados_en_excel:
+                this_line = get_specific_F931_txt_line(legajo_cuil, txt_clean_info)
+                if this_line:
+                    specific_F931_txt_lines.append(this_line)
+            else:
+                this_line = info_empleados_dict['results'].get(int(legajo_cuil))
+                if this_line:
+                    specific_xlsx_info[legajo_cuil] = this_line
 
         reg1 = process_reg1(cuit=cuit,
                             periodo=per_liq,
@@ -575,13 +794,18 @@ def process_presentacion(presentacion_qs: Presentacion) -> Path:
                             tipo_liq=liquidacion.tipo_liq)
         reg2 = process_reg2(legajos, liquidacion.payday, cuit)
         reg3 = process_reg3(conceptos)
-        if liquidaciones.count() == 1 or i == len(liquidaciones) - 1:
+        if (liquidaciones.count() == 1 or i == len(liquidaciones) - 1) and not empleados_en_excel:
             if not specific_F931_txt_lines:
                 raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
             reg4 = process_reg4(specific_F931_txt_lines, liquidacion.id)
         else:
-            reg4 = process_reg4_from_liq(legajos, conceptos, specific_F931_txt_lines)
-
+            if empleados_en_excel:
+                if not specific_xlsx_info:
+                    raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
+                
+                reg4 = process_reg4_from_liq_xlsx(legajos, conceptos, xlsx_info=info_empleados_dict['results'])
+            else:
+                reg4 = process_reg4_from_liq(legajos, conceptos, txt_info=specific_F931_txt_lines)
         reg5 = ''
 
         final_result = reg1 + '\r\n' + reg2 + '\r\n' + reg3 + '\r\n' + reg4
@@ -619,7 +843,7 @@ def process_presentacion(presentacion_qs: Presentacion) -> Path:
     return resp
 
 
-def get_final_txts(user: SimpleLazyObject, id_presentacion: int) -> Path:
+def get_final_txts(id_presentacion: int) -> Path:
     resp = {
         'path': ''
     }
@@ -630,11 +854,16 @@ def get_final_txts(user: SimpleLazyObject, id_presentacion: int) -> Path:
     per_liq = presentacion_qs.periodo.strftime('%Y%m')
 
     fname = f'temptxt_{username}_{cuit}_{per_liq}'
-    fpath = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.txt')
-    info_txt = get_summary_txtF931(fpath)
+    if os.path.exists(os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.xlsx')):
+        empleados_from_xlsx = True
+        fpath = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.xlsx')
+        info_txt = {'Empleados': 'Desde Excel', 'Remuneración 2': 0}
+    else:
+        fpath = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.txt')
+        info_txt = get_summary_txtF931(fpath)
 
-    # 1) Valido empleados
-    if presentacion_qs.employees != info_txt['Empleados']:
+    # 1) Valido empleados si no vino por excel
+    if presentacion_qs.employees != info_txt['Empleados'] and not empleados_from_xlsx:
         resp['error'] = f'Empleados en txt: {info_txt["Empleados"]}. '
         resp['error'] += f'Empleados en liquidaciones: {presentacion_qs.employees}. '
         resp['error'] += 'Por favor corrija esta situación'
@@ -642,7 +871,7 @@ def get_final_txts(user: SimpleLazyObject, id_presentacion: int) -> Path:
         return resp
 
     # 2) Valido remuneración
-    if presentacion_qs.remunerativos != info_txt['Remuneración 2']:
+    if presentacion_qs.remunerativos != info_txt['Remuneración 2'] and not empleados_from_xlsx:
         resp['error'] = f'Remuneración en txt: $ {info_txt["Remuneración 2"]:.2f}. '
         resp['error'] += f'Remuneración en liquidaciones: $ {presentacion_qs.remunerativos:.2f}. '
         resp['error'] += 'Por favor corrija esta situación'
@@ -651,7 +880,7 @@ def get_final_txts(user: SimpleLazyObject, id_presentacion: int) -> Path:
 
     # Listo vamos con el procesamiento
     try:
-        resp['path'] = process_presentacion(presentacion_qs)
+        resp['path'] = process_presentacion(presentacion_qs, empleados_from_xlsx)
         # Por el momento no es lo mejor borrar
         # if os.path.isfile(fpath):
         #    os.remove(fpath)

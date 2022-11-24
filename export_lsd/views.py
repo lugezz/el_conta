@@ -444,9 +444,10 @@ def advanced_export(request):
 
         # Txt F931 subido
         if 'txtF931' in request.FILES:
+            extension = request.FILES['txtF931'].name.split('.')[-1]
             # 1) Grabo el txt temporalmente
             fs = FileSystemStorage(location=settings.TEMP_ROOT)
-            fname = f'temptxt_{request.user.username}_{cuit}_{per_liq}.txt'
+            fname = f'temptxt_{request.user.username}_{cuit}_{per_liq}.{extension}'
             fpath = f'export_lsd/{fname}'
             fs.delete(fpath)
             fs.save(fpath, request.FILES['txtF931'])
@@ -455,7 +456,11 @@ def advanced_export(request):
                 context['existe_presentacion'] = 1
 
             try:
-                context['F931_result'] = get_summary_txtF931(f'temp/{fpath}')
+                if extension == 'txt':
+                    context['F931_result'] = get_summary_txtF931(f'temp/{fpath}')
+                elif extension == 'xlsx':
+                    context['F931_result'] = {'Empleados': 'Información Excel'}
+                
             except Exception:
                 form = PeriodoForm()
                 context['error'] = "Error en el formato del archivo seleccionado"
@@ -502,7 +507,7 @@ def advanced_export_liqs(request, pk: int):
     if request.method == 'POST':
         if 'get-txts' in request.POST:
             # Clic en descargar archivo
-            url_txts = get_final_txts(request.user, pk)
+            url_txts = get_final_txts(pk)
 
             if 'error' in url_txts:
                 messages.error(request, url_txts['error'])

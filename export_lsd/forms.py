@@ -124,10 +124,10 @@ class PeriodoForm(ModelForm):
     txtF931 = FileField(
         widget=FileInput(
             attrs={
-                'class': 'form-control mb-3',
-                'accept': '.txt'
+                'class': 'form-control mb-1',
+                'accept': '.txt, .xlsx'
             }),
-        label='txt F.931',
+        label='txt F.931 o Excel Info Empleados',
         required=False)
 
     class Meta:
