@@ -848,6 +848,7 @@ def get_final_txts(id_presentacion: int) -> Path:
         'path': ''
     }
 
+    empleados_from_xlsx = False
     presentacion_qs = Presentacion.objects.get(id=id_presentacion)
     cuit = presentacion_qs.empresa.cuit
     username = presentacion_qs.user.username
