@@ -86,7 +86,7 @@ def update_presentacion_info(id_presentacion: int) -> dict:
         resp['no_remunerativos'] = round(liquidaciones.aggregate(Sum('no_remunerativos'))['no_remunerativos__sum'], 2)
         resp['empleados'] = conc_liqs.values('empleado').distinct().count()
 
-    Presentacion.objects.update(
+    Presentacion.objects.filter(id=id_presentacion).update(
         employees=resp['empleados'],
         remunerativos=resp['remunerativos'],
         no_remunerativos=resp['no_remunerativos'],
