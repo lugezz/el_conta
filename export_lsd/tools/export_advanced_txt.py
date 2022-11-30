@@ -67,6 +67,12 @@ def get_summary_txtF931(txt_file: Path) -> dict:
             result['Eventuales'] += 1
         else:
             result['Empleados'] += 1
+
+    # Resolver extra decimales
+    for key, values in result.items():
+        if "Rem" in key:
+            result[key] = round(values, 2)
+
     return result
 
 

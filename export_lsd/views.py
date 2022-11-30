@@ -445,6 +445,7 @@ def advanced_export(request):
         # Txt F931 subido
         if 'txtF931' in request.FILES:
             extension = request.FILES['txtF931'].name.split('.')[-1]
+            extension = extension.lower()
             # 1) Grabo el txt temporalmente
             fs = FileSystemStorage(location=settings.TEMP_ROOT)
             fname = f'temptxt_{request.user.username}_{cuit}_{per_liq}.{extension}'
