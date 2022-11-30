@@ -7,7 +7,6 @@
 
 
 import datetime
-import math
 import os
 from pathlib import Path
 import re
@@ -234,7 +233,7 @@ def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
     rem2 = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Remuneración Imponible 2'))
     rem4 = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Remuneración Imponible 4'))
     rem8 = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Rem.Dec.788/05 - Rem Impon. 8'))
-    rem9 = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Remuneración Imponible 9'))
+    # rem9 = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Remuneración Imponible 9'))
     rem10 = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Remuneración Imponible 2'))
     detr = amount_txt_to_integer(get_value_from_txt(txt_info_line, 'Importe a detraer Ley 27430'))
 
@@ -305,7 +304,7 @@ def get_nros_from_liq(cuil: str, id_liq: int) -> int:
     resp_qs = ConceptoLiquidacion.objects.filter(tipo='NROS', empleado__cuil=cuil, liquidacion__id=id_liq)
     resp = resp_qs.aggregate(Sum('importe'))
     final_resp = resp.get('importe__sum', 0)
-    
+
     if not final_resp:
         final_resp = 0
 
@@ -313,9 +312,10 @@ def get_nros_from_liq(cuil: str, id_liq: int) -> int:
 
     return final_resp
 
+
 def process_reg4(txt_info: str, nro_liq: int = 0) -> str:
     resp = []
-    
+
     for legajo in txt_info:
         nros = 0.0
 
@@ -546,7 +546,7 @@ def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, xlsx_
         empleado = Empleado.objects.get(id=id_legajo['empleado'])
         cuil = empleado.cuil
         info_legajo = xlsx_info.get(int(cuil), '')
-        
+
         mod_cont = info_legajo['mod_cont'][:3]
 
         tmp_value = concepto_liq.filter(tipo='Rem', empleado=empleado).aggregate(Sum('importe'))
@@ -745,7 +745,6 @@ def employess_info_from_excel(file_import: Path, this_user: SimpleLazyObject) ->
     return employees_dict
 
 
-
 def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool = False) -> Path:
     # Devuelve el path del archivo comprimido con todas las liquidaciones en txt
     liquidaciones_list = []
@@ -758,7 +757,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
 
     fname = f'finaltxt_{username}_{cuit}_{per_liq}'
     fpath = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}')
-    
+
     if empleados_en_excel:
         info_empleados_xlsx = os.path.join(settings.TEMP_ROOT, f'export_lsd/temptxt_{username}_{cuit}_{per_liq}.xlsx')
         info_empleados_dict = employess_info_from_excel(info_empleados_xlsx, presentacion_qs.user)
@@ -777,7 +776,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
 
         for legajo in legajos:
             legajo_cuil = Empleado.objects.get(id=legajo['empleado']).cuil
-            
+
             if not empleados_en_excel:
                 this_line = get_specific_F931_txt_line(legajo_cuil, txt_clean_info)
                 if this_line:
@@ -802,7 +801,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
             if empleados_en_excel:
                 if not specific_xlsx_info:
                     raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
-                
+
                 reg4 = process_reg4_from_liq_xlsx(legajos, conceptos, xlsx_info=info_empleados_dict['results'])
             else:
                 reg4 = process_reg4_from_liq(legajos, conceptos, txt_info=specific_F931_txt_lines)

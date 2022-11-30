@@ -24,9 +24,10 @@ def amount_txt_to_integer(amount_txt: str, mulitp=100) -> int:
     return resp
 
 
-def amount_txt_to_float(amount_txt: str, mulitp=100) -> float:
-    resp = float(amount_txt.replace(',', '.')) * mulitp
+def amount_txt_to_float(amount_txt: str, multip: int = 100, rount_to: int = 2) -> float:
+    resp = float(amount_txt.replace(',', '.')) * multip
     resp = float(resp)
+    resp = round(resp, rount_to)
 
     return resp
 

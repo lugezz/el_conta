@@ -460,7 +460,7 @@ def advanced_export(request):
                     context['F931_result'] = get_summary_txtF931(f'temp/{fpath}')
                 elif extension == 'xlsx':
                     context['F931_result'] = {'Empleados': 'Información Excel'}
-                
+
             except Exception:
                 form = PeriodoForm()
                 context['error'] = "Error en el formato del archivo seleccionado"
