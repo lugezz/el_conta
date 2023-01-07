@@ -420,16 +420,17 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
         no_remunerativo = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         tmp_value = concepto_liq.filter(tipo='NROS', empleado=empleado).aggregate(Sum('importe'))
         no_remunerativo_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
-        no_remunerativo += no_remunerativo_os
+        tmp_value = concepto_liq.filter(tipo='Inde', empleado=empleado).aggregate(Sum('importe'))
+        indemnizacion = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         tmp_value = concepto_liq.filter(tipo='ApJb', empleado=empleado).aggregate(Sum('importe'))
         aporte_jb = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         tmp_value = concepto_liq.filter(tipo='ApOS', empleado=empleado).aggregate(Sum('importe'))
         aporte_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
 
+        no_remunerativo += no_remunerativo_os
         remuneracion_1 = remuneracion if aporte_jb == 0 else int(round(aporte_jb / 0.11))
         remuneracion_4 = max(remuneracion, int(round(aporte_os / 0.03)))
         remuneracion_9 = remuneracion + no_remunerativo
-        remuneracion_10 = 0 if mod_cont in NOT_SIJP else remuneracion
 
         if abs(remuneracion - remuneracion_1) < 100:
             remuneracion_1 = remuneracion
@@ -511,7 +512,7 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
         # Remuneración maternidad para ANSeS,15,146,160,NU,
         this_line += "0" * 30
         # Remuneración bruta,15,161,175,NU,
-        this_line += str(remuneracion + no_remunerativo).zfill(15)
+        this_line += str(remuneracion + no_remunerativo + indemnizacion).zfill(15)
         # Base imponible 1,15,176,190,NU,
         this_line += str(remuneracion_1).zfill(15)
         # Base imponible 2,15,191,205,NU,
@@ -533,11 +534,11 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
         # Base para el cálculo diferencial de contribuciones de Seg. Social,15,326,340,NU,
         this_line += "0" * 30
         # Base imponible 10,15,341,355,NU,
-        # Pongo $ 1 de detracción porque da error si no hay error en AFIP!
-        this_line += str(remuneracion_10 - 100).zfill(15)
+        # $ 0 de Detracción para liquidaciones parciales, entonces R10 = $ 0 también
+        this_line += "0" * 15
         # Importe a detraer (Ley 26.473),15,356,370,NU,
-        # Pongo $ 1 porque da error si no hay error en AFIP!
-        this_line += "100".zfill(15)
+        # Pongo $ 0 para liquidaciones parciales
+        this_line += "0" * 15
 
         resp.append(this_line)
 
@@ -681,10 +682,8 @@ def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, xlsx_
         # Base para el cálculo diferencial de contribuciones de Seg. Social,15,326,340,NU,
         this_line += "0" * 30
         # Base imponible 10,15,341,355,NU,
-        # Pongo $ 1 de detracción porque da error si no hay error en AFIP!
         this_line += str(remuneracion_10).zfill(15)
         # Importe a detraer (Ley 26.473),15,356,370,NU,
-        # Pongo $ 1 porque da error si no hay error en AFIP!
         this_line += str(detraccion).zfill(15)
 
         resp.append(this_line)
@@ -776,6 +775,8 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
 
     for i, liquidacion in enumerate(liquidaciones):
         conceptos = ConceptoLiquidacion.objects.filter(liquidacion=liquidacion)
+        conceptos_acum = ConceptoLiquidacion.objects.filter(liquidacion__lte=liquidacion,
+                                                            liquidacion__presentacion=liquidacion.presentacion)
         legajos = conceptos.values('empleado').distinct()
         specific_F931_txt_lines = []
         specific_xlsx_info = {}
@@ -808,9 +809,9 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
                 if not specific_xlsx_info:
                     raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
 
-                reg4 = process_reg4_from_liq_xlsx(legajos, conceptos, xlsx_info=info_empleados_dict['results'])
+                reg4 = process_reg4_from_liq_xlsx(legajos, conceptos_acum, xlsx_info=info_empleados_dict['results'])
             else:
-                reg4 = process_reg4_from_liq(legajos, conceptos, txt_info=specific_F931_txt_lines)
+                reg4 = process_reg4_from_liq(legajos, conceptos_acum, txt_info=specific_F931_txt_lines)
         reg5 = ''
 
         final_result = reg1 + '\r\n' + reg2 + '\r\n' + reg3 + '\r\n' + reg4

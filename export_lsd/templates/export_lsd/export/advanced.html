@@ -170,36 +170,6 @@
         });
     {% endif %}
 
-    $('#btn_delete_advanced').on('click', function (e) {
-        e.preventDefault();
-        $.confirm({
-            theme: 'material',
-            title: 'Notificación',
-            icon: 'fa fa-info',
-            content: '¿Estas seguro de eliminar el registro?<br>',
-            columnClass: 'small',
-            typeAnimated: true,
-            cancelButtonClass: 'btn-primary',
-            draggable: true,
-            dragWindowBorder: false,
-            buttons: {
-                info: {
-                    text: "Si",
-                    btnClass: 'btn-primary',
-                    action: function() {
-                        $('form').submit();
-                    }
-                },
-                danger: {
-                    text: "No",
-                    btnClass: 'btn-red',
-                    action: function() {
-                    }
-                },
-            }
-        })
-    });
-
     // Hide button and f931 if change date or company
     $(function() {
         $('#id_periodo').on('change', function(e) {
