@@ -546,7 +546,7 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
     return resp_final
 
 
-def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, xlsx_info: dict) -> str:
+def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, tomo_detraccion: bool, xlsx_info: dict) -> str:
     resp = []
     for id_legajo in leg_liqs:
         empleado = Empleado.objects.get(id=id_legajo['empleado'])
@@ -570,8 +570,12 @@ def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, xlsx_
         remuneracion_1 = remuneracion if aporte_jb == 0 else int(round(aporte_jb / 0.11))
         remuneracion_4 = max(remuneracion, int(round(aporte_os / 0.03)))
         remuneracion_9 = remuneracion + no_remunerativo
-        detraccion = round(info_legajo['mni_ss'] * 100)
-        remuneracion_10 = 0 if mod_cont in NOT_SIJP else remuneracion - detraccion
+        if tomo_detraccion:
+            detraccion = round(info_legajo['mni_ss'] * 100)
+            remuneracion_10 = 0 if mod_cont in NOT_SIJP else remuneracion - detraccion
+        else:
+            detraccion = 0
+            remuneracion_10 = 0
 
         if abs(remuneracion - remuneracion_1) < 100:
             remuneracion_1 = remuneracion
@@ -808,7 +812,8 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
                 if not specific_xlsx_info:
                     raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
 
-                reg4 = process_reg4_from_liq_xlsx(legajos, conceptos_acum, xlsx_info=info_empleados_dict['results'])
+                tomo_detraccion = (liquidaciones.count() == 1 or i == len(liquidaciones) - 1)
+                reg4 = process_reg4_from_liq_xlsx(legajos, conceptos_acum, tomo_detraccion, xlsx_info=info_empleados_dict['results'])
             else:
                 reg4 = process_reg4_from_liq(legajos, conceptos_acum, txt_info=specific_F931_txt_lines)
         reg5 = ''
