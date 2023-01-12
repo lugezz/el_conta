@@ -559,6 +559,8 @@ def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, tomo_
         remuneracion = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         tmp_value = concepto_liq.filter(tipo='NR', empleado=empleado).aggregate(Sum('importe'))
         no_remunerativo = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
+        tmp_value = concepto_liq.filter(tipo='Inde', empleado=empleado).aggregate(Sum('importe'))
+        indemnizacion = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         tmp_value = concepto_liq.filter(tipo='NROS', empleado=empleado).aggregate(Sum('importe'))
         no_remunerativo_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
         no_remunerativo += no_remunerativo_os
@@ -663,7 +665,7 @@ def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, tomo_
         # Remuneración maternidad para ANSeS,15,146,160,NU,
         this_line += "0" * 30
         # Remuneración bruta,15,161,175,NU,
-        this_line += str(remuneracion + no_remunerativo).zfill(15)
+        this_line += str(remuneracion + no_remunerativo + indemnizacion).zfill(15)
         # Base imponible 1,15,176,190,NU,
         this_line += str(remuneracion_1).zfill(15)
         # Base imponible 2,15,191,205,NU,
