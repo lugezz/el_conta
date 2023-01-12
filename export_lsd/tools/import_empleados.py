@@ -97,5 +97,4 @@ def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
     for index, row in df.iterrows():
         if Empleado.objects.filter(leg=row['Leg'], empresa=empresa).count() == 0:
             bulk_mgr.add(Empleado(empresa=empresa, leg=row['Leg'], name="Creado por Importación", cuil=row['CUIL'], area=''))
-            print('Agregado Leg', row['Leg'])
     bulk_mgr.done()
