@@ -107,7 +107,7 @@ def process_reg3(txt_info: str, export_config: dict) -> str:
         ccn_os = export_config['ccn_os'].ljust(10)
         ccn_sindicato = export_config['ccn_sindicato'].ljust(10)
         porc_sindicato = int(export_config['porc_sindicato'])
-        
+
         # Sueldo
         item = f'03{cuil}{ccn_sueldo}{ds_trab}D{str(remun).zfill(15)}C{" " * 6}'
         resp.append(item)
