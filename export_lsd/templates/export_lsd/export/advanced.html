@@ -38,7 +38,7 @@
                         <small class="text-center">Descargar modelo formato Excel</small>
                     </a>
                 </div>
-                {% if F931_result %}
+                {% if F931_result or es_excel > 0 %}
                     <div class="col-12 text-center">
                         <input id="employees" name="employees" type="hidden" value="{{ F931_result.Empleados }}">
                         <input id="remuneracion" name="remuneracion" type="hidden" value="{{ F931_result.Remuneracion_T }}">
@@ -53,9 +53,12 @@
     
         <!-- Export Config Detailed  -->
         <div class="col-4"> 
-            {% if F931_result %}
+            {% if F931_result or es_excel == 1 %}
             <div class="card top-selling overflow-auto f931-result">
                 <h5 id="configTitle" class="card-title text-center">Resumen</h5>
+                {% if es_excel == 1 %}
+                    <small class="text-center">Información empleados desde Excel</small>
+                {% endif %}
                 <ul id="F.931">
                     {% for key, value in F931_result.items %}
                     <li class="list-group-item text-info">
@@ -187,7 +190,13 @@
 
     $('.button_submit').on('click', function (e) {
         e.preventDefault();
-        let content = "¿Estas seguro de avanzar a la carga de liquidaciones?"
+        let text_to_add = ''
+        if ({{ es_excel }} === 1) {
+            text_to_add = "Está creando la presentación mediante información por excel, los legajos incluidos aquí serán exportados<br>"
+            $('form').append('<input type="hidden" name="es_excel" value="1">');
+        }
+
+        let content = text_to_add + "¿Estas seguro de avanzar a la carga de liquidaciones?"
 
         if ({{ existe_presentacion }} === 1) {
             content = "Existe ya una presentación para esta empresa y período, ¿Desea sobrescribirla?"

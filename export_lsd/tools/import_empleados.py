@@ -4,7 +4,7 @@ from django.utils.functional import SimpleLazyObject
 import pandas as pd
 from pathlib import Path
 
-from export_lsd.models import Empleado, Empresa
+from export_lsd.models import BulkCreateManager, Empleado, Empresa
 
 
 def is_positive_number(str_num: str) -> bool:
@@ -67,3 +67,35 @@ def get_empleado_name(cuit: str, leg: str, this_user: SimpleLazyObject) -> str:
     res = '' if not qs else qs.first().name
 
     return res
+
+
+def bulk_new_employees(user: SimpleLazyObject, employees_data: list):
+    """
+    Registra de manera masiva empleados
+    formato:[
+        [CUIT, Leg, Nombre, CUIL, Área]
+        .....
+    ]
+    """
+
+    bulk_mgr = BulkCreateManager()
+
+    for item in employees_data:
+        empresa = Empresa.objects.get(cuit=item[0], user=user)
+        bulk_mgr.add(Empleado(empresa=empresa, leg=item[1], name=item[2], cuil=item[3], area=item[4]))
+    bulk_mgr.done()
+
+
+def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
+    """
+    Registra de manera masiva empleados informados desde excel
+    """
+
+    df = pd.read_excel(filepath)
+    bulk_mgr = BulkCreateManager()
+
+    for index, row in df.iterrows():
+        if Empleado.objects.filter(leg=row['Leg'], empresa=empresa).count() == 0:
+            bulk_mgr.add(Empleado(empresa=empresa, leg=row['Leg'], name="Creado por Importación", cuil=row['CUIL'], area=''))
+            print('Agregado Leg', row['Leg'])
+    bulk_mgr.done()

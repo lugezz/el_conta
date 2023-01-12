@@ -14,7 +14,6 @@ import re
 from django.conf import settings
 from django.db.models import Sum
 from django.db.models.query import QuerySet
-from django.utils.functional import SimpleLazyObject
 import pandas as pd
 
 from export_lsd.models import (BulkCreateManager, ConceptoLiquidacion,
@@ -699,7 +698,7 @@ def is_positive_number(str_num: str) -> bool:
     return re.match(num_format, str_num)
 
 
-def employess_info_from_excel(file_import: Path, this_user: SimpleLazyObject) -> dict:
+def employess_info_from_excel(file_import: Path) -> dict:
     employees_dict = {
         'error': '',
         'results': {},
@@ -765,7 +764,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
 
     if empleados_en_excel:
         info_empleados_xlsx = os.path.join(settings.TEMP_ROOT, f'export_lsd/temptxt_{username}_{cuit}_{per_liq}.xlsx')
-        info_empleados_dict = employess_info_from_excel(info_empleados_xlsx, presentacion_qs.user)
+        info_empleados_dict = employess_info_from_excel(info_empleados_xlsx)
     else:
         f931_txt_path = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.txt'.replace('finaltxt', 'temptxt'))
         with open(f931_txt_path, encoding='latin-1') as f:

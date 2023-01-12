@@ -14,12 +14,12 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from django.views.generic.base import TemplateView
 
-from export_lsd.models import BasicExportConfig, BulkCreateManager, Empleado, Empresa, Liquidacion, Presentacion
+from export_lsd.models import BasicExportConfig, Empleado, Empresa, Liquidacion, Presentacion
 from export_lsd.forms import ConfigEBForm, EmpresaForm, EmpleadoForm, LiquidacionForm, PeriodoForm
 from export_lsd.tools.export_advanced_txt import (get_final_txts, get_summary_txtF931,
                                                   process_liquidacion, update_presentacion_info)
 from export_lsd.tools.export_basic_txt import export_txt
-from export_lsd.tools.import_empleados import get_employees
+from export_lsd.tools.import_empleados import bulk_new_employees, get_employees, new_employees_from_xlsx
 
 
 EXPORT_TITLES = ['Leg', 'Concepto', 'Cant', 'Monto', 'Tipo']
@@ -391,11 +391,7 @@ def import_empleados(request):
         # Confirmation button
         if request.POST.get('has_confirmation') == 'Yes':
             data = request.session['all_data']
-            bulk_mgr = BulkCreateManager()
-            for item in data:
-                empresa = Empresa.objects.get(cuit=item[0], user=request.user)
-                bulk_mgr.add(Empleado(empresa=empresa, leg=item[1], name=item[2], cuil=item[3], area=item[4]))
-            bulk_mgr.done()
+            bulk_new_employees(request.user, data)
 
             return redirect(reverse_lazy('export_lsd:empleado_list'))
         else:
@@ -428,7 +424,8 @@ def advanced_export(request):
         'error': '',
         'form': form,
         'presentaciones_en_pr': presentaciones_en_pr,
-        'existe_presentacion': 0
+        'existe_presentacion': 0,
+        'es_excel': 0
     }
 
     if request.method == 'POST':
@@ -446,7 +443,7 @@ def advanced_export(request):
         if 'txtF931' in request.FILES:
             extension = request.FILES['txtF931'].name.split('.')[-1]
             extension = extension.lower()
-            # 1) Grabo el txt temporalmente
+            # 1) Grabo el txt / Excel temporalmente
             fs = FileSystemStorage(location=settings.TEMP_ROOT)
             fname = f'temptxt_{request.user.username}_{cuit}_{per_liq}.{extension}'
             fpath = f'export_lsd/{fname}'
@@ -460,7 +457,7 @@ def advanced_export(request):
                 if extension == 'txt':
                     context['F931_result'] = get_summary_txtF931(f'temp/{fpath}')
                 elif extension == 'xlsx':
-                    context['F931_result'] = {'Empleados': 'Información Excel'}
+                    context['es_excel'] = 1
 
             except Exception:
                 form = PeriodoForm()
@@ -470,6 +467,15 @@ def advanced_export(request):
         else:
             if presentacion:
                 presentacion.delete()
+
+            # Alta de empleados informados en excel -------------------
+            if request.POST.get("es_excel") == '1':
+                fname_empleado = f'temptxt_{request.user.username}_{cuit}_{per_liq}.xlsx'
+                fpath_empleado = f'temp/export_lsd/{fname_empleado}'
+                if os.path.exists(fpath_empleado):
+                    new_employees_from_xlsx(fpath_empleado, empresa)
+
+            # ---------------------------------------------------------
 
             this_presentacion = Presentacion.objects.create(user=request.user,
                                                             empresa=empresa,
@@ -548,8 +554,6 @@ def advanced_export_liqs(request, pk: int):
             context['nro_liqs_open'].remove(int(nro_liq))
 
     return render(request, 'export_lsd/export/advanced_liqs.html', context)
-
-    # TODO: Agregar el borrado de liquidaciones
 
 
 class PresentacionDeleteView(LoginRequiredMixin, DeleteView):
