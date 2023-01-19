@@ -39,8 +39,9 @@ def siradig_view(request):
             f.write(dire)
 
     else:
-        # Borro los archivos en carpeta temporal
-        clean_folder(settings.TEMP_ROOT)
+        # Borro los archivos en carpeta temporal de Siradig!
+        siradig_temp = settings.TEMP_ROOT / "siradig/"
+        clean_folder(siradig_temp, False)
 
     my_context = {
         'listado': listado,
@@ -93,7 +94,9 @@ def procesa_view(request):
 
     id_reg = formulas.RegistraCarpetaXML(request.user, get_carpeta(request.user))
     query = Registro.objects.filter(id_reg=id_reg)
-    url_to_file = os.path.join(settings.TEMP_URL, f"Presentacion_{id_reg}.xlsx")
+
+    siradig_temp = f"{settings.TEMP_URL}siradig/"
+    url_to_file = os.path.join(siradig_temp, f"Presentacion_{id_reg}.xlsx")
 
     my_context = {
         'titulo': 'Proceso exitoso',
@@ -127,7 +130,8 @@ def procesa_hist_view(request, id=0):
     query = Registro.objects.filter(id_reg=id_reg)
     formulas.QueryToExc(id_reg, query)
 
-    url_to_file = os.path.join(settings.TEMP_URL, f"Presentacion_{id_reg}.xlsx")
+    siradig_temp = f"{settings.TEMP_URL}siradig/"
+    url_to_file = os.path.join(siradig_temp, f"Presentacion_{id_reg}.xlsx")
 
     my_context = {
         'titulo': titulo,
@@ -147,16 +151,16 @@ def lista_zip(arch):
 
 def lista_zip_ex(arch):
     zf = zipfile.ZipFile(arch, "r")
-
-    dirx = os.path.join(settings.TEMP_ROOT, datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
+    siradig_temp = settings.TEMP_ROOT / "siradig/"
+    dirx = os.path.join(siradig_temp, datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
     zf.extractall(path=dirx)
 
     return dirx
 
 
-def clean_folder(path_to_folder):
+def clean_folder(path_to_folder, remove_files_too=True):
     for path in Path(path_to_folder).glob("**/*"):
-        if path.is_file():
+        if path.is_file() and remove_files_too:
             path.unlink()
         elif path.is_dir():
             shutil.rmtree(path)

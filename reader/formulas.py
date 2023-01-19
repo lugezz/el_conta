@@ -137,7 +137,8 @@ def add_registro_empleado(empleado, instancia_bd):
 
 
 def QueryToExc(id, query):
-    opath = os.path.join(settings.TEMP_ROOT, f"Presentacion_{id}.xlsx")
+    siradig_temp = settings.TEMP_ROOT / "siradig/"
+    opath = os.path.join(siradig_temp, f"Presentacion_{id}.xlsx")
 
     workbook = xlsxwriter.Workbook(opath)
     worksheet = workbook.add_worksheet()
