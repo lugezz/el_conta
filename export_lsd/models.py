@@ -190,7 +190,7 @@ class ConceptoLiquidacion(models.Model):
     tipo = models.CharField(max_length=4, verbose_name='Tipo de Concepto', default="Rem")
 
     def __str__(self) -> str:
-        return f'Leg.{self.empleado.leg} - Conc:{self.concepto} - $ {self.importe}'
+        return f'{self.liquidacion.presentacion} - Leg.{self.empleado.leg} - Conc:{self.concepto} - $ {self.importe}'
 
     class Meta:
         verbose_name_plural = 'ConceptoLiquidaciones'
