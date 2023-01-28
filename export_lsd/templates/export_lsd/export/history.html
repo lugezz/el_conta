@@ -38,10 +38,11 @@
                               <td class="text-center">{{ presentacion.employees }}</td>
                               <td class="text-center">
                                 <a 
-                                  class="btn btn-outline-success btn-sm"
-                                  href="{% static presentacion.get_download_url %}"
-                                >
-                                  <i class="fas fa-file-download"></i>
+                                    class="btn btn-outline-success btn-sm"
+                                    href="{{ presentacion.get_download_url }}"
+                                    download
+                                    >
+                                    <i class="fas fa-file-download"></i>
                                 </a>
                             </td>
                             </tr>
