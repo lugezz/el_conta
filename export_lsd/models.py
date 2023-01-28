@@ -151,8 +151,9 @@ class Presentacion(models.Model):
         cuit = self.empresa.cuit
         periodo = self.periodo.strftime('%Y%m')
         extension = 'zip' if self.get_children() > 1 else 'txt'
+        n_liq = '' if self.get_children() > 1 else '_1'
 
-        return f'/temp/export_lsd/finaltxt_{this_user}_{cuit}_{periodo}.{extension}'
+        return f'/temp/export_lsd/finaltxt_{this_user}_{cuit}_{periodo}{n_liq}.{extension}'
 
     def toJSON(self):
         item = model_to_dict(self)
