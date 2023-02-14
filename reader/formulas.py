@@ -66,7 +66,7 @@ def add_registro_empleado(empleado, instancia_bd):
             tipo = deduc['tipo']
             dato1 = deduc['subtipo']
             dato2 = deduc['importe']
-            porc = 0
+            porc = deduc['porc']
 
             reg_ded = Registro.objects.create(id_reg=instancia_bd,
                                               cuil=cuit,
@@ -238,13 +238,17 @@ def leeXML(xml_file):
             subtipo = 0
             if 'detalles' in deduccion:
                 subtipo = deduccion['detalles']['detalle'][0]['@valor']
+                
+            ded_tipo = deduccion['@tipo']
+            ded_porc = deduccion['porcentajeDedFamiliar'] if ded_tipo = 32 else 0
 
             deducciones.append(
                 {'nombre': 'deduccion',
-                 'tipo': deduccion['@tipo'],
+                 'tipo': ded_tipo,
                  'subtipo': subtipo,
                  'importe': deduccion['montoTotal'],
-                 'descripcion': get_deduccion('deduccion', deduccion['@tipo'])
+                 'descripcion': get_deduccion('deduccion', ded_tipo),
+                 'porc': ded_porc
                  }
             )
 
