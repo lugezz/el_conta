@@ -15,6 +15,7 @@ DEDUCCIONES = {
                     '23': 'Primas de Ahorro correspondientes a Seguros Mixtos',
                     '24': 'Aportes correspondientes a Planes de Seguro de Retiro Privados',
                     '25': 'Adquisición de Cuotapartes de Fondos Comunes de Inversión con fines de retiro',
+                    '32': 'Herramientas educativas - Servicios con fines educativos',
                     '99': 'Otras Deducciones',
                 },
                 'cargaFamilia': {
