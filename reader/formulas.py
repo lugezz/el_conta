@@ -41,6 +41,16 @@ class EmpleadoSiradig:
             resp += deduccion['importe']
 
 
+def get_value_from_list(list_of_values: list, value_name: str):
+    resp = ''
+
+    for value in list_of_values:
+        if value['@nombre'] == value_name:
+            resp = value['@valor']
+
+    return resp
+
+
 def RegistraCarpetaXML(usuario, full_folder):
     # Creo el registro en RegAccesos
     registro = RegAcceso.objects.create(reg_user=usuario)
@@ -240,7 +250,12 @@ def leeXML(xml_file):
                 subtipo = deduccion['detalles']['detalle'][0]['@valor']
 
             ded_tipo = deduccion['@tipo']
-            ded_porc = deduccion['porcentajeDedFamiliar'] if ded_tipo == 32 else 0
+
+            if ded_tipo == '32':
+                ded_detalle = deduccion['detalles']['detalle']
+                ded_porc = get_value_from_list(ded_detalle, 'porcentajeDedFamiliar')
+            else:
+                ded_porc = 0
 
             deducciones.append(
                 {'nombre': 'deduccion',
