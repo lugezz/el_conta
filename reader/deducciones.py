@@ -16,6 +16,8 @@ DEDUCCIONES = {
                     '24': 'Aportes correspondientes a Planes de Seguro de Retiro Privados',
                     '25': 'Adquisición de Cuotapartes de Fondos Comunes de Inversión con fines de retiro',
                     '32': 'Herramientas educativas - Servicios con fines educativos',
+                    '32-1': 'Servicios con fines educativos',
+                    '32-2': 'Herramientas educativas',
                     '99': 'Otras Deducciones',
                 },
                 'cargaFamilia': {
@@ -46,12 +48,14 @@ DEDUCCIONES = {
             }
 
 
-def get_deduccion(tipo, indice):
+def get_deduccion(tipo: str, indice: str, subindice: str = ''):
+    this_indice = indice if not subindice else f'{indice}-{subindice}'
+
     resp = ''
     if DEDUCCIONES.get(tipo):
-        resp = DEDUCCIONES[tipo].get(indice)
+        resp = DEDUCCIONES[tipo].get(this_indice)
 
     if tipo == "GANLIQOTROSEMPENT":
-        resp = f"{tipo} - {indice}"
+        resp = f"{tipo} - {this_indice}"
 
     return resp

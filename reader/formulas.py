@@ -9,6 +9,8 @@ import xml.etree.ElementTree as ET
 from .models import RegAcceso, Registro
 from .deducciones import get_deduccion
 
+DEDUCCIONES_CON_SUBINDICE = ['32']
+
 
 class EmpleadoSiradig:
     def __init__(self, cuit, nro_presentacion, fecha, deducciones=[],
@@ -210,7 +212,8 @@ def QueryToExc(id, query):
         val_item = 0 if not item.porc else float(item.porc)
         worksheet.write_number(row, 5, val_item, center_format)
 
-        worksheet.write(row, 6, get_deduccion(item.deduccion, item.tipo), no_format)
+        subindice = item.dato1 if item.tipo in DEDUCCIONES_CON_SUBINDICE else ''
+        worksheet.write(row, 6, get_deduccion(item.deduccion, item.tipo, subindice), no_format)
         row += 1
     workbook.close()
 
