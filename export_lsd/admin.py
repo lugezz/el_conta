@@ -32,7 +32,7 @@ class EmpresaAdmin(admin.ModelAdmin):
 
 
 @admin.register(Presentacion)
-class EmpresaAdmin(admin.ModelAdmin):
+class PresentacionAdmin(admin.ModelAdmin):
     list_display = ("periodo_str", "empresa", "user", "view_created")
     list_filter = ("user", )
     list_per_page = 30
