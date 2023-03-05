@@ -10,7 +10,6 @@ admin.site.register(ConceptoLiquidacion)
 admin.site.register(Formato931)
 admin.site.register(Liquidacion)
 admin.site.register(OrdenRegistro)
-admin.site.register(Presentacion)
 admin.site.register(TipoRegistro)
 
 
@@ -24,6 +23,17 @@ class EmpleadoAdmin(admin.ModelAdmin):
 @admin.register(Empresa)
 class EmpresaAdmin(admin.ModelAdmin):
     list_display = ("name", "cuit", "user", "view_created")
+    list_filter = ("user", )
+    list_per_page = 30
+
+    @admin.display(empty_value='unknown')
+    def view_created(self, obj):
+        return obj.created.strftime('%Y/%m/%d')
+
+
+@admin.register(Presentacion)
+class EmpresaAdmin(admin.ModelAdmin):
+    list_display = ("periodo_str", "empresa", "user", "view_created")
     list_filter = ("user", )
     list_per_page = 30
 
