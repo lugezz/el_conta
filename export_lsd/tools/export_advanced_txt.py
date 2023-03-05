@@ -256,10 +256,9 @@ def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
             # Si está lo vinculo puliendo formato
             multip = 100 if reg.formatof931.name in MULTIP_100 else 1
             tmp_linea = sync_format(get_value_from_txt(txt_info_line, reg.formatof931.name), reg.long, reg.type, multip)
-            if (reg.formatof931.name == 'Cónyuge' or
-                    reg.formatof931.name == 'Trabajador Convencionado 0-No 1-Si' or
-                    reg.formatof931.name == 'Seguro Colectivo de Vida Obligatorio' or
-                    reg.formatof931.name == 'Marca de Corresponde Reducción'):
+            if reg.formatof931.name == 'Cónyuge' or reg.formatof931.name == 'Trabajador Convencionado 0-No 1-Si' or\
+                    reg.formatof931.name == 'Seguro Colectivo de Vida Obligatorio' or\
+                    reg.formatof931.name == 'Marca de Corresponde Reducción':
 
                 tmp_linea = tmp_linea.replace('T', '1').replace('F', '0')
 
@@ -401,7 +400,8 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
             empleado=empleado,
             liquidacion__presentacion=presentacion,
             liquidacion__nroLiq__gt=nro_liq
-            ).count()
+        ).count()
+
         if fut_liq == 0:
             tmp_value = concepto_liq.filter(tipo='NROS', empleado=empleado).aggregate(Sum('importe'))
             this_no_rem_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
@@ -815,7 +815,8 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
                     raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
 
                 tomo_detraccion = (liquidaciones.count() == 1 or i == len(liquidaciones) - 1)
-                reg4 = process_reg4_from_liq_xlsx(legajos, conceptos_acum, tomo_detraccion, xlsx_info=info_empleados_dict['results'])
+                reg4 = process_reg4_from_liq_xlsx(legajos, conceptos_acum, tomo_detraccion,
+                                                  xlsx_info=info_empleados_dict['results'])
             else:
                 reg4 = process_reg4_from_liq(legajos, conceptos_acum, txt_info=specific_F931_txt_lines)
         reg5 = ''

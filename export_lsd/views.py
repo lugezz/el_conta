@@ -481,7 +481,7 @@ def advanced_export(request):
                                                             empresa=empresa,
                                                             periodo=f'{periodo}-01')
 
-            return redirect(reverse('export_lsd:advanced_liqs',  kwargs={'pk': this_presentacion.id}))
+            return redirect(reverse('export_lsd:advanced_liqs', kwargs={'pk': this_presentacion.id}))
 
     return render(request, 'export_lsd/export/advanced.html', context)
 

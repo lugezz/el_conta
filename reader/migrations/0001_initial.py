@@ -35,7 +35,8 @@ class Migration(migrations.Migration):
                 ('dato1', models.CharField(max_length=50)),
                 ('dato2', models.CharField(blank=True, max_length=50, null=True)),
                 ('porc', models.CharField(blank=True, max_length=3, null=True)),
-                ('id_reg', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='registers', to='reader.regacceso')),
+                ('id_reg', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='registers',
+                                             to='reader.regacceso')),
             ],
         ),
     ]
