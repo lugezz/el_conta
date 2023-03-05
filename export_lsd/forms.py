@@ -179,7 +179,7 @@ class LiquidacionForm(ModelForm):
                 'placeholder': "DD/MM/YYYY",
                 'class': "datepicker form-select mb-3 text-center"
             }),
-        )
+    )
 
     class Meta:
         model = Liquidacion

@@ -172,10 +172,10 @@ def process_reg4(txt_info: str, export_config: dict) -> str:
             if reg.formatof931:
                 # Si está lo vinculo puliendo formato
                 tmp_linea = sync_format(get_value_from_txt(legajo, reg.formatof931.name), reg.long, reg.type)
-                if (reg.formatof931.name == 'Cónyuge' or
-                        reg.formatof931.name == 'Trabajador Convencionado 0-No 1-Si' or
-                        reg.formatof931.name == 'Seguro Colectivo de Vida Obligatorio' or
-                        reg.formatof931.name == 'Marca de Corresponde Reducción'):
+                if reg.formatof931.name == 'Cónyuge' or\
+                    reg.formatof931.name == 'Trabajador Convencionado 0-No 1-Si' or\
+                    reg.formatof931.name == 'Seguro Colectivo de Vida Obligatorio' or\
+                        reg.formatof931.name == 'Marca de Corresponde Reducción':
 
                     tmp_linea = tmp_linea.replace('T', '1').replace('F', '0')
 

@@ -4,6 +4,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from export_lsd.views import error_404
+
 
 urlpatterns = [
     path('', include('homepage.urls')),
@@ -18,4 +20,4 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.TEMP_URL, document_root=settings.TEMP_ROOT)
 
-handler404 = 'export_lsd.views.error_404'
+handler404 = error_404

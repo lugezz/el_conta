@@ -4,7 +4,7 @@ from .views import (
     archivo_solo_view, detalle_presentacion,
     no_autorizado,
     procesa_hist_view, siradig_view,
-    )
+)
 
 urlpatterns = [
     path('', siradig_view, name='siradig'),
