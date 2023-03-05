@@ -78,6 +78,8 @@ class Empresa(models.Model):
     name = models.CharField(max_length=120, verbose_name='Razon Social')
     cuit = models.CharField(max_length=11, validators=[MinLengthValidator(11)])
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return self.name
