@@ -27,8 +27,7 @@ jobs:
         pip install -r requirements.txt
     - name: Lint with flake8
       run: |
-        flake8 --count --show-source --max-complexity=10 --max-line-length=130 --statistics
-          --ignore=C901,F811
+        flake8 --count --show-source --max-complexity=10 --max-line-length=130 --statistics --ignore=C901,F811
     - name: Run Tests
       run: |
         python manage.py test
