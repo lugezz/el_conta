@@ -85,12 +85,13 @@ class Empresa(models.Model):
         return self.name
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        user = get_current_user()
-        if user and not user.pk:
-            user = None
-        if not self.pk:
+        if not self.user:
+            user = get_current_user()
+            if user and not user.pk:
+                user = None
+            if not self.pk:
+                self.user = user
             self.user = user
-        self.user = user
         return super().save(force_insert, force_update, using, update_fields)
 
     def toJSON(self):
