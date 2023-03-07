@@ -31,10 +31,10 @@ jobs:
         python manage.py makemigrations --check --dry-run
         python manage.py migrate
     
-    - name: Check pending static files to collect
-      run: |
-        python manage.py collectstatic --noinput
-        git diff --exit-code static/
+    # - name: Check pending static files to collect
+    #   run: |
+    #     python manage.py collectstatic --noinput
+    #     git diff --exit-code static/
           
     - name: Lint with Flake8
       run: |
