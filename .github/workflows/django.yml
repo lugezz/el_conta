@@ -30,6 +30,7 @@ jobs:
         
     - name: Check pendig migrations
       run: |
+        source env/bin/activate
         python manage.py makemigrations --check --dry-run
         python manage.py migrate
     
@@ -40,7 +41,9 @@ jobs:
           
     - name: Lint with Flake8
       run: |
+        source env/bin/activate
         flake8 --count --show-source --max-complexity=10 --max-line-length=130 --statistics --ignore=C901,F811
     - name: Run Tests
       run: |
+        source env/bin/activate
         python manage.py test
