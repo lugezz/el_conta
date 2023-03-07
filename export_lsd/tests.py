@@ -21,11 +21,13 @@ class EmpresaTesting(TestCase):
     def test_create_empresa_long_name(self):
         long_name = "a" * 121
         with self.assertRaisesMessage(DataError, "Data too long for column 'name' at row 1"):
-            Empresa.objects.create(name=long_name, cuit='30999999991', user=self.user)
+            this_empresa = Empresa.objects.create(name=long_name, cuit='30999999991', user=self.user)
+            this_empresa.save()
 
     def test_create_empresa_long_cuit(self):
         with self.assertRaisesMessage(DataError, "Data too long for column 'cuit' at row 1"):
-            Empresa.objects.create(name="Empresa 1", cuit='123456789012', user=self.user)
+            this_empresa = Empresa.objects.create(name="Empresa 1", cuit='123456789012', user=self.user)
+            this_empresa.save()
 
     # No se testea porque se valida por el form
     # def test_create_empresa_short_cuit(self):
