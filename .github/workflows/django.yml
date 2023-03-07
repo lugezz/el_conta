@@ -28,13 +28,11 @@ jobs:
         
     - name: Check pendig migrations
       run: |
-        cd stud
         python manage.py makemigrations --check --dry-run
         python manage.py migrate
     
     - name: Check pending static files to collect
       run: |
-        cd stud
         python manage.py collectstatic --noinput
         git diff --exit-code static/
           
