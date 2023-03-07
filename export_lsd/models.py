@@ -7,6 +7,8 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.forms.models import model_to_dict
 
+from export_lsd.validators import validate_cuit, validate_name
+
 DATA_TYPE = [
     ('AL', 'Alfabético'),
     ('AN', 'Alfanumérico'),
@@ -75,8 +77,8 @@ class OrdenRegistro(models.Model):
 
 
 class Empresa(models.Model):
-    name = models.CharField(max_length=120, verbose_name='Razon Social')
-    cuit = models.CharField(max_length=11, validators=[MinLengthValidator(11)])
+    name = models.CharField(max_length=120, verbose_name='Razon Social', validators=[validate_name])
+    cuit = models.CharField(max_length=11, validators=[validate_cuit])
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -92,6 +94,9 @@ class Empresa(models.Model):
             if not self.pk:
                 self.user = user
             self.user = user
+
+        self.cuit = validate_cuit(self.cuit)
+        self.name = validate_name(self.name)
         return super().save(force_insert, force_update, using, update_fields)
 
     def toJSON(self):

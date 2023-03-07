@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
-from django.db.utils import DataError
 from django.test import Client, TestCase
 
+from export_lsd.exceptions import CuitValidationException, NameValidationException
 from export_lsd.models import Empresa
 
 
@@ -20,16 +20,13 @@ class EmpresaTesting(TestCase):
 
     def test_create_empresa_long_name(self):
         long_name = "a" * 121
-        with self.assertRaisesMessage(DataError, "Data too long for column 'name' at row 1"):
-            this_empresa = Empresa.objects.create(name=long_name, cuit='30999999991', user=self.user)
-            this_empresa.save()
+        with self.assertRaisesMessage(NameValidationException, "El nombre es demasiado largo"):
+            Empresa.objects.create(name=long_name, cuit='30999999991', user=self.user)
 
     def test_create_empresa_long_cuit(self):
-        with self.assertRaisesMessage(DataError, "Data too long for column 'cuit' at row 1"):
-            this_empresa = Empresa.objects.create(name="Empresa 1", cuit='123456789012', user=self.user)
-            this_empresa.save()
+        with self.assertRaisesMessage(CuitValidationException, "El CUIT debe tener 11 caracteres"):
+            Empresa.objects.create(name="Empresa 1", cuit='123456789012', user=self.user)
 
-    # No se testea porque se valida por el form
-    # def test_create_empresa_short_cuit(self):
-    #     with self.assertRaisesMessage(DataError, "Data too long for column 'cuit' at row 1"):
-    #         Empresa.objects.create(name="Empresa 1", cuit='1234567890', user=self.user)
+    def test_create_empresa_short_cuit(self):
+        with self.assertRaisesMessage(CuitValidationException, "El CUIT debe tener 11 caracteres"):
+            Empresa.objects.create(name="Empresa 1", cuit='1234567890', user=self.user)
