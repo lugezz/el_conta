@@ -38,7 +38,7 @@ jobs:
           
     - name: Lint with Flake8
       run: |
-        flake8 --count --show-source --max-complexity=10 --max-line-length=130 --statistics --ignore=C901,F811 --exclude=./env
+        flake8 --count --show-source --max-complexity=10 --max-line-length=130 --statistics --ignore=C901,F811
     - name: Run Tests
       run: |
         python manage.py test
