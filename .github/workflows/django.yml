@@ -25,6 +25,19 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        
+    - name: Check pendig migrations
+      run: |
+        cd stud
+        python manage.py makemigrations --check --dry-run
+        python manage.py migrate
+    
+    - name: Check pending static files to collect
+      run: |
+        cd stud
+        python manage.py collectstatic --noinput
+        git diff --exit-code static/
+          
     - name: Lint with Flake8
       run: |
         flake8 --count --show-source --max-complexity=10 --max-line-length=130 --statistics --ignore=C901,F811
