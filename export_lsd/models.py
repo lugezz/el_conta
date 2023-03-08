@@ -3,11 +3,10 @@ from collections import defaultdict
 from crum import get_current_user
 from django.apps import apps
 from django.contrib.auth.models import User
-from django.core.validators import MinLengthValidator
 from django.db import models
 from django.forms.models import model_to_dict
 
-from export_lsd.validators import validate_cuit, validate_name
+from export_lsd.validators import validate_cuil, validate_cuit, validate_name
 
 DATA_TYPE = [
     ('AL', 'Alfabético'),
@@ -107,8 +106,8 @@ class Empresa(models.Model):
 class Empleado(models.Model):
     leg = models.PositiveSmallIntegerField()
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    name = models.CharField(max_length=120, verbose_name='Nombre', null=True, blank=True)
-    cuil = models.CharField(max_length=11, validators=[MinLengthValidator(11)])
+    name = models.CharField(max_length=120, verbose_name='Nombre', validators=[validate_name])
+    cuil = models.CharField(max_length=11, validators=[validate_cuil])
     area = models.CharField(max_length=120, verbose_name='Área de Trabajo', null=True, blank=True)
 
     def __str__(self) -> str:
@@ -118,6 +117,11 @@ class Empleado(models.Model):
         item = model_to_dict(self)
         item['empresa'] = self.empresa.name
         return item
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.cuil = validate_cuil(self.cuil)
+        self.name = validate_name(self.name)
+        return super().save(force_insert, force_update, using, update_fields)
 
     class Meta:
         ordering = ['empresa__name', 'leg']
