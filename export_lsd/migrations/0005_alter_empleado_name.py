@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='empleado',
             name='name',
-            field=models.CharField(default='Empleado', max_length=120, validators=[export_lsd.validators.validate_name], verbose_name='Nombre'),
+            field=models.CharField(default='Empleado', max_length=120,
+                                   validators=[export_lsd.validators.validate_name], verbose_name='Nombre'),
             preserve_default=False,
         ),
     ]
