@@ -122,7 +122,7 @@ def process_liquidacion(id_presentacion: int, nro_liq: int, payday: datetime, df
         if tipo[:2] == 'NR':
             no_remunerativo += importe
 
-        cantidad = row['Cant'] or 0
+        cantidad = 0 if pd.isna(row['Cant']) else row['Cant']
 
         empleado = Empleado.objects.get(leg=row["Leg"], empresa=empresa)
         bulk_mgr.add(ConceptoLiquidacion(liquidacion=liquidacion,
