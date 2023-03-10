@@ -86,13 +86,11 @@ class Empresa(models.Model):
         return self.name
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        user = get_current_user()
-        if user and not user.pk:
-            user = None
-        if not self.pk:
-            self.user = user
+        if not hasattr(self, 'user'):
+            user = get_current_user()
+            if user and not user.pk:
+                user = None
 
-        if user:
             self.user = user
 
         self.cuit = validate_cuit(self.cuit)
