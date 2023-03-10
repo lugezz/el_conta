@@ -122,11 +122,13 @@ def process_liquidacion(id_presentacion: int, nro_liq: int, payday: datetime, df
         if tipo[:2] == 'NR':
             no_remunerativo += importe
 
+        cantidad = row['Cant'] or 0
+
         empleado = Empleado.objects.get(leg=row["Leg"], empresa=empresa)
         bulk_mgr.add(ConceptoLiquidacion(liquidacion=liquidacion,
                                          empleado=empleado,
                                          concepto=row['Concepto'],
-                                         cantidad=row['Cant'],
+                                         cantidad=cantidad,
                                          importe=importe,
                                          tipo=tipo))
     bulk_mgr.done()
