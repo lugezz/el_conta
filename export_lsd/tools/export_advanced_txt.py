@@ -645,7 +645,7 @@ def process_reg4_from_liq_xlsx(leg_liqs: QuerySet, concepto_liq: QuerySet, tomo_
         # Cantidad de días trabajados,2,48,49,NU,2 enteros.
         this_line += str(info_legajo['dias']).zfill(2)
         # Cantidad de horas trabajadas,3,50,52,NU,"3 enteros.
-        this_line += "000"
+        this_line += str(info_legajo['horas']).zfill(3)
         # Porcentaje de aporte adicional de seguridad social,5,53,57,NU,3 enteros y 2 decimales
         this_line += str(int(info_legajo['por_apo']) * 100).zfill(5)
         # Porcentaje de contribución por tarea diferencial,5,58,62,NU,3 enteros y 2 decimales.
@@ -748,6 +748,7 @@ def employess_info_from_excel(file_import: Path) -> dict:
             'sr3': row['Sit. Revista 3'],
             'dia3': row['Día 3'],
             'dias': row['Días Trab'],
+            'horas': row['Hs Trab'],
             'por_apo': row['% Ap. Adic SS'],
             'cont_dif': row['% Contrib. Dif'],
             'adh': row['Cant. Adher.'],
