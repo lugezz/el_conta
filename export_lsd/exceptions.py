@@ -7,3 +7,7 @@ class NameValidationException(ValidationError):
 
 class CuitValidationException(ValidationError):
     pass
+
+
+class CBUValidationException(ValidationError):
+    pass

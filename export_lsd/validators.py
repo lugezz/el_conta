@@ -1,5 +1,4 @@
-from export_lsd.exceptions import CuitValidationException
-from export_lsd.exceptions import NameValidationException
+from export_lsd.exceptions import CBUValidationException, CuitValidationException, NameValidationException
 
 
 def validate_cuil(value):
@@ -20,6 +19,17 @@ def validate_cuit(value):
 
     if not value.isdigit():
         raise CuitValidationException('El CUIT debe contener sólo valores numéricos')
+
+    return value
+
+
+def validate_cbu(value):
+    """ Debe tener exactamente 22 caracteres númericos """
+    if len(value) != 22:
+        raise CBUValidationException('El CBU debe tener 22 caracteres')
+
+    if not value.isdigit():
+        raise CBUValidationException('El CBU debe contener sólo valores numéricos')
 
     return value
 

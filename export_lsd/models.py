@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.forms.models import model_to_dict
 
-from export_lsd.validators import validate_cuil, validate_cuit, validate_name
+from export_lsd.validators import validate_cbu, validate_cuil, validate_cuit, validate_name
 
 DATA_TYPE = [
     ('AL', 'Alfabético'),
@@ -108,6 +108,7 @@ class Empleado(models.Model):
     name = models.CharField(max_length=120, verbose_name='Nombre', validators=[validate_name])
     cuil = models.CharField(max_length=11, validators=[validate_cuil])
     area = models.CharField(max_length=120, verbose_name='Área de Trabajo', null=True, blank=True)
+    cbu = models.CharField(max_length=22, verbose_name='CBU', null=True, blank=True, validators=[validate_cbu])
 
     def __str__(self) -> str:
         return f'{self.empresa.name} - L.{self.leg}: {self.name}'
@@ -178,6 +179,7 @@ class Liquidacion(models.Model):
     nroLiq = models.PositiveSmallIntegerField(default=1)
     presentacion = models.ForeignKey(Presentacion, on_delete=models.CASCADE)
     payday = models.DateField()
+    forma_pago = models.CharField(max_length=1, choices=FORMAS_PAGO, default='1', verbose_name='Forma de Pago')
     employees = models.PositiveSmallIntegerField(default=0)
     remunerativos = models.FloatField(default=0.0)
     no_remunerativos = models.FloatField(default=0.0)
