@@ -1,23 +1,10 @@
-from django.forms import (DateField, DateInput, Field, FileField, FileInput,
-                          ModelForm, Select, TextInput,
-                          ValidationError)
+from django.forms import (DateField, DateInput, FileField, FileInput,
+                          ModelForm, Select, TextInput,)
 
 from export_lsd.models import BasicExportConfig, Empresa, Empleado, Liquidacion, Presentacion
-from export_lsd.tools.import_empleados import is_positive_number
-
-
-class CuitCuilField(Field):
-    def validate(self, value):
-        """Check if value consists 11 numeric positive values"""
-        # Use the parent's handling of required fields, etc.
-        super().validate(value)
-        if not is_positive_number(str(value)) or len(str(value)) != 11:
-            raise ValidationError("Ingrese un valor numerico de 11 dígitos")
 
 
 class EmpresaForm(ModelForm):
-    cuit = CuitCuilField()
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -34,8 +21,7 @@ class EmpresaForm(ModelForm):
                     'placeholder': "Ingrese el nombre de empresa"
                 }
             ),
-            'cuit': TextInput
-            (
+            'cuit': TextInput(
                 attrs={
                     'placeholder': "Ingrese el número de CUIT",
                     'maxlength': 15,
@@ -57,26 +43,31 @@ class EmpresaForm(ModelForm):
 
 
 class EmpleadoForm(ModelForm):
-    cuil = CuitCuilField()
+    # cuil = CuitCuilField()
 
     class Meta:
         model = Empleado
         fields = '__all__'
 
         widgets = {
-            'empleado.name': TextInput(
+            'name': TextInput(
                 attrs={
                     'placeholder': 'Ingrese el nombre del empleado',
                 }
             ),
-            'empleado.cuil': TextInput(
+            'cuil': TextInput(
                 attrs={
-                    'placeholder': "Ingrese el número de CUIL"
+                    'placeholder': 'Ingrese el nombre del empleado',
                 }
             ),
-            'empleado.area': TextInput(
+            'area': TextInput(
                 attrs={
-                    'placeholder': "Ingrese el Área de Trabajo del Empleado"
+                    'placeholder': "Ingrese el Área de Trabajo del Empleado (opcional)"
+                }
+            ),
+            'cbu': TextInput(
+                attrs={
+                    'placeholder': "Ingrese el CBU del Empleado (opcional)"
                 }
             )
         }
@@ -184,7 +175,7 @@ class LiquidacionForm(ModelForm):
     class Meta:
         model = Liquidacion
 
-        fields = ['payday', 'nroLiq', 'tipo_liq', 'xlsx_liq']
+        fields = ['payday', 'nroLiq', 'tipo_liq', 'forma_pago', 'xlsx_liq']
 
         widgets = {
             'nroLiq': Select(
@@ -193,6 +184,11 @@ class LiquidacionForm(ModelForm):
                 }
             ),
             'tipo_liq': Select(
+                attrs={
+                    'class': "form-select mb-3"
+                }
+            ),
+            'forma_pago': Select(
                 attrs={
                     'class': "form-select mb-3"
                 }

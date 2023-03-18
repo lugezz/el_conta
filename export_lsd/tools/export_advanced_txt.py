@@ -99,13 +99,14 @@ def update_presentacion_info(id_presentacion: int) -> dict:
     return resp
 
 
-def process_liquidacion(id_presentacion: int, nro_liq: int, payday: datetime, df_liq: pd.DataFrame, tipo_liq: str) -> dict:
+def process_liquidacion(id_presentacion: int, nro_liq: int, payday: datetime, df_liq: pd.DataFrame,
+                        tipo_liq: str, forma_pago: str) -> dict:
     bulk_mgr = BulkCreateManager()
     presentacion = Presentacion.objects.get(id=id_presentacion)
     payday_str = payday.strftime('%Y-%m-%d')
     empresa = presentacion.empresa
     liquidacion = Liquidacion.objects.create(nroLiq=nro_liq, presentacion=presentacion,
-                                             payday=payday_str, tipo_liq=tipo_liq)
+                                             payday=payday_str, tipo_liq=tipo_liq, forma_pago=forma_pago)
 
     empleados = set()
     remunerativo = 0.0
@@ -168,7 +169,7 @@ def process_reg1(cuit: str, periodo: datetime.date, employees: int, nro_liq: int
     return resp
 
 
-def process_reg2(leg_liqs: QuerySet, payday: datetime.date, cuit: str) -> str:
+def process_reg2(leg_liqs: QuerySet, payday: datetime.date, forma_pago: str) -> str:
     """
     Identificacion del tipo de registro	2	1	2
     CUIL del trabajador	11	3	13
@@ -188,8 +189,11 @@ def process_reg2(leg_liqs: QuerySet, payday: datetime.date, cuit: str) -> str:
 
         area = " " * 50 if not empleado.area else empleado.area.ljust(50)
         fecha_pago = payday.strftime('%Y%m%d')
-        forma_pago = 1
-        cbu = " " * 22
+        # Si acredita informo el CBU, el CBU está o no está, pero no puede ser más corto
+        if forma_pago == '3' and empleado.cbu:
+            cbu = empleado.cbu
+        else:
+            cbu = " " * 22
         fecha_rubrica = " " * 8
 
         item = f'02{cuil}{leg}{area}{cbu}030{fecha_pago}{fecha_rubrica}{forma_pago}'
@@ -752,7 +756,8 @@ def employess_info_from_excel(file_import: Path) -> dict:
             'por_apo': row['% Ap. Adic SS'],
             'cont_dif': row['% Contrib. Dif'],
             'adh': row['Cant. Adher.'],
-            'os': row['Código de Obra Social']
+            'os': row['Código de Obra Social'],
+            'cbu': row['CBU'],
         }
 
     return employees_dict
@@ -806,7 +811,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
                             employees=liquidacion.employees,
                             nro_liq=liquidacion.nroLiq,
                             tipo_liq=liquidacion.tipo_liq)
-        reg2 = process_reg2(legajos, liquidacion.payday, cuit)
+        reg2 = process_reg2(legajos, liquidacion.payday, liquidacion.forma_pago)
         reg3 = process_reg3(conceptos)
         if (liquidaciones.count() == 1 or i == len(liquidaciones) - 1) and not empleados_en_excel:
             if not specific_F931_txt_lines:

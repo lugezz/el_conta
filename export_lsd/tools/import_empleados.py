@@ -95,6 +95,12 @@ def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
     bulk_mgr = BulkCreateManager()
 
     for index, row in df.iterrows():
+        cbu = None if pd.isna(row['CBU']) else row['CBU']
         if Empleado.objects.filter(leg=row['Leg'], empresa=empresa).count() == 0:
-            bulk_mgr.add(Empleado(empresa=empresa, leg=row['Leg'], name="Creado por Importación", cuil=row['CUIL'], area=''))
+            bulk_mgr.add(Empleado(empresa=empresa, leg=row['Leg'], name="Creado por Importación",
+                                  cuil=row['CUIL'], area='', cbu=cbu))
+        else:
+            # Existe, lo actualizo
+            this_empleado = Empleado.objects.filter(leg=row['Leg'])
+            this_empleado.update(cuil=row['CUIL'], cbu=cbu)
     bulk_mgr.done()

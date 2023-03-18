@@ -24,7 +24,7 @@
             <div class="col-12">
                 <p class="h1 text-center mb-5">{{ empresa }} - {{ periodo|date:"m/Y" }}</p>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <!-- Fecha de pago -->
                 <div class="form-group mb-3">
                     <p class="mb-1">Fecha Pago</p>
@@ -33,15 +33,19 @@
                 <!-- Fin Fecha de pago -->
             </div>
 
-            <div class="col-6">
+            <div class="col-4">
                 <p class="mb-1">N°Liq.</p>
                 {{ form.nroLiq }}
+            </div>
+            <div class="col-4">
+                <p class="mb-1">Tipo</p>
+                {{ form.tipo_liq }}
             </div>
         </div>
         <div class="row px-3">
             <div class="col-4">
-                <p class="mb-1">Tipo</p>
-                {{ form.tipo_liq }}
+                <p class="mb-1">Forma Pago</p>
+                {{ form.forma_pago }}
             </div>
 
             <div class="col-8">

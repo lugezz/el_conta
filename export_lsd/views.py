@@ -527,6 +527,7 @@ def advanced_export_liqs(request, pk: int):
             nro_liq = request.POST['nroLiq']
             tipo_liq = request.POST['tipo_liq']
             payday = datetime.datetime.strptime(request.POST['payday'], '%d/%m/%Y')
+            forma_pago = request.POST['forma_pago']
 
             # Validación 1 - Titulos
             df_titles = list(df_liq.columns.values)
@@ -547,7 +548,7 @@ def advanced_export_liqs(request, pk: int):
                 return redirect(reverse_lazy('export_lsd:empleado_list'))
 
             # Procesar la Liquidación
-            result = process_liquidacion(pk, nro_liq, payday, df_liq, tipo_liq)
+            result = process_liquidacion(pk, nro_liq, payday, df_liq, tipo_liq, forma_pago)
             context['empleados'] = result.get('empleados', 0)
             context['remunerativos'] = result.get('remunerativos', 0)
             context['no_remunerativos'] = result.get('no_remunerativos', 0)
