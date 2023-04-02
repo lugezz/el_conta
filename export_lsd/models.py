@@ -103,7 +103,7 @@ class Empresa(models.Model):
 
 
 class Empleado(models.Model):
-    leg = models.PositiveSmallIntegerField()
+    leg = models.IntegerField()
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     name = models.CharField(max_length=120, verbose_name='Nombre', validators=[validate_name])
     cuil = models.CharField(max_length=11, validators=[validate_cuil])
