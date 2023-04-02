@@ -227,6 +227,9 @@ def process_reg3(concepto_liq: QuerySet) -> str:
         importe = str(int(importe)).zfill(15)
         tipo = 'D' if concepto.tipo[:2] == 'Ap' else 'C'
 
+        if concepto.importe < 0:
+            tipo = 'C' if tipo == 'D' else 'D'
+
         # Genero fila
         item = f'03{cuil}{cod_con}{cantidad}D{importe}{tipo}{" " * 6}'
         resp.append(item)
