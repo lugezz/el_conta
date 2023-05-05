@@ -723,7 +723,6 @@ def employess_info_from_excel(file_import: Path) -> dict:
     df = pd.read_excel(file_import)
 
     for index, row in df.iterrows():
-
         if not is_positive_number(str(row['Leg'])):
             employees_dict['invalid_data'].append(f"Línea: {index} - Legajo {row['Leg']} Inválido")
             continue
