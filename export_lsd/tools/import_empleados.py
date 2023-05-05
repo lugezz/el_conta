@@ -100,7 +100,9 @@ def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
             bulk_mgr.add(Empleado(empresa=empresa, leg=row['Leg'], name="Creado por Importación",
                                   cuil=row['CUIL'], area='', cbu=cbu))
         else:
-            # Existe, lo actualizo
-            this_empleado = Empleado.objects.filter(leg=row['Leg'])
-            this_empleado.update(cuil=row['CUIL'], cbu=cbu)
+            # Existe, lo actualizo. Debe ser sólo 1 registro
+            this_empleado = Empleado.objects.get(leg=row['Leg'], empresa=empresa)
+            this_empleado.cuil = str(row['CUIL'])
+            this_empleado.cbu = str(cbu)
+            this_empleado.save()
     bulk_mgr.done()
