@@ -95,6 +95,7 @@ class Empresa(models.Model):
 
         self.cuit = validate_cuit(self.cuit)
         self.name = validate_name(self.name)
+
         return super().save(force_insert, force_update, using, update_fields)
 
     def toJSON(self):
@@ -109,6 +110,9 @@ class Empleado(models.Model):
     cuil = models.CharField(max_length=11, validators=[validate_cuil])
     area = models.CharField(max_length=120, verbose_name='Área de Trabajo', null=True, blank=True)
     cbu = models.CharField(max_length=22, verbose_name='CBU', null=True, blank=True, validators=[validate_cbu])
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self) -> str:
         return f'{self.empresa.name} - L.{self.leg}: {self.name}'
@@ -121,6 +125,12 @@ class Empleado(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.cuil = validate_cuil(self.cuil)
         self.name = validate_name(self.name)
+        if not hasattr(self, 'user'):
+            user = get_current_user()
+            if user and not user.pk:
+                user = None
+
+            self.updated_by = user
         return super().save(force_insert, force_update, using, update_fields)
 
     class Meta:
