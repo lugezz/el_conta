@@ -25,7 +25,7 @@ class EmpleadoAdmin(admin.ModelAdmin):
 
     @admin.display(empty_value='unknown')
     def actualizado_por(self, obj):
-        return obj.updated_by.username
+        return obj.updated_by
 
 
 @admin.register(Empresa)
