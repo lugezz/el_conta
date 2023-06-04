@@ -15,9 +15,17 @@ admin.site.register(TipoRegistro)
 
 @admin.register(Empleado)
 class EmpleadoAdmin(admin.ModelAdmin):
-    list_display = ("leg", "name", "empresa", "cuil", "area")
+    list_display = ("leg", "name", "empresa", "cuil", "area", "actualizado", "actualizado_por")
     list_filter = ("empresa", "area")
     list_per_page = 30
+
+    @admin.display(empty_value='unknown')
+    def actualizado(self, obj):
+        return obj.updated.strftime('%Y/%m/%d')
+
+    @admin.display(empty_value='unknown')
+    def actualizado_por(self, obj):
+        return obj.updated_by.username
 
 
 @admin.register(Empresa)
