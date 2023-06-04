@@ -48,6 +48,7 @@ class EmpleadoForm(ModelForm):
     class Meta:
         model = Empleado
         fields = '__all__'
+        exclude = ['updated_by']
 
         widgets = {
             'name': TextInput(
