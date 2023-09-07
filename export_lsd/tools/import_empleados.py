@@ -95,6 +95,13 @@ def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
     bulk_mgr = BulkCreateManager()
 
     for index, row in df.iterrows():
+        # Puede suceder que haya filas sin información y que de todas formas se lea, por eso
+        # Si leg es NaN, no lo tomo y termino el loop
+        if pd.isna(row['Leg']):
+            break
+        # En caso de que el CUIL se informe como float lo cambio a int
+        if isinstance(row['CUIL'], float):
+                row['CUIL'] = int(row['CUIL'])
         cbu = None if pd.isna(row['CBU']) else row['CBU']
         if Empleado.objects.filter(leg=row['Leg'], empresa=empresa).count() == 0:
             bulk_mgr.add(Empleado(empresa=empresa, leg=row['Leg'], name="Creado por Importación",
