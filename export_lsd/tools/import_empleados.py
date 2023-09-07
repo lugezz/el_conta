@@ -101,7 +101,7 @@ def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
             break
         # En caso de que el CUIL se informe como float lo cambio a int
         if isinstance(row['CUIL'], float):
-                row['CUIL'] = int(row['CUIL'])
+            row['CUIL'] = int(row['CUIL'])
         cbu = None if pd.isna(row['CBU']) else row['CBU']
         if Empleado.objects.filter(leg=row['Leg'], empresa=empresa).count() == 0:
             bulk_mgr.add(Empleado(empresa=empresa, leg=row['Leg'], name="Creado por Importación",
