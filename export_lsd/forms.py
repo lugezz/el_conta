@@ -58,7 +58,7 @@ class EmpleadoForm(ModelForm):
             ),
             'cuil': TextInput(
                 attrs={
-                    'placeholder': 'Ingrese el nombre del empleado',
+                    'placeholder': 'Ingrese el cuil del empleado',
                 }
             ),
             'area': TextInput(
