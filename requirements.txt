@@ -5,7 +5,7 @@ et-xmlfile==1.0.1
 flake8==5.0.4
 openpyxl==3.0.10
 pandas==1.5.1
-Pillow==9.3.0
+Pillow==10.0.1
 python-dotenv==0.19.0
 XlsxWriter==1.1.5
 xmltodict==0.13.0
