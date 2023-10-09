@@ -41,7 +41,7 @@ class EmpresaAdmin(admin.ModelAdmin):
 
 @admin.register(BasicExportConfig)
 class BasicExportConfigAdmin(admin.ModelAdmin):
-    list_display = ("user", "name", "creado", "actualizado")
+    list_display = ("user", "name", "dias_base")
     list_filter = ("user", )
     list_per_page = 30
 
