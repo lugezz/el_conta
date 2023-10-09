@@ -45,6 +45,7 @@ class BasicExportConfigAdmin(admin.ModelAdmin):
     list_filter = ("user", )
     list_per_page = 30
 
+
 @admin.register(Presentacion)
 class PresentacionAdmin(admin.ModelAdmin):
     list_display = ("periodo_str", "empresa", "user", "creado", "actualizado")
