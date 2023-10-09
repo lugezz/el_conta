@@ -5,7 +5,6 @@ from export_lsd.models import (BasicExportConfig, ConceptoLiquidacion, Empleado,
                                Presentacion, TipoRegistro)
 
 
-admin.site.register(BasicExportConfig)
 admin.site.register(ConceptoLiquidacion)
 admin.site.register(Formato931)
 admin.site.register(Liquidacion)
@@ -18,6 +17,7 @@ class EmpleadoAdmin(admin.ModelAdmin):
     list_display = ("leg", "name", "empresa", "cuil", "area", "actualizado", "actualizado_por")
     list_filter = ("empresa", "area")
     list_per_page = 30
+    search_fields = ("leg", "name", "empresa", "cuil")
 
     @admin.display(empty_value='unknown')
     def actualizado(self, obj):
@@ -39,12 +39,30 @@ class EmpresaAdmin(admin.ModelAdmin):
         return obj.created.strftime('%Y/%m/%d')
 
 
-@admin.register(Presentacion)
-class PresentacionAdmin(admin.ModelAdmin):
-    list_display = ("periodo_str", "empresa", "user", "view_created")
+@admin.register(BasicExportConfig)
+class BasicExportConfigAdmin(admin.ModelAdmin):
+    list_display = ("user", "name", "creado", "actualizado")
     list_filter = ("user", )
     list_per_page = 30
 
     @admin.display(empty_value='unknown')
-    def view_created(self, obj):
+    def creado(self, obj):
         return obj.created.strftime('%Y/%m/%d')
+
+    @admin.display(empty_value='unknown')
+    def actualizado(self, obj):
+        return obj.updated.strftime('%Y/%m/%d')
+
+@admin.register(Presentacion)
+class PresentacionAdmin(admin.ModelAdmin):
+    list_display = ("periodo_str", "empresa", "user", "creado", "actualizado")
+    list_filter = ("user", )
+    list_per_page = 30
+
+    @admin.display(empty_value='unknown')
+    def creado(self, obj):
+        return obj.created.strftime('%Y/%m/%d')
+
+    @admin.display(empty_value='unknown')
+    def actualizado(self, obj):
+        return obj.updated.strftime('%Y/%m/%d')
