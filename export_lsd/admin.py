@@ -17,7 +17,7 @@ class EmpleadoAdmin(admin.ModelAdmin):
     list_display = ("leg", "name", "empresa", "cuil", "area", "actualizado", "actualizado_por")
     list_filter = ("empresa", "area")
     list_per_page = 30
-    search_fields = ("leg", "name", "empresa__name", "cuil", "area__name")
+    search_fields = ("leg", "name", "empresa__name", "cuil")
 
     @admin.display(empty_value='unknown')
     def actualizado(self, obj):
