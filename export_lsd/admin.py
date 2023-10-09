@@ -17,7 +17,7 @@ class EmpleadoAdmin(admin.ModelAdmin):
     list_display = ("leg", "name", "empresa", "cuil", "area", "actualizado", "actualizado_por")
     list_filter = ("empresa", "area")
     list_per_page = 30
-    search_fields = ("leg", "name", "empresa", "cuil")
+    search_fields = ("leg", "name", "empresa__name", "cuil", "area__name")
 
     @admin.display(empty_value='unknown')
     def actualizado(self, obj):
@@ -44,14 +44,6 @@ class BasicExportConfigAdmin(admin.ModelAdmin):
     list_display = ("user", "name", "creado", "actualizado")
     list_filter = ("user", )
     list_per_page = 30
-
-    @admin.display(empty_value='unknown')
-    def creado(self, obj):
-        return obj.created.strftime('%Y/%m/%d')
-
-    @admin.display(empty_value='unknown')
-    def actualizado(self, obj):
-        return obj.updated.strftime('%Y/%m/%d')
 
 @admin.register(Presentacion)
 class PresentacionAdmin(admin.ModelAdmin):
