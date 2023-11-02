@@ -1,4 +1,4 @@
-Django==4.1.10
+Django==4.1.13
 django-crum==0.7.9
 django-widget-tweaks==1.4.12
 et-xmlfile==1.0.1
