@@ -207,7 +207,7 @@ class Liquidacion(models.Model):
 
 class ConceptoLiquidacion(models.Model):
     liquidacion = models.ForeignKey(Liquidacion, on_delete=models.CASCADE)
-    empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
+    empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE, related_name='conceptos')
     concepto = models.CharField(max_length=10)
     cantidad = models.PositiveSmallIntegerField(default=0)
     importe = models.FloatField(default=0)
