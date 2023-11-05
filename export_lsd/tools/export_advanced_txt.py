@@ -810,7 +810,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
                 liquidacion__nroLiq__gt=liquidacion.nroLiq
             ).count()
             last_liq_for_this_cuil = future_liquidaciones_for_this_cuil == 0
-            
+
             if not empleados_en_excel:
                 this_line = get_specific_F931_txt_line(legajo_cuil, txt_clean_info)
                 if this_line:
@@ -827,7 +827,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
                             tipo_liq=liquidacion.tipo_liq)
         reg2 = process_reg2(legajos, liquidacion.payday, liquidacion.forma_pago)
         reg3 = process_reg3(conceptos)
-        
+
         # Si ocurre algunas de estas condiciones, proceso el registro 4
         # - Sólo hay una liquidación
         # - Es la última liquidación de la presentación
