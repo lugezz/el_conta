@@ -802,14 +802,14 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
             # Identifico la última liquidación del empleado para:
             # 1) Procesar el Registro 4
             # 2) Asignarle la detracción seguridad social final
-            last_liquidacion_for_this_cuil = False
+            last_liq_for_this_cuil = False
             # Chequeo en la tabla ConceptoLiquidación si hay más liquidaciones para este empleado
             # Si no hay, entonces es la última liquidación para este empleado
             future_liquidaciones_for_this_cuil = empleado.conceptos.filter(
                 liquidacion__presentacion=liquidacion.presentacion,
                 liquidacion__nroLiq__gt=liquidacion.nroLiq
             ).count()
-            last_liquidacion_for_this_cuil = future_liquidaciones_for_this_cuil == 0
+            last_liq_for_this_cuil = future_liquidaciones_for_this_cuil == 0
             
             if not empleados_en_excel:
                 this_line = get_specific_F931_txt_line(legajo_cuil, txt_clean_info)
@@ -832,7 +832,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
         # - Sólo hay una liquidación
         # - Es la última liquidación de la presentación
         # - No hay más liquidaciones para este empleado en la presentación
-        if (liquidaciones.count() == 1 or i == len(liquidaciones) - 1 or last_liquidacion_for_this_cuil) and not empleados_en_excel:
+        if (liquidaciones.count() == 1 or i == len(liquidaciones) - 1 or last_liq_for_this_cuil) and not empleados_en_excel:
             if not specific_F931_txt_lines:
                 raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
             reg4 = process_reg4(specific_F931_txt_lines, liquidacion.id)
@@ -841,7 +841,7 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
                 if not specific_xlsx_info:
                     raise Exception('Cuiles no encontrados en nómina, por favor solucionar el inconveniente')
 
-                tomo_detraccion = (liquidaciones.count() == 1 or i == len(liquidaciones) - 1 or last_liquidacion_for_this_cuil)
+                tomo_detraccion = (liquidaciones.count() == 1 or i == len(liquidaciones) - 1 or last_liq_for_this_cuil)
                 reg4 = process_reg4_from_liq_xlsx(legajos, conceptos_acum, tomo_detraccion,
                                                   xlsx_info=info_empleados_dict['results'])
             else:
