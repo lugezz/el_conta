@@ -113,8 +113,13 @@ def process_liquidacion(id_presentacion: int, nro_liq: int, payday: datetime, df
     no_remunerativo = 0.0
 
     for index, row in df_liq.iterrows():
+        # Si leg es NaN, no lo tomo y termino el loop
+        if pd.isna(row['Leg']):
+            break
+
         tipo = row['Tipo']
         importe = row['Monto']
+        importe = 0 if pd.isna(importe) else round(importe, 2)
 
         empleados.add(row['Leg'])
         if tipo == 'Rem':
@@ -723,6 +728,10 @@ def employess_info_from_excel(file_import: Path) -> dict:
     df = pd.read_excel(file_import)
 
     for index, row in df.iterrows():
+        # Si leg es NaN, no lo tomo y termino el loop
+        if pd.isna(row['Leg']):
+            break
+
         if not is_positive_number(str(row['Leg'])):
             employees_dict['invalid_data'].append(f"Línea: {index} - Legajo {row['Leg']} Inválido")
             continue
