@@ -244,8 +244,9 @@ def process_reg3(concepto_liq: QuerySet) -> str:
     return resp_final
 
 
-def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
+def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0, id_liquidaciones_anteriores: list = []) -> str:
     resp = ''
+    cuil = get_value_from_txt(txt_info_line, 'CUIL')
     reg4_qs = OrdenRegistro.objects.filter(tiporegistro__order=4)
 
     mod_cont = int(get_value_from_txt(txt_info_line, 'Código de Modalidad de Contratación'))
@@ -264,6 +265,10 @@ def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
     tmp_sr2 = '  ' if sr1 == sr2 else sr2
     sr3 = '  ' if sr2 == sr3 else sr3
     sr2 = tmp_sr2
+
+    no_rem_os_liq_anteriores = 0
+    for id_liq in id_liquidaciones_anteriores:
+        no_rem_os_liq_anteriores += get_nros_from_liq(cuil=cuil, id_liq=id_liq)
 
     for reg in reg4_qs:
         if reg.formatof931:
@@ -296,11 +301,10 @@ def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
 
                 resp += str(rem10).zfill(15)
             elif reg.name == 'Base para el cálculo diferencial de aporte de obra social y FSR (1)':
-
                 # Valido R4
                 # R4 = Rem + NR OS y Sind + Ap.Ad.OS
                 # Ap.Ad.OS = R4 - Rem - NR OS y Sind
-                resta = rem2 + no_rem_os
+                resta = rem2 + no_rem_os + no_rem_os_liq_anteriores
                 aa_os = max(0, rem4 - resta)
                 resp += str(aa_os).zfill(15)
 
@@ -308,9 +312,9 @@ def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
                 # Valido R8
                 # R8 = Rem + NR OS y Sind + Ct.Ad.OS
                 # Ct.Ad.OS = R8 - Rem - NR OS y Sind
-                resta = rem2 + no_rem_os
-                aa_os = max(0, rem8 - resta)
-                resp += str(aa_os).zfill(15)
+                resta = rem2 + no_rem_os + no_rem_os_liq_anteriores
+                ca_os = max(0, rem8 - resta)
+                resp += str(ca_os).zfill(15)
 
             else:
                 resp += "0" * reg.long
@@ -319,6 +323,8 @@ def process_reg4_line(txt_info_line: str, no_rem_os: float = 0.0) -> str:
 
 
 def get_nros_from_liq(cuil: str, id_liq: int) -> int:
+    """ Obtiene el importe de No Remunerativo Obra Social de una liquidación
+    """
     resp_qs = ConceptoLiquidacion.objects.filter(tipo='NROS', empleado__cuil=cuil, liquidacion__id=id_liq)
     resp = resp_qs.aggregate(Sum('importe'))
     final_resp = resp.get('importe__sum', 0)
@@ -331,8 +337,14 @@ def get_nros_from_liq(cuil: str, id_liq: int) -> int:
     return final_resp
 
 
-def process_reg4(txt_info: str, nro_liq: int = 0) -> str:
+def process_reg4(txt_info: str, id_liq: int = 0) -> str:
     resp = []
+
+    liquidacion = Liquidacion.objects.get(id=id_liq)
+    presentacion = liquidacion.presentacion
+    id_liquidaciones_anteriores = Liquidacion.objects.filter(
+        presentacion=presentacion,
+    ).exclude(id=id_liq).values_list('id', flat=True)
 
     for legajo in txt_info:
         nros = 0.0
@@ -340,10 +352,10 @@ def process_reg4(txt_info: str, nro_liq: int = 0) -> str:
         if not legajo:
             continue
 
-        if nro_liq > 0:
-            nros = get_nros_from_liq(legajo[:11], nro_liq)
+        if id_liq > 0:
+            nros = get_nros_from_liq(legajo[:11], id_liq)
 
-        linea = process_reg4_line(legajo, nros)
+        linea = process_reg4_line(legajo, nros, id_liquidaciones_anteriores)
 
         resp.append(linea)
 
@@ -417,9 +429,12 @@ def process_reg4_from_liq(leg_liqs: QuerySet, concepto_liq: QuerySet, txt_info: 
         ).count()
 
         if fut_liq == 0:
+            id_liquidaciones_anteriores = Liquidacion.objects.filter(
+                presentacion=presentacion,
+            ).exclude(nroLiq=nro_liq).values_list('id', flat=True)
             tmp_value = concepto_liq.filter(tipo='NROS', empleado=empleado).aggregate(Sum('importe'))
             this_no_rem_os = 0 if not tmp_value['importe__sum'] else int(round(tmp_value['importe__sum'], 2) * 100)
-            this_line = process_reg4_line(txt_legajo, this_no_rem_os)
+            this_line = process_reg4_line(txt_legajo, this_no_rem_os, id_liquidaciones_anteriores)
             resp.append(this_line)
             continue
         # ---------------------------------------------------------------
