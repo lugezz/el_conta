@@ -4,7 +4,7 @@ import xmltodict
 import xml.etree.ElementTree as ET
 
 from reader.deducciones import get_deduccion
-from reader.helpers.tools import get_nombre_y_valor, get_value_from_list
+from reader.helpers.tools import get_nombre_y_valor, get_list_of_values_from_list, get_value_from_list
 
 
 class EmpleadoSiradig:
@@ -213,24 +213,39 @@ def extended_leeXML(xml_file):
             # Otras deducciones, puede tener 9 tipos
             # Y el formato es diferente, se informa un registro por período
 
-            # TODO: Actualizar esto que 32 si tiene períodos
-            if ded_tipo == '32' or ded_tipo == '99':
+            if ded_tipo == '32':
                 ded_detalle = deduccion['detalles']['detalle']
-                nombre_campo = 'tipoGasto' if ded_tipo == '32' else 'motivo'
-                subtipo, mes = get_nombre_y_valor(ded_detalle, nombre_campo)
-                ded_porc = get_value_from_list(ded_detalle, 'porcentajeDedFamiliar')
+                info_to_get = ['porcentajeDedFamiliar', 'tipoGasto']
+                info_obtenida = get_list_of_values_from_list(ded_detalle, info_to_get)
+                ded_porc = info_obtenida['porcentajeDedFamiliar']
+                subtipo = info_obtenida['tipoGasto']
+
+            # Otras deducciones, puede tener 9 tipos
+            # Y el formato es diferente, se informa un registro por período
+            if ded_tipo == '99':
+                ded_detalle = deduccion['detalles']['detalle']
+                subtipo, mes = get_nombre_y_valor(ded_detalle)
                 deducciones.append(
-                        {'nombre': 'deduccion',
-                         'tipo': ded_tipo,
-                         'subtipo': subtipo,
-                         'importe': deduccion['montoTotal'],
-                         'descripcion': get_deduccion('deduccion', ded_tipo),
-                         'porc': ded_porc,
-                         'nro_doc': nro_doc,
-                         'mes': mes,
-                         }
-                    )
+                    {
+                        'nombre': 'deduccion',
+                        'tipo': ded_tipo,
+                        'subtipo': subtipo,
+                        'importe': deduccion['montoTotal'],
+                        'descripcion': get_deduccion('deduccion', ded_tipo),
+                        'porc': 0,
+                        'nro_doc': nro_doc,
+                        'mes': mes,
+                    }
+                )
                 continue
+
+            # Herramientas educativas, puede tener 2 tipos
+            if ded_tipo == '32':
+                ded_detalle = deduccion['detalles']['detalle']
+                info_to_get = ['porcentajeDedFamiliar', 'tipoGasto']
+                info_obtenida = get_list_of_values_from_list(ded_detalle, info_to_get)
+                ded_porc = info_obtenida['porcentajeDedFamiliar']
+                subtipo = info_obtenida['tipoGasto']
 
             # Si el tipo de deducción es 9 SGR, viene de esta forma el detalle
             # [{'@nombre': 'fechaAporte', '@valor': '2023-01-09'},

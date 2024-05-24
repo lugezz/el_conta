@@ -5,7 +5,7 @@ import xlsxwriter
 
 from reader.deducciones import get_deduccion
 
-DEDUCCIONES_CON_SUBINDICE = ['32']
+DEDUCCIONES_CON_SUBINDICE = ['32', '99']
 
 
 def QueryToExc(id, query):
