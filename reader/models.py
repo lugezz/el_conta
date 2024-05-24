@@ -24,6 +24,9 @@ class Registro(models.Model):
     dato1 = models.CharField(max_length=50)
     dato2 = models.CharField(max_length=50, blank=True, null=True)
     porc = models.CharField(max_length=3, blank=True, null=True)
+    nro_doc = models.CharField(max_length=20, blank=True, null=True)
+    mes = models.PositiveSmallIntegerField(blank=True, null=True)
+    presentacion_version = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self) -> str:
         return f'{self.id_reg.id} -{self.id_reg.reg_user} - {self.id_reg.fecha.strftime("%d/%m/%Y")} - {self.cuil}'

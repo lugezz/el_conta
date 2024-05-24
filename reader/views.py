@@ -1,3 +1,7 @@
+from datetime import datetime
+import os
+import zipfile
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
@@ -6,12 +10,10 @@ from pathlib import Path
 import pytz
 import shutil
 
-from . import formulas
-from .models import RegAcceso, Registro
-
-from datetime import datetime
-import os
-import zipfile
+from reader.helpers.lectores import leeXML
+from reader.helpers.register import RegistraCarpetaXML
+from reader.helpers.reporters import QueryToExc
+from reader.models import RegAcceso, Registro
 
 
 def get_carpeta(usuario):
@@ -80,7 +82,7 @@ def detalle_presentacion(request, id):
 def archivo_solo_view(request, slug):
     # TODO: Agregar validaciones de archivos
     xml_path = os.path.join(get_carpeta(request.user), slug)
-    siradig_empleado = formulas.leeXML(xml_path)
+    siradig_empleado = leeXML(xml_path)
 
     context = {
         'siradig_empleado': siradig_empleado.get_dict_all(),
@@ -92,7 +94,7 @@ def archivo_solo_view(request, slug):
 @login_required
 def procesa_view(request):
 
-    id_reg = formulas.RegistraCarpetaXML(request.user, get_carpeta(request.user))
+    id_reg = RegistraCarpetaXML(request.user, get_carpeta(request.user))
     query = Registro.objects.filter(id_reg=id_reg)
 
     siradig_temp = f"{settings.TEMP_URL}siradig/"
@@ -115,7 +117,7 @@ def no_autorizado(request):
 def procesa_hist_view(request, id=0):
 
     if id == 0:
-        id_reg = formulas.RegistraCarpetaXML(request.user, get_carpeta(request.user))
+        id_reg = RegistraCarpetaXML(request.user, get_carpeta(request.user))
         titulo = 'Procesado exitosamente'
 
     else:
@@ -128,7 +130,7 @@ def procesa_hist_view(request, id=0):
             return redirect(f"{reverse('no_autorizado')}?next={request.path}")
 
     query = Registro.objects.filter(id_reg=id_reg)
-    formulas.QueryToExc(id_reg, query)
+    QueryToExc(id_reg, query)
 
     siradig_temp = f"{settings.TEMP_URL}siradig/"
     url_to_file = os.path.join(siradig_temp, f"Presentacion_{id_reg}.xlsx")
