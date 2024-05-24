@@ -1,5 +1,6 @@
 import os
 
+from export_lsd.models import BulkCreateManager
 from reader.helpers.lectores import extended_leeXML
 from reader.models import RegAcceso, Registro
 
@@ -22,6 +23,8 @@ def RegistraCarpetaXML(usuario, full_folder):
 def add_registro_empleado(empleado, instancia_bd):
     cuit = empleado.cuit
     presentacion_version = empleado.presentacion_version
+    bulk_mgr = BulkCreateManager()
+
     # Deducciones ---------------------------------
     if empleado.deducciones:
         for deduc in empleado.deducciones:
@@ -33,7 +36,7 @@ def add_registro_empleado(empleado, instancia_bd):
             nro_doc = deduc['nro_doc']
             mes = deduc['mes'] or None
 
-            Registro.objects.create(
+            bulk_mgr.add(Registro(
                 id_reg=instancia_bd,
                 cuil=cuit,
                 deduccion=deduccion,
@@ -44,7 +47,7 @@ def add_registro_empleado(empleado, instancia_bd):
                 nro_doc=nro_doc,
                 mes=mes,
                 presentacion_version=presentacion_version,
-            )
+            ))
 
     # Cargas de Familia ---------------------------------
     if empleado.cargasFamilia:
@@ -55,7 +58,7 @@ def add_registro_empleado(empleado, instancia_bd):
             dato2 = carga_flia['hasta']
             porc = carga_flia['porc']
 
-            Registro.objects.create(
+            bulk_mgr.add(Registro(
                 id_reg=instancia_bd,
                 cuil=cuit,
                 deduccion=deduccion,
@@ -64,7 +67,7 @@ def add_registro_empleado(empleado, instancia_bd):
                 dato2=dato2,
                 porc=porc,
                 presentacion_version=presentacion_version,
-            )
+            ))
 
     # Ganancia Otros Empleadores ---------------------------------
     if empleado.ganLiqOtrosEmpEnt:
@@ -75,7 +78,7 @@ def add_registro_empleado(empleado, instancia_bd):
             dato2 = gan_oe['importe']
             porc = 0
 
-            Registro.objects.create(
+            bulk_mgr.add(Registro(
                 id_reg=instancia_bd,
                 cuil=cuit,
                 deduccion=deduccion,
@@ -84,7 +87,7 @@ def add_registro_empleado(empleado, instancia_bd):
                 dato2=dato2,
                 porc=porc,
                 presentacion_version=presentacion_version,
-            )
+            ))
 
     # Percepciones ---------------------------------
     if empleado.retPerPagos:
@@ -97,7 +100,7 @@ def add_registro_empleado(empleado, instancia_bd):
             nro_doc = percepcion['nro_doc']
             mes = percepcion['mes']
 
-            Registro.objects.create(
+            bulk_mgr.add(Registro(
                 id_reg=instancia_bd,
                 cuil=cuit,
                 deduccion=deduccion,
@@ -108,4 +111,6 @@ def add_registro_empleado(empleado, instancia_bd):
                 nro_doc=nro_doc,
                 mes=mes,
                 presentacion_version=presentacion_version,
-            )
+            ))
+    # Guardo en BD
+    bulk_mgr.done()
