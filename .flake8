@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 130
+max-complexity = 14
+exclude = migrations
+count = true
+show-source = true
+statistics = true
+
