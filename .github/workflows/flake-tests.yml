@@ -38,7 +38,7 @@ jobs:
     #     git diff --exit-code static/
           
     - name: Lint with Flake8
-      run: flake8 payroll  # usa .flake8
+      run: flake8  # usa .flake8
 
     - name: Run Tests
       run: |
