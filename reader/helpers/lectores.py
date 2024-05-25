@@ -290,6 +290,7 @@ def leeXML(xml_file):
     nro_presentacion = diccionario_base['presentacion']['nroPresentacion']
     fecha = diccionario_base['presentacion']['fechaPresentacion']
     fecha = datetime.strptime(fecha, '%Y-%m-%d')
+    deducciones = []
     cargasFamilia = []
     ganLiqOtrosEmpEnt = []
     retPerPagos = []
@@ -313,12 +314,13 @@ def leeXML(xml_file):
 
         for carga_flia in lista_familiares:
             cargasFamilia.append(
-                {'nombre': 'cargaFamilia',
-                 'tipo': carga_flia['parentesco'],
-                 'desde': carga_flia['mesDesde'],
-                 'hasta': carga_flia['mesHasta'],
-                 'porc': carga_flia['porcentajeDeduccion'],
-                 'descripcion': get_deduccion('cargaFamilia', carga_flia['parentesco'])
+                {
+                    'nombre': 'cargaFamilia',
+                    'tipo': carga_flia['parentesco'],
+                    'desde': carga_flia['mesDesde'],
+                    'hasta': carga_flia['mesHasta'],
+                    'porc': carga_flia['porcentajeDeduccion'],
+                    'descripcion': get_deduccion('cargaFamilia', carga_flia['parentesco'])
                  }
             )
 
@@ -383,6 +385,9 @@ def extended_leeXML(xml_file):
     fecha = datetime.strptime(fecha, '%Y-%m-%d')
 
     cargasFamilia = []
+    deducciones = []
+    ganLiqOtrosEmpEnt = []
+    retPerPagos = []
 
     # Info de la presentación
     deducciones_xml = diccionario_base['presentacion'].get('deducciones')
@@ -395,7 +400,7 @@ def extended_leeXML(xml_file):
             # En los casos de un solo registro no lo hace lista, lo adapto
             lista_deducciones = [lista_deducciones]
 
-    deducciones = procesar_deducciones_extended(lista_deducciones)
+        deducciones = procesar_deducciones_extended(lista_deducciones=lista_deducciones)
 
     # Tomo Cargas de Familia -----------------------------------
     if diccionario_base['presentacion'].get('cargasFamilia'):
