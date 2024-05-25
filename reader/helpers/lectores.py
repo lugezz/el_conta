@@ -327,7 +327,7 @@ def extended_leeXML(xml_file):
 
         for ganancia_OE in lista_gan_otro_emp:
             lista_ingresos = ganancia_OE['ingresosAportes']['ingAp']
-            cuit = ganancia_OE['cuit']
+            nro_doc = ganancia_OE['cuit']
 
             if not isinstance(lista_ingresos, list):
                 # Cuando hay un solo registro no lo hace lista, lo adapto
@@ -335,13 +335,14 @@ def extended_leeXML(xml_file):
 
             for ganancia_mes_OE in lista_ingresos:
                 for item in ganancia_mes_OE:
-
+                    mes = ganancia_mes_OE.get('@mes', 0)
                     if ganancia_mes_OE[item] != '0' and item != '@mes':
                         ganLiqOtrosEmpEnt.append(
                             {'nombre': 'ganLiqOtrosEmpEnt',
                              'tipo': item,
                              'importe': ganancia_mes_OE[item],
-                             'cuit': cuit,
+                             'nro_doc': nro_doc,
+                             'mes': mes,
                              }
                         )
     # Tomo Percepciones -----------------------------------

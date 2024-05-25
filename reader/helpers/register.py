@@ -77,6 +77,8 @@ def add_registro_empleado(empleado, instancia_bd):
             dato1 = 0
             dato2 = gan_oe['importe']
             porc = 0
+            mes = gan_oe['mes']
+            nro_doc = gan_oe['nro_doc']
 
             bulk_mgr.add(Registro(
                 id_reg=instancia_bd,
@@ -87,6 +89,8 @@ def add_registro_empleado(empleado, instancia_bd):
                 dato2=dato2,
                 porc=porc,
                 presentacion_version=presentacion_version,
+                nro_doc=nro_doc,
+                mes=mes,
             ))
 
     # Percepciones ---------------------------------
