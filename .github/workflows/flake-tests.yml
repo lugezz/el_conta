@@ -38,8 +38,8 @@ jobs:
     #     git diff --exit-code static/
           
     - name: Lint with Flake8
-      run: |
-        flake8 --count --show-source --max-complexity=10 --max-line-length=130 --statistics --ignore=C901,F811
+      run: flake8 payroll  # usa .flake8
+
     - name: Run Tests
       run: |
         python manage.py test
