@@ -17,6 +17,7 @@ DEDUCCIONES = {'deduccion': {
     '32': 'Herramientas educativas - Servicios con fines educativos',
     '32-1': 'Servicios con fines educativos',
     '32-2': 'Herramientas educativas',
+    '33': 'Deducción Alquiler Art. 85 inc. k)',
     '99-1': 'Aportes para fondos de Jubilación, Retiros, Pensiones',
     '99-2': 'Cajas Provinciales o Municipales',
     '99-3': 'Impuesto sobre los Créditos y Débitos en Cuenta Bancaria',
