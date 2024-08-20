@@ -2,8 +2,7 @@
 {% block title %}{% block list_title %}{% endblock list_title %}{% endblock title %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'lib/datatables-1.11.3/css/dataTables.bootstrap5.min.css' %}" />
-<link rel="stylesheet" href="{% static 'lib/datatables-1.11.3/responsive-2.2.9/css/responsive.bootstrap5.min.css' %}" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.css" />
 {% block head_list %} {% endblock %} {% endblock %}
 {% block content %}
 {% block messages %}
@@ -39,10 +38,8 @@
 {% endblock %}
 
 {% block footer_js %}
-    <script src="{% static 'lib/datatables-1.11.3/js/jquery.dataTables.js' %}"></script>
-    <script src="{% static 'lib/datatables-1.11.3/js/dataTables.bootstrap5.min.js' %}"></script>
-    <script src="{% static 'lib/datatables-1.11.3/responsive-2.2.9/js/dataTables.responsive.js' %}"></script>
-    <script src="{% static 'lib/datatables-1.11.3/responsive-2.2.9/js/responsive.bootstrap5.min.js' %}"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
     {% block javascript %}
     {% endblock %}
 {% endblock %}
