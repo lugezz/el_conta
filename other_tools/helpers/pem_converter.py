@@ -1,11 +1,15 @@
 import base64
 import datetime
+import logging
 import re
 import string
 
 import xmltodict
 
 from other_tools.helpers.base_tools import dictionary_to_excel
+
+
+logger = logging.getLogger(__name__)
 
 
 string_to_remove = [
@@ -109,14 +113,12 @@ def get_cierresZ_dict(cierresz_list: list) -> dict:
         fecha = datetime.datetime.strptime(fecha, '%Y-%m-%dT%H:%M:%S')
         this_cierreZ = cierreZ.get('cierreZ', {})
         if not this_cierreZ:
-            print("No hay cierreZ")
-            print("---", cierreZ, "----")
+            logger.error("No hay cierreZ", cierreZ)
             continue
 
         info_comprobante_base = this_cierreZ.get('arrayConjuntosComprobantesFiscales', {})
         if not info_comprobante_base:
-            print("No hay info_comprobante_base")
-            print("---", this_cierreZ, "----")
+            logger.error("No hay info_comprobante_base", this_cierreZ)
             continue
 
         info_comprobante = info_comprobante_base.get('conjuntoComprobantesFiscales', {})
@@ -146,7 +148,7 @@ def get_cierresZ_dict(cierresz_list: list) -> dict:
             elif this_porcentaje == '10.50':
                 iva105 += float(subtotal_iva.get('importe'))
             else:
-                print("Porcentaje de IVA no reconocido:", this_porcentaje)
+                logger.info("Porcentaje de IVA no reconocido:", this_porcentaje)
 
         otros_tributos = info_comprobante.get('arrayOtrosTributos')
         otros_tributos = otros_tributos or 0

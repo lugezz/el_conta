@@ -22,38 +22,30 @@
                 <div class="card top-selling overflow-auto">
                     <div class="card-body pb-0">
                     <h5 class="card-title text-center">Resultados de Importación</h5>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th class="text-center" scope="col" style="width: 10%">Leg</th>
-                            <th class="text-center" scope="col" style="width: 30%">Nombre</th>
-                            <th class="text-center" scope="col" style="width: 10%">CUIL</th>
-                            <th class="text-center" scope="col" style="width: 35%">Div. Pers.</th>
-                            <th class="text-center" scope="col" style="width: 15%">Alta</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% if results_empleados.results_data %}
-                              {% for result in results_empleados.results_data %}
-                                <tr>
-                                    <td class="text-center small">{{ result.principal.info_data.legajo }}</td>
-                                    <td class="text-center small">
-                                        {{ result.principal.info_data.last_name }},
-                                        {{ result.principal.info_data.first_name }}
-                                    </td>
-                                    <td class="text-center small">{{ result.principal.info_data.cuil }}</td>
-                                    <td class="text-center small">
-                                        {{ result.asignacion_organizativa.info_data.division_personal }}
-                                    </td>
-                                    <td class="text-center small">
-                                        {{ result.principal.info_data.fecha_ingreso|date:"d/m/Y" }}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            {% endif %}    
-                            </tr>
-                        </tbody>
-                    </table>
+                        {% if result_import.sumary %}
+                            <div class="card" style="width: 100%;">
+                                <div class="card-body">
+                                <h5 class="card-title">Resumen Archivo</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ result_import.sumary.nombre_fantasia }}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ result_import.sumary.razon_social }}</h6>
+                                <p class="card-text">Período {{ result_import.sumary.desde }} al {{ result_import.sumary.hasta }}
+                                </p>
+                                <p class="card-text"><b>Cantidad Comprobantes:</b> {{ result_import.sumary.cantidad_comprobantes }}</p>
+                                <p class="card-text"><b>Total Gravado:</b> $ {{ result_import.sumary.total_gravado }}</p>
+                                <p class="card-text"><b>Total No Gravado:</b> $ {{ result_import.sumary.total_no_gravado }}</p>
+                                <p class="card-text"><b>Total Exento:</b> $ {{ result_import.sumary.total_exento }}</p>
+                                </div>
+                            </div>
+                            <div class="container my-3 text-center">
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="has_confirmation" value="Yes">
+                                    <button class="btn btn-primary btn-flat btnTest">
+                                        <i class="fa-solid fa-file-import"></i> Confirmar Importación
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}    
                     </div>
                     {% if results_empleados.results_data %}
                     <div class="container my-3 text-center">

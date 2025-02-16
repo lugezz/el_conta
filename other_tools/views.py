@@ -4,6 +4,7 @@ import tempfile
 
 from django.conf import settings
 from django.contrib import messages
+from django.http import FileResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
@@ -29,6 +30,7 @@ def import_pem(request):
         'error': '',
         'results_data': '',
         'invalid_data': '',
+        'sumary': {},
     }
     context = {
         'result_import': result_import,
@@ -42,13 +44,15 @@ def import_pem(request):
             data = request.session['all_data']
             datetime_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             file_name = f"descarga_pem_{datetime_str}.xlsx"
-            file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+            file_path = os.path.join(settings.PATH_IMPORT_8011, file_name)
 
             dict_xml_to_excel(dict_xml=data, output_path=file_path)
-
             messages.success(request, 'Archivo importado correctamente')
 
-            return redirect(redirect_url)
+            response = FileResponse(open(file_path, 'rb'), as_attachment=True, filename=file_name)
+            # Elimino el archivo
+            os.remove(file_path)
+            return response
 
         else:
             try:
@@ -68,6 +72,29 @@ def import_pem(request):
             if error:
                 messages.error(request, error)
                 return redirect(redirect_url)
+
+            base_dict = result_import.get('tns:auditoria', {})
+            emisor = base_dict.get('emisor', {})
+            comprobantes = base_dict.get('arrayComprobantesAuditoria', []).get('comprobanteAuditoria', {})
+            rango = comprobantes.get('rangoSolicitado', {})
+            cantidad_comprobantes = comprobantes.get('cantidadComprobantesFiscales', 0)
+            total_gravado = comprobantes.get('totalGravadoComprobantesFiscales', 0)
+            total_no_gravado = comprobantes.get('totalNoGravadoComprobantesFiscales', 0)
+            total_exento = comprobantes.get('totalExentoComprobantesFiscales', 0)
+
+            summary = {
+                'nombre_fantasia': emisor.get('nombreFantasiaEmisor', ''),
+                'razon_social': emisor.get('razonSocialEmisor', ''),
+                'cuit': emisor.get('cuitEmisor', ''),
+                'punto_venta': emisor.get('numeroPuntoVenta', ''),
+                'desde': rango.get('fechaZDesde', ''),
+                'hasta': rango.get('fechaZHasta', ''),
+                'cantidad_comprobantes': cantidad_comprobantes,
+                'total_gravado': total_gravado,
+                'total_no_gravado': total_no_gravado,
+                'total_exento': total_exento,
+            }
+            result_import['sumary'] = summary
 
             request.session['all_data'] = result_import
 
