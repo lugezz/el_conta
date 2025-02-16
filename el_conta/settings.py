@@ -206,3 +206,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+
+PATH_IMPORT_8011 = BASE_DIR / 'temp' / '8011'

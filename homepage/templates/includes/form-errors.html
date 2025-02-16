@@ -1,0 +1,19 @@
+{% if form.errors %}
+<div class="alert alert-danger alert-dismissible fade show pb-0">
+    <ul>
+        {% for field in form %}
+            {% if field.errors %}
+            <li>
+                <b>{{ field.label }}</b>: {{ field.errors|join:", " }}
+            </li>
+            {% endif %}
+        {% endfor %}
+        {% if form.non_field_errors %}
+        <li>
+            <b>{{ form.non_field_errors|join:", " }}</b>
+        </li>
+        {% endif %}
+    </ul>
+    <button type="button" class="btn-close align-bottom" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}

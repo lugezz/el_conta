@@ -1,0 +1,128 @@
+h1 {
+    margin: 2px 20px;
+}
+
+.payroll-form {
+    width: 100%;
+    display: grid;
+}
+
+.payroll-sub-form {
+    background-color: #d0d0d0;
+    border-radius: 7px;
+}
+
+/* mobile */
+@media (max-width: 576px) {
+    .payroll-form {
+        margin: 4px;
+        padding: 4px;
+    }
+}
+
+@media (min-width: 576px) {
+    .payroll-form {
+        margin: 20px;
+        padding: 20px;
+    }
+}
+
+.payroll-form fieldset {
+    margin: 3px;
+    padding: 4px;
+    display: block;
+}
+
+/* Si es muy grande, usar los laterales */
+@media (min-width: 1000px) {
+    .payroll-form fieldset {
+        width: 48%;
+        float: left;
+    }
+}
+
+@media (min-width: 1400px) {
+    .payroll-form fieldset {
+        width: 31%;
+        float: left;
+    }
+}
+
+.payroll-form .payroll-form-div-field {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.payroll-form label {
+    margin-bottom: 2px;
+    display: inline-flex;
+}
+
+.payroll-form .helptext {
+    color: #363535;
+    font-size: 12px;
+    display: flex;
+}
+
+.payroll-form textarea {
+    max-height: 90px;
+}
+
+.payroll-form-action-buttons {
+    margin-top: 15px;
+    width: 100%;
+    display: block;
+}
+
+.payroll-form-fields {
+    width: 100%;
+    display: block;
+}
+
+.payroll-form-fields2 {
+    width: 70%;
+    display: block;
+}
+
+.actividad-secundaria-subform fieldset fieldset {
+    width: 100% !important;
+}
+
+.actividad-secundaria-subform {
+    width: 100%;
+    display: block;
+}
+
+/* clase de errores de los campos en django forms */
+ul.errorlist li {
+    color: #460b0b;
+    background-color: #f0d4d4;
+    font-weight: bold;
+    padding: 5px;
+    margin: 3px;
+}
+
+.payroll-form-narrow {
+    /* formulario mas angosto y centrado al medio */
+    width: 70%;
+    margin: 30px auto;
+    display: grid;
+}
+
+
+/* Por casos de campos custom en forms salen los label diferentes de los inputs */
+form label {
+    font-size: 1rem;
+}
+
+/* No estaría funcionando */
+form datalist option {
+    font-size: 1rem;
+}
+
+.pre-form-box {
+    border: 1px solid #a7a5a5;
+    background-color: #ebe9e9;
+    margin: 3px;
+    padding: 20px 8px;
+}
