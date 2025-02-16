@@ -11,6 +11,7 @@ urlpatterns = [
     path('', include('homepage.urls')),
     path('admin/', admin.site.urls),
     path('export-lsd/', include('export_lsd.urls', namespace='export_lsd')),
+    path('other-tools/', include('other_tools.urls')),
     path('login/', include('login.urls')),
     path('siradig/', include('reader.urls')),
     path('users/', include('users.urls')),

@@ -44,21 +44,21 @@
                 </div>
             </div>
             
-            <!-- F.1357 -->
+            <!-- F.1359 -->
             <div class="card">
-                <a href="#"><img src="{% static 'homepage/images/f1357.png' %}" class="card-img-top" alt="f1357"></a>
+                <a href="#"><img src="{% static 'homepage/images/f1359.png' %}" class="card-img-top" alt="f1357"></a>
                 <div class="card-body">
-                    <a href="#"><h5 class="card-title text-center">Generador txt F.1357</h5></a>
+                    <a href="#"><h5 class="card-title text-center">Generador txt F.1359</h5></a>
                     <p class="card-text text-muted">En construcción</p>
                 </div>
             </div>
             
             <!-- Cálculo Ganancias -->
             <div class="card">
-                <a href="#"><img src="{% static 'homepage/images/ganancias.png' %}" class="card-img-top" alt="f1357"></a>
+                <a href="{% url 'pem-a-excel' %}"><img src="{% static 'homepage/images/controlador_fiscal.png' %}" class="card-img-top" alt="f1357"></a>
                 <div class="card-body">
-                    <a href="#"><h5 class="card-title text-center">Cálculo Ganancias</h5></a>
-                    <p class="card-text text-muted">En construcción</p>
+                    <a href="{% url 'pem-a-excel' %}"><h5 class="card-title text-center">Controlador Fiscal a excel</h5></a>
+                    <p class="card-text text-muted">Convertir archivos de controladores fiscales .pem (8011) a excel.</p>
                 </div>
             </div>
         </div>

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'homepage',
     'login',
     'export_lsd',
+    'other_tools',
     'reader',
     'users.apps.UserConfig',
 ]
@@ -205,3 +206,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+
+PATH_IMPORT_8011 = BASE_DIR / 'temp' / '8011'

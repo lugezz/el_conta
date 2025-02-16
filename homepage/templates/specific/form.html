@@ -1,0 +1,111 @@
+{% extends "base-form.html" %}
+{% load static %}
+
+{% block extra_head %}
+<!-- Add datepicker.js JavaScript and CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" integrity="sha512-34s5cpvaNG3BknEWSuOncX28vz97bRI59UnVtEEpFX536A7BtZSJHsDyFoCl8S7Dt2TPzcrCEoHBGeM4SUBDBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js" integrity="sha512-LsnSViqQyaXpD4mBBdRYeP6sRwJiJveh2ZIbW41EBrNmKxgr/LFZIiWT6yr+nycvhvauz8c2nYMhrP80YhG7Cw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{{ block.super }}
+{% endblock extra_head %}
+
+{% block site_title %}
+    {{ title }}{% if extra_title %} - {{ extra_title }}{% endif %}
+{% endblock site_title%}
+
+{% block site_content %}
+
+<div class="container my-3">
+    <div class="row">
+        <div class="col-12 col-md-8">
+        <h5 class="text-center mb-5">
+            {{ title }}{% if extra_title %} - {{ extra_title }}{% endif %}
+        </h5>
+        </div>
+        <div class="col-12 col-md-4">
+            {% if show_empleado_registro_gestion_status and empleado %}
+            {% comment %}
+            Para los casos donde valga la pena, mostrar el badge de registro de gestion
+            {% endcomment %}
+                {% include 'empleados/registro-gestion-badge.html' with empleado=empleado %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+
+        {% block pre_form %}
+        {% endblock pre_form %}
+
+        <form method="POST" class="mb-3">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group mt-1 {% if '!' in field.label %}bg-danger text-white{% endif %}">
+                {% if field.label %}
+                    <label for="{{ field.id_for_label }}" class="form-label fs-6 fw-medium">{{ field.label }}</label>
+                {% endif %}
+                {{ field }}
+            </div>
+        {% endfor %}
+            <br>
+            <div class="payroll-form-action-buttons text-center">
+                <a
+                    class="btn btn-secondary mx-3 mt-2 .btn-lg"
+                    href="{{ url_list }}{% if request.GET.page %}?q=&page={{ request.GET.page }}{% endif %}"
+                >
+                    Volver
+                </a>
+                <button class="btn btn-primary mt-2">
+                    {% if edit %}
+                        Actualizar {{ registro }}
+                    {% else %}
+                        Crear {{ registro }}
+                    {% endif %}
+                </button>
+                {% if button_to_add %}
+                    <a
+                        href="{{ button_to_add.url }}"
+                        class="{{ button_to_add.class }}"
+                    >
+                        <i class="{{ button_to_add.icon }}"></i>
+                        {{ button_to_add.text }}
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+    
+{% endblock site_content %}
+
+{% block extra_footer_scripts_before %}
+<script>
+    // No sé por qué, pero necesita que esté antes
+    // Initialize the datepicker after the document is ready
+    $(document).ready(function() {
+        // Initialize the datepicker if there is one
+        $('#datepicker-1').datepicker({
+            format: 'dd/mm/yyyy',
+            autoHide: true,
+            // orientation: "bottom left",
+            // offset: 30  // Adjust this value as needed to move the datepicker down
+          });
+        $('#datepicker-2').datepicker({
+            format: 'dd/mm/yyyy',
+            autoHide: true,
+            // orientation: "bottom left",
+            // offset: 30  // Adjust this value as needed to move the datepicker down
+        });
+        $('#datepicker-3').datepicker({
+            format: 'dd/mm/yyyy',
+            autoHide: true,
+            // orientation: "bottom left",
+            // offset: 30  // Adjust this value as needed to move the datepicker down
+        });
+        // If #id_periodo and context['default_periodo'] both exists, then set the value of #id_periodo to context['default_periodo']
+        {% if default_periodo %}
+            $('#id_periodo').val('{{ default_periodo }}');
+        {% endif %}
+    });
+</script>
+
+{% endblock extra_footer_scripts_before %}

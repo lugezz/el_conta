@@ -37,7 +37,7 @@ def validate_cbu(value):
 def validate_name(value):
     """ Validar que el nombre no tenga caracteres raros.
         Devolver None si no hay cambios o el nuevo nombre si aceptamos el cambio. """
-    if type(value) != str or not value:
+    if not value or not isinstance(value, str):
         raise NameValidationException('El nombre debe ser una cadena de texto')
     if len(value) > 120:
         raise NameValidationException('El nombre es demasiado largo')

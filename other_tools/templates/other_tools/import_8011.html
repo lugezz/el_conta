@@ -1,0 +1,106 @@
+{% extends "specific/form.html" %}
+{% load static %}
+
+{% block title %} Importador archivos Controlador Fiscal {% endblock title%}
+{% block content %}
+
+    <form method="post" enctype="multipart/form-data" class="mb-3">  
+        {% csrf_token %}
+        <div class="container">
+            <p>Seleccione el archivo de importación</p>
+            <div class="input-group mb-1" style="width: 58.33%;">
+                <input class="form-control" type="file" id="formFile" name="file_pem" width="50%" accept=".pem">
+                <button type="submit" class="button_submit input-group-text">Subir</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Resultados correctos -->
+    <div class="container my-3">
+        <div class="row">
+            <div class="col-7">
+                <div class="card top-selling overflow-auto">
+                    <div class="card-body pb-0">
+                    <h5 class="card-title text-center">Resultados de Importación</h5>
+                        {% if result_import.sumary %}
+                            <div class="card" style="width: 100%;">
+                                <div class="card-body">
+                                <h5 class="card-title">Resumen Archivo</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ result_import.sumary.nombre_fantasia }}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ result_import.sumary.razon_social }}</h6>
+                                <p class="card-text">Período {{ result_import.sumary.desde }} al {{ result_import.sumary.hasta }}
+                                </p>
+                                <p class="card-text"><b>Cantidad Comprobantes:</b> {{ result_import.sumary.cantidad_comprobantes }}</p>
+                                <p class="card-text"><b>Total Gravado:</b> $ {{ result_import.sumary.total_gravado }}</p>
+                                <p class="card-text"><b>Total No Gravado:</b> $ {{ result_import.sumary.total_no_gravado }}</p>
+                                <p class="card-text"><b>Total Exento:</b> $ {{ result_import.sumary.total_exento }}</p>
+                                </div>
+                            </div>
+                            <div class="container my-3 text-center">
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="has_confirmation" value="Yes">
+                                    <button class="btn btn-primary btn-flat btnTest">
+                                        <i class="fa-solid fa-file-import"></i> Confirmar Importación
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}    
+                    </div>
+                    {% if results_empleados.results_data %}
+                    <div class="container my-3 text-center">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="has_confirmation" value="Yes">
+                            <button class="btn btn-primary btn-flat btnTest">
+                                <i class="fa-solid fa-file-import"></i> Confirmar Importación
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+            </div><!-- End Resultados ok -->
+            <!-- Resultados incorrectos -->
+            <div class="col-5"> 
+                {% if results_empleados.invalid_data %}
+                <div class="card top-selling overflow-auto">
+                    <h5 class="card-title text-center">Errores en el proceso de Importación</h5>
+                        <ul class="list-group list-group-flush">
+                            {% for data in results_empleados.invalid_data %}
+                            <li class="list-group-item text-center text-info"><small>{{ data }}</small></li>
+                            {% endfor %}
+                        </ul>
+                </div>
+                {% endif %}
+            </div><!-- Resultados incorrectos -->
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block extra_footer_scripts_before %}
+    <script>
+        {% if error %}
+            var errors = "{{ error|safe }}";
+            Swal.fire({
+                title: 'Error!',
+                text: errors,
+                icon: 'error'
+            });
+        {% endif %}
+
+    $(document).ready(
+    function(){
+        $('.button_submit').attr('disabled',true);
+        $('input:file').change(
+            function(){
+                if ($(this).val()){
+                    $('.button_submit').removeAttr('disabled'); 
+                }
+                else {
+                    $('.button_submit').attr('disabled',true);
+                }
+            });
+    });
+    </script>
+{% endblock %}
