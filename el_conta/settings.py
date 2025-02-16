@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'homepage',
     'login',
     'export_lsd',
+    'other_tools',
     'reader',
     'users.apps.UserConfig',
 ]
