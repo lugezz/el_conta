@@ -181,18 +181,37 @@ def get_cierresZ_dict(cierresz_list: list) -> dict:
     return cierresZ_dict, format_headers
 
 
-def convert_pem_a_excel(file_path, output_path):
-    """ Toma el archivo pem, extrae el XML y lo convierte en un archivo Excel
+def pem_to_dict(file_path) -> dict:
+    """ Toma el archivo pem y extrae el XML
+        Retorna toda la información en formato diccionario
     """
     # Ejecutar la función
-    archivo_prueba = "templates/F8011.27333878459.HSHSAC0000025202.20250131.E37CB998-36E6-4A1D-8E07-1F92A0E56899.pem"
-    decoded_xml = extract_xml_from_cms(archivo_prueba)
+    decoded_xml = extract_xml_from_cms(file_path)
     # Write the decoded xml to a file
     dict_xml = xml_to_dict(decoded_xml)
-    # Ver el contenido extraído
+
+    return dict_xml
+
+
+def dict_xml_to_excel(dict_xml, output_path):
+    """ Toma el diccionario con el XML y lo convierte en un archivo Excel
+    """
     cierresZ = get_cierresZ_list(dict_xml)
     cierresZ_dict, format_headers = get_cierresZ_dict(cierresZ)
 
     final_excel = dictionary_to_excel(cierresZ_dict, output_path, columns_format=format_headers)
+
+    return final_excel
+
+
+def convert_pem_a_excel(file_path, output_path):
+    """ Toma el archivo pem, extrae el XML y lo convierte en un archivo Excel
+    """
+    # Convierte el archivo PEM a un diccionario de Python
+    # Se dividió a fines de poder dar una vista previa de resultados antes de descargar
+    dict_xml = pem_to_dict(file_path)
+
+    # Convierte el diccionario a un archivo Excel
+    final_excel = dict_xml_to_excel(dict_xml, output_path)
 
     return final_excel
