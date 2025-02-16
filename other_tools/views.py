@@ -47,7 +47,6 @@ def import_pem(request):
             file_path = os.path.join(settings.PATH_IMPORT_8011, file_name)
 
             dict_xml_to_excel(dict_xml=data, output_path=file_path)
-            messages.success(request, 'Archivo importado correctamente')
 
             response = FileResponse(open(file_path, 'rb'), as_attachment=True, filename=file_name)
             # Elimino el archivo
