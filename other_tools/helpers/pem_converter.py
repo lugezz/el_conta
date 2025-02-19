@@ -12,11 +12,12 @@ from other_tools.helpers.base_tools import dictionary_to_excel
 logger = logging.getLogger(__name__)
 
 
-string_to_remove = [
+string_to_change = [
     ('\n', ''),
     ('\r', ''),
     ('@', ''),
     ('/Rporc', '/porc'),
+    ('cantidaduBloqueos', 'cantidadBloqueos'),
 ]
 
 
@@ -42,12 +43,20 @@ def extract_xml_from_cms(pem_file_path):
         raise ValueError("No se encontró el final del contenido XML en el archivo CMS")
 
     xml_content = cms_bytes[xml_start:xml_end]
-    decoded_xml = xml_content.decode('utf-8', errors='ignore')
+
+    # Get encoding from XML
+    xml_encoding = re.search(rb"encoding=\"(.*?)\"", xml_content)
+    encoding_to_use = 'utf-8'
+    if xml_encoding:
+        encoding_to_use = xml_encoding.group(1).decode()
+
+    # decoded_xml = xml_content.decode('utf-8', errors='ignore')
+    decoded_xml = xml_content.decode(encoding_to_use, errors='ignore')
 
     # Filter out non-printable characters
     cleaned_string = ''.join(char for char in decoded_xml if char in string.printable)
 
-    for char in string_to_remove:
+    for char in string_to_change:
         cleaned_string = cleaned_string.replace(char[0], char[1])
 
     return cleaned_string
