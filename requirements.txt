@@ -1,4 +1,4 @@
-Django==5.1.6
+Django==5.1.7
 django-crum==0.7.9
 django-widget-tweaks==1.5.0
 et-xmlfile==2.0.0
