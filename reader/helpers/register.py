@@ -2,6 +2,7 @@ import os
 
 from export_lsd.models import BulkCreateManager
 from reader.helpers.lectores import extended_leeXML
+from reader.helpers.tools import no_exceed_length
 from reader.models import RegAcceso, Registro
 
 
@@ -36,6 +37,10 @@ def add_registro_empleado(empleado, instancia_bd):
             nro_doc = deduc['nro_doc']
             mes = deduc['mes'] or None
 
+            # Me aseguro longitud de dato1 y dato2
+            dato1 = no_exceed_length(dato1, 50)
+            dato2 = no_exceed_length(dato2, 50)
+
             bulk_mgr.add(Registro(
                 id_reg=instancia_bd,
                 cuil=cuit,
@@ -58,6 +63,10 @@ def add_registro_empleado(empleado, instancia_bd):
             dato2 = carga_flia['hasta']
             porc = carga_flia['porc']
 
+            # Me aseguro longitud de dato1 y dato2
+            dato1 = no_exceed_length(dato1, 50)
+            dato2 = no_exceed_length(dato2, 50)
+
             bulk_mgr.add(Registro(
                 id_reg=instancia_bd,
                 cuil=cuit,
@@ -79,6 +88,10 @@ def add_registro_empleado(empleado, instancia_bd):
             porc = 0
             mes = gan_oe['mes']
             nro_doc = gan_oe['nro_doc']
+
+            # Me aseguro longitud de dato1 y dato2
+            dato1 = no_exceed_length(dato1, 50)
+            dato2 = no_exceed_length(dato2, 50)
 
             bulk_mgr.add(Registro(
                 id_reg=instancia_bd,
@@ -103,6 +116,10 @@ def add_registro_empleado(empleado, instancia_bd):
             porc = 0
             nro_doc = percepcion['nro_doc']
             mes = percepcion['mes']
+
+            # Me aseguro longitud de dato1 y dato2
+            dato1 = no_exceed_length(dato1, 50)
+            dato2 = no_exceed_length(dato2, 50)
 
             bulk_mgr.add(Registro(
                 id_reg=instancia_bd,

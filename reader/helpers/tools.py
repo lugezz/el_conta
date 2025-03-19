@@ -52,3 +52,12 @@ def is_numeric(value: str, check_integer: bool = False) -> bool:
         return False
     except TypeError:
         return False
+
+
+def no_exceed_length(value, max_len: int) -> str:
+    """ Devuelve el valor truncado si supera el max_len
+    """
+    str_value = str(value)
+    if len(str_value) > max_len:
+        return str_value[:max_len]
+    return value
