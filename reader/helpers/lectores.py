@@ -1,10 +1,14 @@
 from datetime import datetime
+import logging
 import xmltodict
 
 import xml.etree.ElementTree as ET
 
 from reader.deducciones import get_deduccion
 from reader.helpers.tools import get_nombre_y_valor, get_list_of_values_from_list, get_value_from_list
+
+
+logger = logging.getLogger(__name__)
 
 
 class EmpleadoSiradig:
@@ -44,7 +48,6 @@ def procesar_deducciones_extended(lista_deducciones: list) -> list:
         retorna una lista de diccionarios con la información de las deducciones
     """
     deducciones = []
-
     for deduccion in lista_deducciones:
         subtipo = 0
         ded_porc = 0
@@ -52,7 +55,7 @@ def procesar_deducciones_extended(lista_deducciones: list) -> list:
             subtipo = deduccion['detalles']['detalle'][0]['@valor']
 
         ded_tipo = deduccion['@tipo']
-        nro_doc = deduccion['nroDoc']
+        nro_doc = deduccion.get('nroDoc', 0)
 
         # Herramientas educativas, puede tener 2 tipos
         # Otras deducciones, puede tener 9 tipos
@@ -118,9 +121,33 @@ def procesar_deducciones_extended(lista_deducciones: list) -> list:
             )
             continue
 
+        if ded_tipo == '10':
+            subtipo = 0
+            ded_detalle = deduccion['detalles']['detalle']
+            ded_porc = deduccion.get('porcAfect', '0')
+            # Informo siempre 1
+            mes = 1
+
+            desc_basica = deduccion.get('descBasica', '')
+
+            deducciones.append(
+                {
+                    'nombre': 'deduccion',
+                    'tipo': ded_tipo,
+                    'subtipo': subtipo,
+                    'importe': deduccion['montoTotal'],
+                    'descripcion': get_deduccion('deduccion', ded_tipo) + desc_basica,
+                    'porc': ded_porc,
+                    'nro_doc': nro_doc,
+                    'mes': mes,
+                }
+            )
+            continue
+
         # En este lee extended, se toma el detalle de las deducciones periodo por periodo
         # Para todas las deducciones que no sean 32, 99 y 9
-        periodos = deduccion['periodos']['periodo']
+        periodos_dict = deduccion.get('periodos', {})
+        periodos = periodos_dict.get('periodo')
 
         # Si hay un solo periodo no lo hace lista, lo adapto
         if not isinstance(periodos, list):
@@ -156,8 +183,12 @@ def procesas_percepciones_extended(lista_percepciones: list) -> list:
 
     for percepcion in lista_percepciones:
         # En este lee extended, se toma el detalle de las deducciones periodo por periodo
-        periodos = percepcion['periodos']['periodo']
-        nro_doc = percepcion['nroDoc']
+        periodos_dict = percepcion.get('periodos', {})
+        if not periodos_dict:
+            logger.warning(f'No hay periodos para la percepción {percepcion}')
+            continue
+        periodos = periodos_dict['periodo']
+        nro_doc = percepcion.get('nroDoc', 0)
         perc_tipo = percepcion['@tipo']
 
         # Si hay un solo periodo no lo hace lista, lo adapto
@@ -190,8 +221,12 @@ def procesa_ganancias_otros_emp_ent(lista_gan_otro_emp: list) -> list:
     """
     ganLiqOtrosEmpEnt = []
     for ganancia_OE in lista_gan_otro_emp:
-        lista_ingresos = ganancia_OE['ingresosAportes']['ingAp']
+        ingresos_aportes_dict = ganancia_OE.get('ingresosAportes', {})
         nro_doc = ganancia_OE['cuit']
+        if not ingresos_aportes_dict:
+            logger.warning(f'No hay ingresosAportes para el CUIT {nro_doc}')
+            continue
+        lista_ingresos = ingresos_aportes_dict.get('ingAp', [])
 
         if not isinstance(lista_ingresos, list):
             # Cuando hay un solo registro no lo hace lista, lo adapto

@@ -37,3 +37,18 @@ def get_list_of_values_from_list(list_of_values: list, value_list: list) -> dict
         resp[value] = get_value_from_list(list_of_values, value)
 
     return resp
+
+
+def is_numeric(value: str, check_integer: bool = False) -> bool:
+    """ Devuelve True si el valor es numérico, False en caso contrario
+    """
+    try:
+        if check_integer:
+            int(value)
+        else:
+            float(value)
+        return True
+    except ValueError:
+        return False
+    except TypeError:
+        return False

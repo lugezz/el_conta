@@ -4,6 +4,7 @@ from django.conf import settings
 import xlsxwriter
 
 from reader.deducciones import get_deduccion
+from reader.helpers.tools import is_numeric
 
 DEDUCCIONES_CON_SUBINDICE = ['32', '99']
 
@@ -73,9 +74,15 @@ def QueryToExc(id, query):
         worksheet.write_number(row, 6, int(val_item), center_format)
 
         if item.deduccion == 'cargaFamilia':
-            worksheet.write_number(row, 7, int(item.dato2), center_format)
+            if not is_numeric(item.dato2):
+                worksheet.write(row, 7, item.dato2, no_format)
+            else:
+                worksheet.write_number(row, 7, int(item.dato2), center_format)
         else:
-            worksheet.write_number(row, 7, float(item.dato2), money)
+            if not is_numeric(item.dato2):
+                worksheet.write(row, 7, item.dato2, no_format)
+            else:
+                worksheet.write_number(row, 7, float(item.dato2), money)
 
         val_item = 0 if not item.porc else float(item.porc)
         worksheet.write_number(row, 8, val_item, center_format)
