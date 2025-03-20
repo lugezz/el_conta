@@ -63,7 +63,7 @@ def get_deduccion(tipo: str, indice: str, subindice: str = ''):
     if DEDUCCIONES.get(tipo):
         resp = DEDUCCIONES[tipo].get(this_indice)
 
-    if tipo.lower() == "ganliqotrosempent":
-        resp = f"{tipo} - {this_indice}"
+    if tipo.lower()[:10] == "ganliqotro":
+        resp = f"Gan.Otro Empleador - {this_indice}"
 
     return resp

@@ -233,19 +233,24 @@ def procesa_ganancias_otros_emp_ent(lista_gan_otro_emp: list) -> list:
             lista_ingresos = [lista_ingresos]
 
         for ganancia_mes_OE in lista_ingresos:
-            for item in ganancia_mes_OE:
-                mes = ganancia_mes_OE.get('@mes', 0)
-                if ganancia_mes_OE[item] != '0' and item != '@mes':
-                    ganLiqOtrosEmpEnt.append(
-                        {
-                            'nombre': 'ganLiqOtrosEmpEnt',
-                            'tipo': item,
-                            'importe': ganancia_mes_OE[item],
-                            'nro_doc': nro_doc,
-                            'mes': mes,
-                        }
-                    )
+            regimen = ganancia_mes_OE.get('@regimen', '')
+            mes = ganancia_mes_OE.get('@mes', 0)
+            for item, value in ganancia_mes_OE.items():
+                if value == '0' or item in ['@mes', '@regimen', 'bonosProdDetalle']:
+                    continue
 
+                this_nombre = 'ganLiqOtrosEmpEnt'
+                if regimen:
+                    this_nombre = f'{this_nombre} (Reg: {regimen})'
+                ganLiqOtrosEmpEnt.append(
+                    {
+                        'nombre': this_nombre,
+                        'tipo': item,
+                        'importe': value,
+                        'nro_doc': nro_doc,
+                        'mes': mes,
+                    }
+                )
     return ganLiqOtrosEmpEnt
 
 

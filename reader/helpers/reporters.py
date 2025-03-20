@@ -64,8 +64,13 @@ def QueryToExc(id, query):
         if item.deduccion == 'ganLiqOtrosEmpEnt':
             worksheet.write(row, 3, item.tipo, no_format)
         else:
-            val_item = 0 if not item.tipo else float(item.tipo)
-            worksheet.write_number(row, 3, val_item, center_format)
+            val_item = item.tipo
+            if is_numeric(val_item):
+                val_item = int(val_item)
+                worksheet.write_number(row, 3, val_item, center_format)
+            else:
+                val_item = 0 or val_item
+                worksheet.write(row, 3, val_item, no_format)
 
         worksheet.write(row, 4, item.mes, center_format)
         worksheet.write(row, 5, item.nro_doc, center_format)
