@@ -236,8 +236,20 @@ def procesa_ganancias_otros_emp_ent(lista_gan_otro_emp: list) -> list:
             regimen = ganancia_mes_OE.get('@regimen', '')
             mes = ganancia_mes_OE.get('@mes', 0)
             for item, value in ganancia_mes_OE.items():
-                if value == '0' or item in ['@mes', '@regimen', 'bonosProdDetalle']:
+                if value == '0' or item in ['@mes', '@regimen']:
                     continue
+
+                if 'Detalle' in item:
+                    # Si el item es un detalle, lo ignoro, pero dejo el log por las dudas
+                    logger.warning(f'El item {item} es un detalle, se ignora: {value}')
+                    continue
+
+                # Si el item es un diccionario, informo el @monto y dejo un log por las dudas para su futuro análisis
+                if isinstance(value, dict):
+                    value = value.get('@monto', 0)
+                    if str(value) == '0':
+                        continue
+                    logger.warning(f'El item {item} es un diccionario, se toma el @monto: {value}')
 
                 this_nombre = 'ganLiqOtrosEmpEnt'
                 if regimen:
