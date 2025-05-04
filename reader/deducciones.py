@@ -18,6 +18,7 @@ DEDUCCIONES = {'deduccion': {
     '32-1': 'Servicios con fines educativos',
     '32-2': 'Herramientas educativas',
     '33': 'Deducción Alquiler Art. 85 inc. k)',
+    '34:': 'Alquiler de Inmuebles destinados a casa habitación - Propietarios',
     '99-1': 'Aportes para fondos de Jubilación, Retiros, Pensiones',
     '99-2': 'Cajas Provinciales o Municipales',
     '99-3': 'Impuesto sobre los Créditos y Débitos en Cuenta Bancaria',
@@ -35,6 +36,7 @@ DEDUCCIONES = {'deduccion': {
         '31': 'Hijo/a Incapacitado para el Trabajo',
         '32': 'Hijastro/a Incapcacitado para el Trabajo',
         '51': 'Union convivencial',
+        '103': 'Hijo/a mayor de 18 y hasta 24 años',
 },
     'retPerPago': {
         '6': 'Impuestos sobre Créditos y Débitos en cuenta Bancaria',
@@ -51,7 +53,12 @@ DEDUCCIONES = {'deduccion': {
         '28': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. b)',
         '29': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. c)',
         '30': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. e)',
-        '31': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. e)',
+        '31': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. d)',
+        '35': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. a)',
+        '36': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. b)',
+        '37': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. c)',
+        '38': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. e)',
+        '39': 'Pago a Cuenta - RG 4815 - Ley 27541 - Art. 35 inc. d)',
 },
 }
 
