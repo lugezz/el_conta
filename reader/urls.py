@@ -1,9 +1,11 @@
 from django.urls import path
 
 from .views import (
-    archivo_solo_view, detalle_presentacion,
+    archivo_solo_view,
+    detalle_presentacion,
     no_autorizado,
-    procesa_hist_view, siradig_view,
+    procesa_hist_view,
+    siradig_view,
 )
 
 urlpatterns = [

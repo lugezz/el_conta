@@ -5,7 +5,7 @@ import tempfile
 from django.conf import settings
 from django.contrib import messages
 from django.http import FileResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 

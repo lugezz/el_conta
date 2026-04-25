@@ -1,4 +1,8 @@
-from export_lsd.exceptions import CBUValidationException, CuitValidationException, NameValidationException
+from export_lsd.exceptions import (
+    CBUValidationException,
+    CuitValidationException,
+    NameValidationException,
+)
 
 
 def validate_cuil(value):

@@ -3,7 +3,7 @@
 {% block title %} Home Page {% endblock title%}
 {% block content %}
     <div class="jumbotron">
-        <h1 class="display-4">Bienvenido, 
+        <h1 class="display-4">Bienvenido,
             {% if user.first_name.title %}
                 {{ user.first_name.title }}
             {% else %}
@@ -43,7 +43,7 @@
                     </p>
                 </div>
             </div>
-            
+
             <!-- F.1359 -->
             <div class="card">
                 <a href="#"><img src="{% static 'homepage/images/f1359.png' %}" class="card-img-top" alt="f1357"></a>
@@ -52,7 +52,7 @@
                     <p class="card-text text-muted">En construcción</p>
                 </div>
             </div>
-            
+
             <!-- Cálculo Ganancias -->
             <div class="card">
                 <a href="{% url 'pem-a-excel' %}"><img src="{% static 'homepage/images/controlador_fiscal.png' %}" class="card-img-top" alt="pem_a_excel"></a>

@@ -1,7 +1,20 @@
-from django.forms import (DateField, DateInput, FileField, FileInput,
-                          ModelForm, Select, TextInput,)
+from django.forms import (
+    DateField,
+    DateInput,
+    FileField,
+    FileInput,
+    ModelForm,
+    Select,
+    TextInput,
+)
 
-from export_lsd.models import BasicExportConfig, Empresa, Empleado, Liquidacion, Presentacion
+from export_lsd.models import (
+    BasicExportConfig,
+    Empleado,
+    Empresa,
+    Liquidacion,
+    Presentacion,
+)
 
 
 class EmpresaForm(ModelForm):

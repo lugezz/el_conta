@@ -4,7 +4,7 @@
 {% block title %} Importador archivos Controlador Fiscal {% endblock title%}
 {% block content %}
 
-    <form method="post" enctype="multipart/form-data" class="mb-3">  
+    <form method="post" enctype="multipart/form-data" class="mb-3">
         {% csrf_token %}
         <div class="container">
             <p>Seleccione el archivo de importación</p>
@@ -45,7 +45,7 @@
                                     </button>
                                 </form>
                             </div>
-                        {% endif %}    
+                        {% endif %}
                     </div>
                     {% if results_empleados.results_data %}
                     <div class="container my-3 text-center">
@@ -61,7 +61,7 @@
                 </div>
             </div><!-- End Resultados ok -->
             <!-- Resultados incorrectos -->
-            <div class="col-5"> 
+            <div class="col-5">
                 {% if results_empleados.invalid_data %}
                 <div class="card top-selling overflow-auto">
                     <h5 class="card-title text-center">Errores en el proceso de Importación</h5>
@@ -95,7 +95,7 @@
         $('input:file').change(
             function(){
                 if ($(this).val()){
-                    $('.button_submit').removeAttr('disabled'); 
+                    $('.button_submit').removeAttr('disabled');
                 }
                 else {
                     $('.button_submit').attr('disabled',true);

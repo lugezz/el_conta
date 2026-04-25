@@ -1,14 +1,14 @@
-from datetime import datetime
 import os
+import shutil
 import zipfile
+from datetime import datetime
+from pathlib import Path
 
+import pytz
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from pathlib import Path
-import pytz
-import shutil
 
 from reader.helpers.lectores import leeXML
 from reader.helpers.register import RegistraCarpetaXML

@@ -8,7 +8,6 @@ import xmltodict
 
 from other_tools.helpers.base_tools import dictionary_to_excel
 
-
 logger = logging.getLogger(__name__)
 
 

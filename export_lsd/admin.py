@@ -1,9 +1,16 @@
 from django.contrib import admin
 
-from export_lsd.models import (BasicExportConfig, ConceptoLiquidacion, Empleado, Empresa,
-                               Formato931, Liquidacion, OrdenRegistro,
-                               Presentacion, TipoRegistro)
-
+from export_lsd.models import (
+    BasicExportConfig,
+    ConceptoLiquidacion,
+    Empleado,
+    Empresa,
+    Formato931,
+    Liquidacion,
+    OrdenRegistro,
+    Presentacion,
+    TipoRegistro,
+)
 
 admin.site.register(ConceptoLiquidacion)
 admin.site.register(Formato931)

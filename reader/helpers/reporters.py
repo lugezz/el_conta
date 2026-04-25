@@ -1,7 +1,7 @@
 import os
 
-from django.conf import settings
 import xlsxwriter
+from django.conf import settings
 
 from reader.deducciones import get_deduccion
 from reader.helpers.tools import is_numeric

@@ -9,7 +9,7 @@
     {% if messages %}
         {% include 'export_lsd/messages.html' %}
     {% endif %}
-   
+
     <div class="row">
         <div class="col-12">
             <div class="card top-selling overflow-auto">
@@ -37,7 +37,7 @@
                               <td class="text-center">{{ presentacion.get_children }}</td>
                               <td class="text-center">{{ presentacion.employees }}</td>
                               <td class="text-center">
-                                <a 
+                                <a
                                   class="btn btn-outline-success btn-sm"
                                   href="{{ presentacion.get_download_url }}"
                                   download

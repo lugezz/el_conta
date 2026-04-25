@@ -1,0 +1,60 @@
+name: Django Tests and Linting
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: ["3.14"]
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: payroll
+          POSTGRES_PASSWORD: payroll
+          POSTGRES_DB: payroll
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Test PostgreSQL connection
+      run: |
+        psql -h localhost -U payroll -d payroll -c "SELECT 1;"
+        psql -h localhost -U payroll -d payroll -c "ALTER USER payroll CREATEDB;"
+      env:
+        PGPASSWORD: payroll
+
+    - name: Install Dependencies
+      run: uv sync --dev
+    - name: Check pending migrations
+      run: |
+        uv run python manage.py makemigrations --check --dry-run
+        uv run python manage.py migrate
+
+    # ✅ Pre-commit step (runs flake8, isort, etc.)
+    - name: Run Pre-commit hooks
+      run: uv run pre-commit run --all-files
+
+    # Testing step
+    - name: Run Tests
+      run: uv run python manage.py test

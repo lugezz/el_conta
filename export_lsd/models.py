@@ -6,7 +6,12 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.forms.models import model_to_dict
 
-from export_lsd.validators import validate_cbu, validate_cuil, validate_cuit, validate_name
+from export_lsd.validators import (
+    validate_cbu,
+    validate_cuil,
+    validate_cuit,
+    validate_name,
+)
 
 DATA_TYPE = [
     ('AL', 'Alfabético'),

@@ -8,22 +8,31 @@
 
 import datetime
 import os
-from pathlib import Path
 import re
+from pathlib import Path
 
+import pandas as pd
 from django.conf import settings
 from django.db.models import Sum
 from django.db.models.query import QuerySet
-import pandas as pd
 
-from export_lsd.models import (BulkCreateManager, ConceptoLiquidacion,
-                               Empleado, Liquidacion,
-                               OrdenRegistro, Presentacion)
-from export_lsd.utils import (amount_txt_to_integer, amount_txt_to_float,
-                              delete_list_of_liles,
-                              file_compress, get_value_from_txt,
-                              NOT_SIJP, sync_format)
-
+from export_lsd.models import (
+    BulkCreateManager,
+    ConceptoLiquidacion,
+    Empleado,
+    Liquidacion,
+    OrdenRegistro,
+    Presentacion,
+)
+from export_lsd.utils import (
+    NOT_SIJP,
+    amount_txt_to_float,
+    amount_txt_to_integer,
+    delete_list_of_liles,
+    file_compress,
+    get_value_from_txt,
+    sync_format,
+)
 
 MULTIP_100 = ['Contribucion tarea diferencial (%)']
 
