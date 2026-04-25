@@ -36,6 +36,37 @@ from export_lsd.utils import (
 
 MULTIP_100 = ['Contribucion tarea diferencial (%)']
 
+INFO_EMPLEADOS_COLUMNS = {
+    'Leg',
+    'CUIL',
+    'Detracción SS',
+    'Cónyuge',
+    'Cant Hijos',
+    'CCT',
+    'SVO',
+    'Reducción',
+    'Tipo de empresa',
+    'Codigo de Situación',
+    'Codigo de Condición',
+    'Código de Actividad',
+    'Modalidad de Contratación',
+    'Código de Siniestrado',
+    'Localidad',
+    'Sit. Revista 1',
+    'Día 1',
+    'Sit. Revista 2',
+    'Día 2',
+    'Sit. Revista 3',
+    'Día 3',
+    'Días Trab',
+    'Hs Trab',
+    '% Ap. Adic SS',
+    '% Contrib. Dif',
+    'Cant. Adher.',
+    'Código de Obra Social',
+    'CBU',
+}
+
 
 def get_summary_txtF931(txt_file: Path) -> dict:
     result = {
@@ -749,7 +780,19 @@ def employess_info_from_excel(file_import: Path) -> dict:
         'invalid_data': [],
     }
 
-    df = pd.read_excel(file_import)
+    try:
+        df = pd.read_excel(file_import)
+    except Exception as err:
+        employees_dict['error'] = f'No se pudo leer el archivo Excel: {err}'
+        return employees_dict
+
+    missing_columns = INFO_EMPLEADOS_COLUMNS.difference(df.columns)
+    if missing_columns:
+        missing_str = ', '.join(sorted(missing_columns))
+        employees_dict['error'] = (
+            f'El archivo Excel no contiene las columnas obligatorias: {missing_str}'
+        )
+        return employees_dict
 
     for index, row in df.iterrows():
         # Si leg es NaN, no lo tomo y termino el loop
@@ -814,6 +857,11 @@ def process_presentacion(presentacion_qs: Presentacion, empleados_en_excel: bool
     if empleados_en_excel:
         info_empleados_xlsx = os.path.join(settings.TEMP_ROOT, f'export_lsd/temptxt_{username}_{cuit}_{per_liq}.xlsx')
         info_empleados_dict = employess_info_from_excel(info_empleados_xlsx)
+        if info_empleados_dict['error']:
+            raise ValueError(info_empleados_dict['error'])
+        if info_empleados_dict['invalid_data']:
+            errors = '; '.join(info_empleados_dict['invalid_data'][:5])
+            raise ValueError(f'Excel de empleados con datos inválidos: {errors}')
     else:
         f931_txt_path = os.path.join(settings.TEMP_ROOT, f'export_lsd/{fname}.txt'.replace('finaltxt', 'temptxt'))
         with open(f931_txt_path, encoding='latin-1') as f:
@@ -960,6 +1008,6 @@ def get_final_txts(id_presentacion: int) -> Path:
         #    os.remove(fpath)
 
     except Exception as e:
-        resp['error'] = e
+        resp['error'] = str(e)
 
     return resp

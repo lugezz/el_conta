@@ -6,6 +6,12 @@ from django.utils.functional import SimpleLazyObject
 
 from export_lsd.models import BulkCreateManager, Empleado, Empresa
 
+INFO_EMPLEADOS_MIN_COLUMNS = {
+    'Leg',
+    'CUIL',
+    'CBU',
+}
+
 
 def is_positive_number(str_num: str) -> bool:
     num_format = "^\\d+$"
@@ -91,7 +97,16 @@ def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
     Registra de manera masiva empleados informados desde excel
     """
 
-    df = pd.read_excel(filepath)
+    try:
+        df = pd.read_excel(filepath)
+    except Exception as err:
+        raise ValueError(f'No se pudo leer el archivo Excel de empleados: {err}')
+
+    missing_columns = INFO_EMPLEADOS_MIN_COLUMNS.difference(df.columns)
+    if missing_columns:
+        missing_str = ', '.join(sorted(missing_columns))
+        raise ValueError(f'El archivo Excel no contiene columnas obligatorias: {missing_str}')
+
     bulk_mgr = BulkCreateManager()
 
     for index, row in df.iterrows():

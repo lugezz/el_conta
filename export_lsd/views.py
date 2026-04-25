@@ -500,7 +500,11 @@ def advanced_export(request):
                 fname_empleado = f'temptxt_{request.user.username}_{cuit}_{per_liq}.xlsx'
                 fpath_empleado = f'temp/export_lsd/{fname_empleado}'
                 if os.path.exists(fpath_empleado):
-                    new_employees_from_xlsx(fpath_empleado, empresa)
+                    try:
+                        new_employees_from_xlsx(fpath_empleado, empresa)
+                    except Exception as err:
+                        context['error'] = f'Error al procesar Info_Empleados_v2.xlsx: {err}'
+                        return render(request, 'export_lsd/export/advanced.html', context)
 
             # ---------------------------------------------------------
 
