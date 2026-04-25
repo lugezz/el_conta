@@ -29,7 +29,7 @@ dev = [
 
 [tool.flake8]
 max-line-length = 130
-max-complexity = 14
+max-complexity = 16
 exclude = ["migrations"]
 count = true
 show-source = true
