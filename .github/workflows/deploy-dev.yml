@@ -44,6 +44,7 @@ jobs:
             POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
             POSTGRES_HOST=postgres_service
             ALLOW_ORIGINS=${{ vars.ALLOW_ORIGINS }}
+            CSRF_TRUSTED=${{ vars.CSRF_TRUSTED }}
             DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
             ENV=develop
             DEBUG=False
