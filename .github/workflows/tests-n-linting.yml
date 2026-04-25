@@ -19,9 +19,9 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: payroll
-          POSTGRES_PASSWORD: payroll
-          POSTGRES_DB: payroll
+          POSTGRES_USER: elconta
+          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
+          POSTGRES_DB: elconta_db
         ports:
           - 5432:5432
         options: >-
@@ -39,10 +39,10 @@ jobs:
 
     - name: Test PostgreSQL connection
       run: |
-        psql -h localhost -U payroll -d payroll -c "SELECT 1;"
-        psql -h localhost -U payroll -d payroll -c "ALTER USER payroll CREATEDB;"
+        psql -h localhost -U elconta -d elconta_db -c "SELECT 1;"
+        psql -h localhost -U elconta -d elconta_db -c "ALTER USER elconta CREATEDB;"
       env:
-        PGPASSWORD: payroll
+        PGPASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
 
     - name: Install Dependencies
       run: uv sync --dev

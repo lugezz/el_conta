@@ -13,12 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-xhr-%=1il%ev_jbne2$u=bc1rp0n@ngb=c%u_%7oa)u(_$=b)p'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'elconta.com.ar', 'www.elconta.com.ar', '54.241.109.209']
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "any-default-secret-key")
+DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.getenv('ALLOW_ORIGINS', '').split(',')
 
 # Application definition
 
@@ -78,25 +75,25 @@ WSGI_APPLICATION = 'el_conta.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-# Configura las variables DB_* en el archivo .env
+# Configura las variables POSTGRES_* en el archivo .env
 
-_db_engine = os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3')
-if _db_engine == 'django.db.backends.sqlite3':
+_postgres_db = os.environ.get('POSTGRES_DB')
+if _postgres_db:
     DATABASES = {
         'default': {
-            'ENGINE': _db_engine,
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _postgres_db,
+            'USER': os.environ.get('POSTGRES_USER', ''),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
         }
     }
 else:
     DATABASES = {
         'default': {
-            'ENGINE': _db_engine,
-            'NAME': os.environ.get('DB_NAME', ''),
-            'USER': os.environ.get('DB_USER', ''),
-            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', ''),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 

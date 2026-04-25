@@ -2,32 +2,32 @@ h1 {
     margin: 2px 20px;
 }
 
-.payroll-form {
+.el_conta-form {
     width: 100%;
     display: grid;
 }
 
-.payroll-sub-form {
+.el_conta-sub-form {
     background-color: #d0d0d0;
     border-radius: 7px;
 }
 
 /* mobile */
 @media (max-width: 576px) {
-    .payroll-form {
+    .el_conta-form {
         margin: 4px;
         padding: 4px;
     }
 }
 
 @media (min-width: 576px) {
-    .payroll-form {
+    .el_conta-form {
         margin: 20px;
         padding: 20px;
     }
 }
 
-.payroll-form fieldset {
+.el_conta-form fieldset {
     margin: 3px;
     padding: 4px;
     display: block;
@@ -35,51 +35,51 @@ h1 {
 
 /* Si es muy grande, usar los laterales */
 @media (min-width: 1000px) {
-    .payroll-form fieldset {
+    .el_conta-form fieldset {
         width: 48%;
         float: left;
     }
 }
 
 @media (min-width: 1400px) {
-    .payroll-form fieldset {
+    .el_conta-form fieldset {
         width: 31%;
         float: left;
     }
 }
 
-.payroll-form .payroll-form-div-field {
+.el_conta-form .el_conta-form-div-field {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-.payroll-form label {
+.el_conta-form label {
     margin-bottom: 2px;
     display: inline-flex;
 }
 
-.payroll-form .helptext {
+.el_conta-form .helptext {
     color: #363535;
     font-size: 12px;
     display: flex;
 }
 
-.payroll-form textarea {
+.el_conta-form textarea {
     max-height: 90px;
 }
 
-.payroll-form-action-buttons {
+.el_conta-form-action-buttons {
     margin-top: 15px;
     width: 100%;
     display: block;
 }
 
-.payroll-form-fields {
+.el_conta-form-fields {
     width: 100%;
     display: block;
 }
 
-.payroll-form-fields2 {
+.el_conta-form-fields2 {
     width: 70%;
     display: block;
 }
@@ -102,7 +102,7 @@ ul.errorlist li {
     margin: 3px;
 }
 
-.payroll-form-narrow {
+.el_conta-form-narrow {
     /* formulario mas angosto y centrado al medio */
     width: 70%;
     margin: 30px auto;
