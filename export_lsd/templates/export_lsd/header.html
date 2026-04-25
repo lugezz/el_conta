@@ -1,12 +1,15 @@
 {% load static %}
+{% url 'export_lsd:home' as lsd_home_url %}
+{% url 'siradig' as siradig_home_url %}
+{% url 'pem-a-excel' as pem_home_url %}
 
 <!-- ======= Header ======= -->
  <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="{% url 'export_lsd:home' %}" class="logo d-flex align-items-center">
+      <a href="{% if request.resolver_match.namespace == 'export_lsd' %}{{ lsd_home_url }}{% elif request.path|slice:':9' == '/siradig/' %}{{ siradig_home_url }}{% elif request.path|slice:':13' == '/other-tools/' %}{{ pem_home_url }}{% else %}{% url 'homepage' %}{% endif %}" class="logo d-flex align-items-center">
         <img src="{% static 'export_lsd/img/logo.png' %}" alt="Logo">
-        <span class="d-none d-lg-block">Exporta LSD</span>
+        <span class="d-none d-lg-block">{% if request.resolver_match.namespace == 'export_lsd' %}Exporta LSD{% else %}El Conta{% endif %}</span>
       </a>
       <i class="fas fa-bars toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -22,6 +25,8 @@
         </a>
         -
         <a href="{% url 'homepage' %}">Home</a>
+        -
+        <a href="{% url 'logout' %}">Cerrar sesión</a>
     </nav><!-- End Icons Navigation -->
 
   </header><!-- End Header -->
