@@ -78,25 +78,25 @@ WSGI_APPLICATION = 'el_conta.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-# Configura las variables DB_* en el archivo .env
+# Configura las variables POSTGRES_* en el archivo .env
 
-_db_engine = os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3')
-if _db_engine == 'django.db.backends.sqlite3':
+_postgres_db = os.environ.get('POSTGRES_DB')
+if _postgres_db:
     DATABASES = {
         'default': {
-            'ENGINE': _db_engine,
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _postgres_db,
+            'USER': os.environ.get('POSTGRES_USER', ''),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
         }
     }
 else:
     DATABASES = {
         'default': {
-            'ENGINE': _db_engine,
-            'NAME': os.environ.get('DB_NAME', ''),
-            'USER': os.environ.get('DB_USER', ''),
-            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', ''),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
