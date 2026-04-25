@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     bash \
+    curl \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
