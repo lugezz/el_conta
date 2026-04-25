@@ -37,5 +37,6 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy the project (copy script first for caching and to avoid being masked by later COPY)
 COPY . .
 COPY --chmod=755 dev/server/devserver.sh /devserver.sh
+COPY --chmod=755 dev/scripts/run_all_inits.sh /run_all_inits.sh
 
 CMD ["bash", "/devserver.sh"]

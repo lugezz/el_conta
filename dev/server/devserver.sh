@@ -12,6 +12,14 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
+echo " - Inicializar o actualizar tablas base tablas"
+if [ "$ENV" != "local-dev" ]; then
+  if ! bash /run_all_inits.sh; then
+    echo "❌ Error en run_all_inits.sh"
+    exit 1
+  fi
+fi
+
 echo "✅ Database ready!"
 
 # Start server depending on environment
