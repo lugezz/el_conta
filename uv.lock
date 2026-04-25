@@ -78,6 +78,7 @@ dependencies = [
     { name = "pillow" },
     { name = "psycopg2-binary" },
     { name = "python-dotenv" },
+    { name = "pytz" },
     { name = "xlsxwriter" },
     { name = "xmltodict" },
 ]
@@ -100,6 +101,7 @@ requires-dist = [
     { name = "pillow", specifier = ">=12.2.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.9" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
+    { name = "pytz", specifier = ">=2024.1" },
     { name = "xlsxwriter", specifier = ">=3.2.2" },
     { name = "xmltodict", specifier = ">=0.14.2" },
 ]
