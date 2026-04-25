@@ -20,7 +20,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: elconta
-          POSTGRES_PASSWORD: elconta
+          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
           POSTGRES_DB: elconta_db
         ports:
           - 5432:5432
@@ -42,7 +42,7 @@ jobs:
         psql -h localhost -U elconta -d elconta_db -c "SELECT 1;"
         psql -h localhost -U elconta -d elconta_db -c "ALTER USER elconta CREATEDB;"
       env:
-        PGPASSWORD: elconta
+        PGPASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
 
     - name: Install Dependencies
       run: uv sync --dev
