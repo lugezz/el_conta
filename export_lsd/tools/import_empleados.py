@@ -1,10 +1,15 @@
+import logging
 import re
 from pathlib import Path
 
 import pandas as pd
+from django.db import IntegrityError, connection
+from django.db.models import Max
 from django.utils.functional import SimpleLazyObject
 
 from export_lsd.models import BulkCreateManager, Empleado, Empresa
+
+logger = logging.getLogger(__name__)
 
 INFO_EMPLEADOS_MIN_COLUMNS = {
     'Leg',
@@ -89,7 +94,45 @@ def bulk_new_employees(user: SimpleLazyObject, employees_data: list):
     for item in employees_data:
         empresa = Empresa.objects.get(cuit=item[0], user=user)
         bulk_mgr.add(Empleado(empresa=empresa, leg=item[1], name=item[2], cuil=item[3], area=item[4]))
-    bulk_mgr.done()
+
+    _bulk_insert_with_sequence_sync(bulk_mgr)
+
+
+def _sync_pk_sequence(model_class):
+    if connection.vendor != 'postgresql':
+        return
+
+    table_name = model_class._meta.db_table
+    pk_column = model_class._meta.pk.column
+    max_id = model_class.objects.aggregate(max_id=Max(pk_column)).get('max_id') or 0
+
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT pg_get_serial_sequence(%s, %s)', [table_name, pk_column])
+        row = cursor.fetchone()
+        seq_name = row[0] if row else None
+
+        if not seq_name:
+            return
+
+        if max_id <= 0:
+            cursor.execute('SELECT setval(%s, %s, %s)', [seq_name, 1, False])
+        else:
+            cursor.execute('SELECT setval(%s, %s, %s)', [seq_name, max_id, True])
+
+
+def _bulk_insert_with_sequence_sync(bulk_mgr: BulkCreateManager):
+    _sync_pk_sequence(Empleado)
+
+    try:
+        bulk_mgr.done()
+    except IntegrityError as err:
+        err_msg = str(err)
+        if 'export_lsd_empleado_pkey' not in err_msg:
+            raise
+
+        logger.warning('Empleado PK sequence desync detected, trying one sequence resync and retry')
+        _sync_pk_sequence(Empleado)
+        bulk_mgr.done()
 
 
 def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
@@ -127,4 +170,4 @@ def new_employees_from_xlsx(filepath: str, empresa: SimpleLazyObject):
             this_empleado.cuil = str(row['CUIL'])
             this_empleado.cbu = str(cbu)
             this_empleado.save()
-    bulk_mgr.done()
+    _bulk_insert_with_sequence_sync(bulk_mgr)
