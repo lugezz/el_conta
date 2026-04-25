@@ -1,14 +1,10 @@
+import os
 from pathlib import Path
 
 from django.contrib.messages import constants as messages
+from dotenv import load_dotenv
 
-try:
-    from el_conta.local_settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, DATABASES
-except ImportError:
-    EMAIL_HOST_USER = ''
-    EMAIL_HOST_PASSWORD = ''
-    DATABASES = {}
-    print('No local settings found')
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,14 +78,25 @@ WSGI_APPLICATION = 'el_conta.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-# Reemplaza esto en el archivo local_settings.py acorde a la base de datos
-# que quieres usar (por ejemplo PostgreSQL o MySQL)
+# Configura las variables DB_* en el archivo .env
 
-if not DATABASES:
+_db_engine = os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3')
+if _db_engine == 'django.db.backends.sqlite3':
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
+            'ENGINE': _db_engine,
             'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': _db_engine,
+            'NAME': os.environ.get('DB_NAME', ''),
+            'USER': os.environ.get('DB_USER', ''),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', ''),
         }
     }
 
@@ -150,9 +157,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-relay.sendinblue.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-if not EMAIL_HOST_PASSWORD:
-    EMAIL_HOST_USER = ''  # definir-en-local-settings.py
-    EMAIL_HOST_PASSWORD = ''  # definir-en-local-settings.py
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 # ------------------------------------------------------
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30

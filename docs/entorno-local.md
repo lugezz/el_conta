@@ -6,14 +6,14 @@
 # Descargar repositorio
 git clone git@github.com:lugezz/el_conta.git
 
-# Crear entorno virtual
-python3 -m venv env
+# Instalar dependencias y crear entorno virtual (usando uv)
+uv sync
 
-# Activamos el entorno virtual
-source env/bin/activate
-
-# Instalar requerimientos
-pip install -r requirements.txt
+# Activar el entorno virtual
+# Linux/macOS:
+source .venv/bin/activate
+# Windows:
+.venv\Scripts\activate
 
 ```
 
@@ -22,12 +22,12 @@ pip install -r requirements.txt
 Crea el archivo `el_conta/local_settings.py` y actualiza `DATABASES`
 segun tu entorno y el motor que quieres usar (por ejemplo PostgreSQL o MySQL)
 
-```
+```bash
 # Requerimientos segun motor de base de datos
 
-pip install -r requirements.mysql.txt
+uv sync --extra mysql
 # o
-pip install -r requirements.psql.txt
+uv sync --extra psql
 ```
 
 ### PostgreSQL

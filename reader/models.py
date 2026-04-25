@@ -22,7 +22,7 @@ class Registro(models.Model):
     deduccion = models.CharField(max_length=50)
     tipo = models.CharField(max_length=50)
     dato1 = models.CharField(max_length=50)
-    dato2 = models.CharField(max_length=50, blank=True, null=True)
+    dato2 = models.CharField(max_length=200, blank=True, null=True)
     porc = models.CharField(max_length=3, blank=True, null=True)
     nro_doc = models.CharField(max_length=20, blank=True, null=True)
     mes = models.PositiveSmallIntegerField(blank=True, null=True)
