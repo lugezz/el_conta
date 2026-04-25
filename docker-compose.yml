@@ -16,9 +16,6 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       ALLOW_ORIGINS: ${ALLOW_ORIGINS}
     expose: ["8000"]
-    volumes:
-      - ./el_conta:/app
-
     depends_on:
       postgres_service:
         condition: service_healthy
