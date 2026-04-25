@@ -14,8 +14,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "any-default-secret-key")
-DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.getenv('ALLOW_ORIGINS', '').split(',')
+CSRF_TRUSTED = os.getenv("CSRF_TRUSTED", "").split(",")
+if CSRF_TRUSTED != ['']:
+    CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED
+else:
+    CSRF_TRUSTED_ORIGINS = []
+
+ENV = os.getenv("ENV", "local-dev")
 
 # Application definition
 
@@ -125,7 +132,7 @@ LANGUAGE_CODE = 'es-ar'
 TIME_ZONE = 'America/Argentina/Buenos_Aires'
 USE_I18N = True
 USE_L10N = True
-pioUSE_TZ = True
+USE_TZ = True
 USE_THOUSAND_SEPARATOR = True
 
 # more custom folders STATICFILES_DIRS = ['el_conta/static']
