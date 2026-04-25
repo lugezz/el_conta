@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 
 import pandas as pd
@@ -41,6 +42,8 @@ from export_lsd.tools.import_empleados import (
 )
 
 EXPORT_TITLES = ['Leg', 'Concepto', 'Cant', 'Monto', 'Tipo']
+
+logger = logging.getLogger(__name__)
 
 
 def error_404(request, exception):
@@ -486,9 +489,10 @@ def advanced_export(request):
                 elif extension == 'xlsx':
                     context['es_excel'] = 1
 
-            except Exception:
+            except Exception as err:
+                logger.exception('Error processing uploaded F931/employee file in advanced_export')
                 form = PeriodoForm()
-                context['error'] = "Error en el formato del archivo seleccionado"
+                context['error'] = f'Error en el formato del archivo seleccionado: {err}'
 
         # Procesar nomás
         else:
@@ -503,6 +507,7 @@ def advanced_export(request):
                     try:
                         new_employees_from_xlsx(fpath_empleado, empresa)
                     except Exception as err:
+                        logger.exception('Error importing employees from Excel uploaded in advanced_export')
                         context['error'] = f'Error al procesar Info_Empleados_v2.xlsx: {err}'
                         return render(request, 'export_lsd/export/advanced.html', context)
 
@@ -514,8 +519,9 @@ def advanced_export(request):
                     empresa=empresa,
                     periodo=f'{periodo}-01',
                 )
-            except Exception:
-                context['error'] = "No se pudo crear la presentación. Verifique datos e intente nuevamente."
+            except Exception as err:
+                logger.exception('Error creating Presentacion in advanced_export')
+                context['error'] = f'No se pudo crear la presentación: {err}'
                 return render(request, 'export_lsd/export/advanced.html', context)
 
             return redirect(reverse('export_lsd:advanced_liqs', kwargs={'pk': this_presentacion.id}))
