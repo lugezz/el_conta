@@ -2,10 +2,30 @@
 {% load static %}
 
 {% block extra_head %}
+{{ block.super }}
 <link href="{% static 'css/forms.css' %}" rel="stylesheet">
 <!-- Add datepicker.js JavaScript and CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" integrity="sha512-34s5cpvaNG3BknEWSuOncX28vz97bRI59UnVtEEpFX536A7BtZSJHsDyFoCl8S7Dt2TPzcrCEoHBGeM4SUBDBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js" integrity="sha512-LsnSViqQyaXpD4mBBdRYeP6sRwJiJveh2ZIbW41EBrNmKxgr/LFZIiWT6yr+nycvhvauz8c2nYMhrP80YhG7Cw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+    .el_conta-form,
+    .el_conta-form-narrow {
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .el_conta-sub-form {
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #dbe3ea;
+    }
+
+    .pre-form-box {
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+    }
+</style>
 {% endblock %}
 
 {% block site_pre_content %}
