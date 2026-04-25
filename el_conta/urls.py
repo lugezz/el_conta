@@ -2,10 +2,9 @@ from django.conf import settings
 from django.conf.urls import handler404
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
 
 from export_lsd.views import error_404
-
 
 urlpatterns = [
     path('', include('homepage.urls')),

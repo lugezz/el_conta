@@ -1,16 +1,30 @@
 from django.urls import path
 
-from export_lsd.tools.export_db import exportaDB, exportaDB_f931
 from export_lsd.tools.export_basic_txt import export_txt
-from export_lsd.views import (advanced_export, advanced_export_liqs, basic_export,
-                              get_final_txts, import_empleados, HomeView,
-                              ConfigEBCreateView, ConfigEBDeleteView, ConfigEBListView,
-                              ConfigEBUpdateView,
-                              EmpleadoCreateView, EmpleadoDeleteView, EmpleadoListView,
-                              EmpleadoUpdateView, EmpresaCreateView, EmpresaDeleteView,
-                              EmpresaListView, EmpresaUpdateView,
-                              LiquidacionDeleteView,
-                              PresentacionDeleteView, PresentacionListView)
+from export_lsd.tools.export_db import exportaDB, exportaDB_f931
+from export_lsd.views import (
+    ConfigEBCreateView,
+    ConfigEBDeleteView,
+    ConfigEBListView,
+    ConfigEBUpdateView,
+    EmpleadoCreateView,
+    EmpleadoDeleteView,
+    EmpleadoListView,
+    EmpleadoUpdateView,
+    EmpresaCreateView,
+    EmpresaDeleteView,
+    EmpresaListView,
+    EmpresaUpdateView,
+    HomeView,
+    LiquidacionDeleteView,
+    PresentacionDeleteView,
+    PresentacionListView,
+    advanced_export,
+    advanced_export_liqs,
+    basic_export,
+    get_final_txts,
+    import_empleados,
+)
 
 app_name = 'export_lsd'
 

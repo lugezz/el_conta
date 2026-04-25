@@ -1,0 +1,35 @@
+[project]
+name = "el-conta"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "Django>=5.1.15,<6",
+    "django-crum>=0.7.9,<1",
+    "django-widget-tweaks>=1.5.0,<2",
+    "et-xmlfile>=2.0.0",
+    "numpy>=2.2.3",
+    "openpyxl>=3.1.5",
+    "pandas>=2.2.3",
+    "Pillow>=12.2.0",
+    "psycopg2-binary>=2.9.9",
+    "python-dotenv>=1.2.2",
+    "pytz>=2024.1",
+    "XlsxWriter>=3.2.2",
+    "xmltodict>=0.14.2",
+]
+
+
+[dependency-groups]
+dev = [
+    "flake8==7.1.1",
+    "flake8-pyproject==1.2.3",
+    "pre-commit>=4.6.0",
+]
+
+[tool.flake8]
+max-line-length = 130
+max-complexity = 14
+exclude = ["migrations"]
+count = true
+show-source = true
+statistics = true

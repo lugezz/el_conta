@@ -30,7 +30,7 @@ Este valor es obligatorio cuando se informa un código de concepto asociado a lo
 3,Importe,15,30,44,NU,13 enteros y 2 decimales
 3,Indicador Débito / Crédito,1,45,45,AN,D=Débito; C=Crédito
 3,Período de ajuste retroactivo,6,46,51,AN,"Formato: AAAAMM.
-Para los conceptos liquidados del período este valor se informa con blancos. 
+Para los conceptos liquidados del período este valor se informa con blancos.
 Si hace referencia a una liquidación retroactiva del concepto, se debe informar el período. Este dato es solo informativo."
 4,Identificación del tipo de registro,2,1,2,NU,Fijo '04'
 4,CUIL,11,3,13,NU,

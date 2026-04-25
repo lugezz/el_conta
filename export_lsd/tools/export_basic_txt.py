@@ -1,9 +1,15 @@
 from datetime import date
 
 from export_lsd.models import OrdenRegistro
-from export_lsd.utils import (amount_txt_to_integer, exclude_eventuales,
-                              get_value_from_txt, NOT_OS_INSSJP, NOT_SIJP,
-                              just_eventuales, sync_format)
+from export_lsd.utils import (
+    NOT_OS_INSSJP,
+    NOT_SIJP,
+    amount_txt_to_integer,
+    exclude_eventuales,
+    get_value_from_txt,
+    just_eventuales,
+    sync_format,
+)
 
 
 def process_reg1(cuit: str, periodo: date, employees: int, export_config: dict) -> str:

@@ -1,12 +1,15 @@
-from datetime import datetime
 import logging
+import xml.etree.ElementTree as ET
+from datetime import datetime
+
 import xmltodict
 
-import xml.etree.ElementTree as ET
-
 from reader.deducciones import get_deduccion
-from reader.helpers.tools import get_nombre_y_valor, get_list_of_values_from_list, get_value_from_list
-
+from reader.helpers.tools import (
+    get_list_of_values_from_list,
+    get_nombre_y_valor,
+    get_value_from_list,
+)
 
 logger = logging.getLogger(__name__)
 

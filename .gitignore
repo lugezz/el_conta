@@ -1,5 +1,12 @@
 # Virtual environment
 /env
+/.venv
+
+# Environment variables
+.env
+data.json
+/venv
+/.venv
 
 # Flake 8
 /.vscode

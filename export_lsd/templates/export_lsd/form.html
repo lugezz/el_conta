@@ -71,8 +71,8 @@
             // var parameters = $(this).serializeArray();
             var parameters = new FormData(this);
             var csrftoken = getCookie('csrftoken')
-            submit_with_ajax(window.location.pathname, 'Notificación', 
-                '¿Estas seguro de realizar la siguiente acción?', parameters, 
+            submit_with_ajax(window.location.pathname, 'Notificación',
+                '¿Estas seguro de realizar la siguiente acción?', parameters,
                 function () {
                     location.href = '{{ list_url }}';
                 },

@@ -2,25 +2,43 @@ import datetime
 import os
 
 import pandas as pd
-
-from django.shortcuts import redirect, render
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
 from django.http.response import JsonResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from django.views.generic.base import TemplateView
 
-from export_lsd.models import BasicExportConfig, Empleado, Empresa, Liquidacion, Presentacion
-from export_lsd.forms import ConfigEBForm, EmpresaForm, EmpleadoForm, LiquidacionForm, PeriodoForm
-from export_lsd.tools.export_advanced_txt import (get_final_txts, get_summary_txtF931,
-                                                  process_liquidacion, update_presentacion_info)
+from export_lsd.forms import (
+    ConfigEBForm,
+    EmpleadoForm,
+    EmpresaForm,
+    LiquidacionForm,
+    PeriodoForm,
+)
+from export_lsd.models import (
+    BasicExportConfig,
+    Empleado,
+    Empresa,
+    Liquidacion,
+    Presentacion,
+)
+from export_lsd.tools.export_advanced_txt import (
+    get_final_txts,
+    get_summary_txtF931,
+    process_liquidacion,
+    update_presentacion_info,
+)
 from export_lsd.tools.export_basic_txt import export_txt
-from export_lsd.tools.import_empleados import bulk_new_employees, get_employees, new_employees_from_xlsx
-
+from export_lsd.tools.import_empleados import (
+    bulk_new_employees,
+    get_employees,
+    new_employees_from_xlsx,
+)
 
 EXPORT_TITLES = ['Leg', 'Concepto', 'Cant', 'Monto', 'Tipo']
 

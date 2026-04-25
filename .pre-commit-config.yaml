@@ -1,0 +1,41 @@
+default_language_version:
+  python: python3.14
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-ast
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+        args:
+          - '--markdown-linebreak-ext=md'
+
+  - repo: https://github.com/pycqa/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
+        args: ["--profile=black"]
+        exclude: ^.*/migrations/.*$
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
+        args: [
+          "--count",
+          "--show-source",
+          "--max-complexity=14",
+          "--max-line-length=130",
+          "--statistics",
+          "--extend-ignore=E231",
+          "--exclude=**/migrations/*,"
+        ]

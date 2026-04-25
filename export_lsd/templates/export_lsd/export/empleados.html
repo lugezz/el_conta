@@ -4,7 +4,7 @@
 {% block title %} Importador Empleados {% endblock title%}
 {% block content %}
 
-    <form method="post" enctype="multipart/form-data" class="mb-3">  
+    <form method="post" enctype="multipart/form-data" class="mb-3">
         {% csrf_token %}
         <div class="container">
             <p>Seleccione el archivo de exportación</p>
@@ -47,7 +47,7 @@
                                     {% endfor %}
                                 </small></tr>
                                 {% endfor %}
-                            {% endif %}    
+                            {% endif %}
                             </tr>
                         </tbody>
                     </table>
@@ -66,7 +66,7 @@
                 </div>
             </div><!-- End Resultados ok -->
             <!-- Resultados incorrectos -->
-            <div class="col-5"> 
+            <div class="col-5">
                 {% if invalid_data %}
                 <div class="card top-selling overflow-auto">
                     <h5 class="card-title text-center">Errores en el proces de Exportación</h5>
@@ -100,7 +100,7 @@
         $('input:file').change(
             function(){
                 if ($(this).val()){
-                    $('.button_submit').removeAttr('disabled'); 
+                    $('.button_submit').removeAttr('disabled');
                 }
                 else {
                     $('.button_submit').attr('disabled',true);
