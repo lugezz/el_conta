@@ -46,6 +46,8 @@ jobs:
             ALLOW_ORIGINS=${{ vars.ALLOW_ORIGINS }}
             DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
             ENV=develop
+            DEBUG=False
+            GIT_COMMIT=${{ github.sha }}
             EOF
 
       # 4️⃣ SSH into EC2 and deploy Docker container
@@ -57,7 +59,6 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd /home/ubuntu/app
-            export GIT_COMMIT=${{ github.sha }}
             docker compose -f docker-compose.yml down
             docker compose -f docker-compose.yml up -d --build
             docker system prune -f

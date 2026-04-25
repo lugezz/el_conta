@@ -16,6 +16,9 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       ALLOW_ORIGINS: ${ALLOW_ORIGINS}
     expose: ["8000"]
+    volumes:
+      - static_files:/app/static
+      - media_files:/app/media
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import socket; s=socket.socket(); s.connect(('localhost', 8000)); s.close()\""]
       interval: 10s
@@ -56,9 +59,11 @@ services:
       - "443:443"
     volumes:
       - ./dev/server/develop/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./el_conta/static:/app/static
-      - ./el_conta/media:/app/media
+      - static_files:/app/static:ro
+      - media_files:/app/media:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
 
 volumes:
   postgres_data:
+  static_files:
+  media_files:
