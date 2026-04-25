@@ -19,6 +19,7 @@ services:
     volumes:
       - static_files:/app/static
       - media_files:/app/media
+      - temp_files:/app/temp
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import socket; s=socket.socket(); s.connect(('localhost', 8000)); s.close()\""]
       interval: 10s
@@ -61,9 +62,11 @@ services:
       - ./dev/server/develop/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - static_files:/app/static:ro
       - media_files:/app/media:ro
+      - temp_files:/app/temp:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
 
 volumes:
   postgres_data:
   static_files:
   media_files:
+  temp_files:
