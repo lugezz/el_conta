@@ -1,71 +1,115 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %} Siradig Reader {% endblock title%}
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'reader/css/siradig.css' %}">
+{% endblock %}
 {% block content %}
-    <div class="container jumbotron2">
-        <h1 class="display-4 mb-3">Siradig Reader</h1>
-        <p class="lead">
-            Este es el sistema <b>Siradig Reader</b> desarrollado con la finalidad de simplificar
-            el proceso de lectura masiva de formularios Siradig de AFIP de los empleados.
+<section class="siradig-shell">
+    <header class="siradig-hero">
+        <p class="siradig-kicker">Reader de Presentaciones AFIP</p>
+        <h1>Siradig Reader</h1>
+        <p>
+            Subí el ZIP, revisá los XML detectados y exportá el Excel final en un flujo claro de 3 pasos.
         </p>
+    </header>
 
-        <!--Selección de archivo zip con Siradigs -->
-        <div class="container">
-            <div class="row">
-                <!--Descarga-->
-                <div class="col-sm">
-                    <!--Formulario -->
-                    <h4 class="mt-2 text-info">Seleccione archivo zip descargado de AFIP</h4>
-                    <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                        <input type="file" name="upload" accept=".zip">
-                        <br>
-                        <button class="btn btn-dark my-3" type="submit">Descomprimir</button>
-                    </form>
-
-                    <!--Ver Archivos descargados-->
-                    <u><h5 class="mt-1 ml-1 text-info">Archivos descargados</h5></u>
-                        {% if listado %}
-                        <div class="container">
-                            <a class="btn btn-dark mr-4 mt-2 .btn-lg" href="{% url 'siradig'%} ">Limpiar</a>
-                            <a class="btn btn-success mt-2 .btn-lg" href="{% url 'procesa-siradig'%}">Exportar</a>
-                            <p class="card-text"><small class="text-muted">{{ listado|length }} archivos descargados</small></p>
-                        </div>
-                        <div class="card" style="width: 80%;">
-                            <ul class="list-group list-group-flush">
-                                {% for file_name in listado %}
-                                    <li class="list-group-item">
-                                        <a href="{% url 'archivoxml' file_name %}">{{ file_name }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% else %}
-                        <p class="card-text"><small class="text-muted">Sin archivos aun</small></p>
-                    {% endif %}
-                </div>
-                <!--Historial-->
-                <div class="col-sm">
-                    <h5 class="mt-2 ml-5 text-info">Presentaciones Anteriores</h4>
-                    <div class="container">
-                        {% if query_historia %}
-                        <div class="card" style="width: 80%;">
-                            <ul class="list-group list-group-flush">
-                                {% for registro in query_historia %}
-                                    <li class="list-group-item text-center">
-                                        <a href="{% url 'presentaciones' registro.id %}">{{ registro.fecha|date:"d/m/Y h:i a" }}</a>
-                                        <small class="text-muted">{{ registro.registers.count }} registros</small>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% else %}
-                        <p class="card-text"><small class="text-muted">Sin procesos registrados aun</small></p>
-                    {% endif %}
-                    </div>
-                </div>
+    <div class="siradig-grid">
+        <article class="siradig-card">
+            <div class="siradig-card-head">
+                <h2>Flujo de trabajo</h2>
+                <span class="siradig-pill">Paso a paso</span>
             </div>
-        </div>
-        <!--Fin selección-->
+
+            <ol class="siradig-steps">
+                <li>
+                    <span class="step-index">1</span>
+                    <div>
+                        <h3>Cargar ZIP</h3>
+                        <p>Seleccioná el archivo descargado desde AFIP y descomprimilo.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="step-index">2</span>
+                    <div>
+                        <h3>Validar archivos</h3>
+                        <p>Visualizá los XML encontrados antes de exportar.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="step-index">3</span>
+                    <div>
+                        <h3>Limpiar o exportar</h3>
+                        <p>Descartá la carga actual o generá el Excel con un clic.</p>
+                    </div>
+                </li>
+            </ol>
+
+            <form method="post" enctype="multipart/form-data" class="siradig-upload-form">
+                {% csrf_token %}
+                <label class="siradig-file-label" for="upload">ZIP de presentaciones</label>
+                <input id="upload" type="file" name="upload" accept=".zip" required>
+                <button class="btn siradig-btn-primary" type="submit">Descomprimir ZIP</button>
+            </form>
+        </article>
+
+        <article class="siradig-card">
+            <div class="siradig-card-head">
+                <h2>Archivos detectados</h2>
+                {% if listado %}
+                    <span class="siradig-pill siradig-pill-live">{{ listado|length }} XML</span>
+                {% else %}
+                    <span class="siradig-pill">Sin carga</span>
+                {% endif %}
+            </div>
+
+            {% if listado %}
+                <div class="siradig-actions">
+                    <a class="btn siradig-btn-ghost" href="{% url 'siradig' %}">Limpiar selección</a>
+                    <a class="btn siradig-btn-success" href="{% url 'procesa-siradig' %}">Procesar y exportar</a>
+                </div>
+                <ul class="siradig-file-list">
+                    {% for file_name in listado %}
+                        <li>
+                            <a href="{% url 'archivoxml' file_name %}">{{ file_name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="siradig-empty">
+                    Cargá un ZIP para ver aquí el detalle de archivos incluidos.
+                </div>
+            {% endif %}
+        </article>
     </div>
+
+    <article class="siradig-card mt-4">
+        <div class="siradig-card-head">
+            <h2>Historial de presentaciones</h2>
+            <span class="siradig-pill">Últimas ejecuciones</span>
+        </div>
+
+        {% if query_historia %}
+            <ul class="siradig-history-list">
+                {% for registro in query_historia %}
+                    <li>
+                        <div>
+                            <strong>{{ registro.fecha|date:"d/m/Y H:i" }}</strong>
+                            <p>{{ registro.registers.count }} registros procesados</p>
+                        </div>
+                        <a class="btn siradig-btn-ghost" href="{% url 'presentaciones' registro.id %}">Ver detalle</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="siradig-empty">
+                Aún no hay procesos registrados para esta cuenta.
+            </div>
+        {% endif %}
+    </article>
+</section>
 
 {% endblock content %}
