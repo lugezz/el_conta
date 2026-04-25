@@ -134,7 +134,7 @@ USE_THOUSAND_SEPARATOR = True
 # more custom folders STATICFILES_DIRS = ['el_conta/static']
 STATIC_URL = '/static/'
 
-if DEBUG:
+if DEBUG and (BASE_DIR / "static").exists():
     STATICFILES_DIRS = [
         BASE_DIR / "static",
     ]
