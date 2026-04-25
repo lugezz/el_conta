@@ -37,7 +37,8 @@ else
   echo "Starting Gunicorn in $ENV mode..."
   exec gunicorn el_conta.wsgi:application \
     --bind 0.0.0.0:8000 \
-    --workers=5 \
+    --workers=1 \
+    --threads=2 \
     --timeout=120 \
     --access-logfile - \
     --error-logfile -
