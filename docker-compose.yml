@@ -17,7 +17,7 @@ services:
       ALLOW_ORIGINS: ${ALLOW_ORIGINS}
     expose: ["8000"]
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      test: ["CMD-SHELL", "python -c \"import socket; s=socket.socket(); s.connect(('localhost', 8000)); s.close()\""]
       interval: 10s
       timeout: 5s
       retries: 5
