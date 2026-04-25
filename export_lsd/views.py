@@ -448,9 +448,18 @@ def advanced_export(request):
 
     if request.method == 'POST':
         id_empresa = request.POST.get("empresa")
-        empresa = Empresa.objects.get(id=id_empresa)
-        cuit = empresa.cuit
         periodo = request.POST.get("periodo")
+
+        if not id_empresa or not periodo:
+            context['error'] = "Debe seleccionar empresa y período."
+            return render(request, 'export_lsd/export/advanced.html', context)
+
+        empresa = Empresa.objects.filter(id=id_empresa, user=request.user).first()
+        if not empresa:
+            context['error'] = "Empresa inválida para el usuario actual."
+            return render(request, 'export_lsd/export/advanced.html', context)
+
+        cuit = empresa.cuit
         presentacion = Presentacion.objects.filter(user=request.user,
                                                    empresa__id=id_empresa,
                                                    periodo=f'{periodo}-01')
@@ -495,9 +504,15 @@ def advanced_export(request):
 
             # ---------------------------------------------------------
 
-            this_presentacion = Presentacion.objects.create(user=request.user,
-                                                            empresa=empresa,
-                                                            periodo=f'{periodo}-01')
+            try:
+                this_presentacion = Presentacion.objects.create(
+                    user=request.user,
+                    empresa=empresa,
+                    periodo=f'{periodo}-01',
+                )
+            except Exception:
+                context['error'] = "No se pudo crear la presentación. Verifique datos e intente nuevamente."
+                return render(request, 'export_lsd/export/advanced.html', context)
 
             return redirect(reverse('export_lsd:advanced_liqs', kwargs={'pk': this_presentacion.id}))
 

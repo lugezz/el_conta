@@ -165,16 +165,21 @@ class Presentacion(models.Model):
         user = get_current_user()
         if user and not user.pk:
             user = None
-        if not self.pk:
+
+        # Preserve user explicitly assigned by caller if CRUM cannot resolve it.
+        if user is not None:
             self.user = user
-        self.user = user
+        elif self.user_id is None:
+            self.user = None
+
         return super().save(force_insert, force_update, using, update_fields)
 
     def get_children(self):
         return Liquidacion.objects.filter(presentacion=self).count()
 
     def get_download_url(self):
-        this_user = get_current_user().username
+        current_user = get_current_user()
+        this_user = current_user.username if current_user else self.user.username
         cuit = self.empresa.cuit
         periodo = self.periodo.strftime('%Y%m')
         extension = 'zip' if self.get_children() > 1 else 'txt'
