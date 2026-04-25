@@ -27,7 +27,7 @@ else
 
 
   echo "Starting Gunicorn in $ENV mode..."
-  exec gunicorn payroll.wsgi:application \
+  exec gunicorn el_conta.wsgi:application \
     --bind 0.0.0.0:8000 \
     --workers=5 \
     --timeout=120 \

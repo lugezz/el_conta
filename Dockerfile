@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 COPY pyproject.toml uv.lock ./
 
 # Install Python deps using uv
-# Place venv outside /app to avoid being masked by the docker-compose volume mount (./payroll:/app)
+# Place venv outside /app to avoid being masked by the docker-compose volume mount (./el_conta:/app)
 ENV UV_LINK_MODE=copy
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 RUN uv sync --frozen --dev
