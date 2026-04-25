@@ -17,7 +17,6 @@ data.json
 # Otros
 Todo.txt
 __pycache__/
-temp/
 local_settings.py
 /carpetas
 *.log
