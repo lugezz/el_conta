@@ -1,8 +1,13 @@
 {% load static %}
+{% url 'export_lsd:home' as lsd_home_url %}
+{% url 'siradig' as siradig_home_url %}
+{% url 'pem-a-excel' as pem_home_url %}
 <!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
+
+      {% if request.resolver_match.namespace == 'export_lsd' %}
 
       <li class="nav-item">
         <a class="nav-link " href="{% url 'export_lsd:home' %}">
@@ -60,6 +65,20 @@
       <li class="nav-heading">Otros</li>
 
       <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'siradig' %}">
+          <i class="fas fa-file-zipper"></i>
+          <span>Siradig Reader</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'pem-a-excel' %}">
+          <i class="fas fa-file-excel"></i>
+          <span>Importador 8011</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'export_lsd:presentacion_list'  %}">
           <i class="fas fa-history"></i>
           <span>Historial</span>
@@ -100,6 +119,49 @@
           <span>Contacto</span>
         </a>
       </li><!-- End Contact Page Nav -->
+
+      {% else %}
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% if request.path|slice:':9' == '/siradig/' %}{{ siradig_home_url }}{% elif request.path|slice:':13' == '/other-tools/' %}{{ pem_home_url }}{% else %}{% url 'homepage' %}{% endif %}">
+          <i class="fas fa-th"></i>
+          <span>Panel de Control</span>
+        </a>
+      </li>
+
+      {% if request.path|slice:':9' != '/siradig/' %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ siradig_home_url }}">
+          <i class="fas fa-file-zipper"></i>
+          <span>Siradig Reader</span>
+        </a>
+      </li>
+      {% endif %}
+
+      {% if request.path|slice:':13' != '/other-tools/' %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ pem_home_url }}">
+          <i class="fas fa-file-excel"></i>
+          <span>Importador 8011</span>
+        </a>
+      </li>
+      {% endif %}
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ lsd_home_url }}">
+          <i class="fas fa-file-export"></i>
+          <span>Exportador LSD</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="mailto:elconta@eugeniovazquez.com.ar">
+          <i class="fas fa-envelope"></i>
+          <span>Contacto</span>
+        </a>
+      </li>
+
+      {% endif %}
     </ul>
 
   </aside><!-- End Sidebar-->

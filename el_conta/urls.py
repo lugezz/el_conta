@@ -3,10 +3,12 @@ from django.conf.urls import handler404
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic.base import RedirectView
 
 from export_lsd.views import error_404
 
 urlpatterns = [
+    path('favicon.ico', RedirectView.as_view(url=f'{settings.STATIC_URL}img/favicon.ico', permanent=True)),
     path('', include('homepage.urls')),
     path('admin/', admin.site.urls),
     path('export-lsd/', include('export_lsd.urls', namespace='export_lsd')),

@@ -2,17 +2,17 @@
 <!doctype html>
 <html lang="es">
 <head>
-    <!-- Required meta tags -->
+  <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Favicons -->
     <link href="{% static 'img/favicon.ico' %}" rel="icon">
-    <!-- Add jQuery (required for Bootstrap) -->
+    <!-- jQuery is still required by legacy plugins used in child templates -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
@@ -24,59 +24,73 @@
 
     <title>El Conta - {% block title %}{% endblock %} </title>
 </head>
-<body>
-  <div class="container p-3 my-3">
-    <div class="row">
-      <div class="col-md-12">
-        <nav class="navbar navbar-expand-md navbar-light " style="background-color: #f0f5f5">
-          <a href="/" class="navbar-brand">Home</a>
-            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav ml-auto">
-                  {% if user.is_authenticated %}
-                    <a href="{% url 'users-profile' %}" class="nav-item nav-link hovertext" data-hover="Perfil">
-                      <i class="fa fa-user fa-xl" aria-hidden="true"></i>
-                    </a>
-                    <a href="mailto:elconta@eugeniovazquez.com.ar" class="nav-item nav-link hovertext" data-hover="Contactame">
-                      <i class="fas fa-envelope fa-xl"></i>
-                    </a>
-                    <a href="{% url 'logout' %}" class="nav-item nav-link hovertext" data-hover="Cerrar Sesión">
-                      <i class="fa fa-power-off fa-xl"></i>
-                    </a>
-                  {% else %}
-                    <a href="{% url 'login' %}" class="nav-item nav-link">Iniciar Sesión</a>
-                  {% endif %}
-
-                </div>
-            </div>
-        </nav>
-        <!--Any flash messages pop up in any page because this is the base template-->
-        {% if messages %}
-          <div class="alert alert-dismissible" role="alert">
-            {% for message in messages %}
-              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+<body class="ec-body">
+  <div class="container-xxl py-3 py-lg-4">
+    <div class="ec-shell">
+      <nav class="navbar navbar-expand-md navbar-light ec-navbar">
+        <a href="/" class="navbar-brand d-flex align-items-center gap-2 fw-semibold">
+          <span class="ec-brand-dot" aria-hidden="true"></span>
+          El Conta
+        </a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Alternar navegacion">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <div class="navbar-nav ms-auto align-items-md-center gap-md-2">
+            {% if user.is_authenticated %}
+              <a href="{% url 'users-profile' %}" class="nav-item nav-link hovertext" data-hover="Perfil" title="Perfil">
+                <i class="fa fa-user fa-xl" aria-hidden="true"></i>
+              </a>
+              <a href="mailto:elconta@eugeniovazquez.com.ar" class="nav-item nav-link hovertext" data-hover="Contactame" title="Contactame">
+                <i class="fas fa-envelope fa-xl" aria-hidden="true"></i>
+              </a>
+              <a href="{% url 'logout' %}" class="nav-item nav-link hovertext" data-hover="Cerrar Sesion" title="Cerrar sesion">
+                <i class="fa fa-power-off fa-xl" aria-hidden="true"></i>
+              </a>
+            {% else %}
+              <a href="{% url 'login' %}" class="nav-item nav-link">Iniciar Sesion</a>
+            {% endif %}
           </div>
+        </div>
+      </nav>
+
+      <main class="ec-content">
+        <!-- Any flash messages pop up in any page because this is the base template -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
         {% endif %}
+
         {% block site_pre_content %}{% endblock %}
         {% block content %}{% endblock %}
-      </div>
+      </main>
+
+      {% include 'footer.html' %}
     </div>
-
-    {% include 'footer.html' %}
   </div>
-  </body>
-  {% block extra_footer_scripts_before %}{% endblock %}
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js" integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 
-  <!-- A plugin for password show/hide  -->
+  {% block extra_footer_scripts_before %}{% endblock %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- Compatibility bridge for old Bootstrap 4 data attributes in existing templates -->
+  <script>
+    document.querySelectorAll('[data-dismiss]').forEach(function (el) {
+      el.setAttribute('data-bs-dismiss', el.getAttribute('data-dismiss'));
+    });
+    document.querySelectorAll('[data-toggle]').forEach(function (el) {
+      el.setAttribute('data-bs-toggle', el.getAttribute('data-toggle'));
+    });
+    document.querySelectorAll('[data-target]').forEach(function (el) {
+      el.setAttribute('data-bs-target', el.getAttribute('data-target'));
+    });
+  </script>
+
+  <!-- A plugin for password show/hide -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-show-password/1.1.0/bootstrap-show-password.min.js" integrity="sha512-GxuCe627WuFdGdFhltZsUXSuG58ccuP+4qjlcXCskHjg6hTOlO/8i99UuO34dfwZ9X0/4MshiDUCPskGK3GBWg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+</body>
 </html>

@@ -1,4 +1,4 @@
-{% extends "specific/form.html" %}
+{% extends "export_lsd/base.html" %}
 {% load static %}
 
 {% block title %} Importador archivos Controlador Fiscal {% endblock title%}
@@ -78,7 +78,7 @@
 
 {% endblock content %}
 
-{% block extra_footer_scripts_before %}
+{% block footer_js %}
     <script>
         {% if error %}
             var errors = "{{ error|safe }}";
@@ -103,4 +103,4 @@
             });
     });
     </script>
-{% endblock %}
+{% endblock footer_js %}

@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -75,6 +76,18 @@ class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'users/change_password.html'
     success_message = "Contraseña modificada correctamente"
     success_url = reverse_lazy('users-home')
+
+
+class CustomLogoutView(View):
+    template_name = 'users/logout.html'
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return render(request, self.template_name)
 
 
 @login_required

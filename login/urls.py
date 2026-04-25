@@ -4,7 +4,12 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from users.forms import LoginForm
-from users.views import ChangePasswordView, CustomLoginView, ResetPasswordView
+from users.views import (
+    ChangePasswordView,
+    CustomLoginView,
+    CustomLogoutView,
+    ResetPasswordView,
+)
 
 # app_name = 'login'
 
@@ -12,7 +17,7 @@ urlpatterns = [
     path('', CustomLoginView.as_view(redirect_authenticated_user=True, template_name='users/login.html',
                                      authentication_form=LoginForm), name='login'),
     # path('users', include('users.urls')),
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
     path('password-reset-confirm/<uidb64>/<token>/',
          auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'),
