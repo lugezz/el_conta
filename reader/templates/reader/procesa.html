@@ -1,15 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Proceso Exitoso{% endblock title%}
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'reader/css/siradig.css' %}">
+{% endblock %}
 {% block content %}
-<div class="jumbotron">
-    <h2 class="display-5 text-primary mb-3">{{ titulo }}</h2>
+<section class="siradig-shell">
+    <article class="siradig-card siradig-result-card">
+        <p class="siradig-kicker">Proceso finalizado</p>
+        <h1>{{ titulo }}</h1>
+        <p class="siradig-result-copy">
+            Se procesaron <strong>{{ archproc }}</strong> registros correctamente.
+            El archivo Excel ya está disponible para descarga.
+        </p>
 
-    <p>Se procesaron <b>{{ archproc }}</b> registros exitosamente </p>
-
-    <a class="btn btn-success mr-1 mt-2 .btn-lg" href="{{ url_to_file }}">Descargar el archivo</a>
-    <a class="btn btn-secondary mr-1 mt-2 .btn-lg" href="javascript:history.back()">Volver Atrás</a>
-    <a class="btn btn-dark mr-1 mt-2 .btn-lg" href="{% url 'siradig'%}">Nuevo Proceso</a>
-</div>
+        <div class="siradig-actions">
+            <a class="btn siradig-btn-success" href="{{ url_to_file }}">Descargar Excel</a>
+            <a class="btn siradig-btn-ghost" href="javascript:history.back()">Volver</a>
+            <a class="btn siradig-btn-primary" href="{% url 'siradig' %}">Nuevo proceso</a>
+        </div>
+    </article>
+</section>
 
 {% endblock content %}

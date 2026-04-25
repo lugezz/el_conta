@@ -1,0 +1,314 @@
+:root {
+    --sir-bg-top: #f8fafb;
+    --sir-bg-bottom: #edf2f5;
+    --sir-card: #ffffff;
+    --sir-border: #dbe3e8;
+    --sir-text-main: #1d2b34;
+    --sir-text-soft: #4f6573;
+    --sir-primary: #0f5fa8;
+    --sir-primary-dark: #0c4a82;
+    --sir-accent: #0b7d6c;
+    --sir-ghost: #eef3f7;
+    --sir-shadow: 0 10px 26px rgba(23, 41, 55, 0.08);
+}
+
+.siradig-shell {
+    font-family: 'Work Sans', 'Segoe UI', sans-serif;
+    color: var(--sir-text-main);
+    background:
+        radial-gradient(circle at top right, rgba(15, 95, 168, 0.08), transparent 40%),
+        radial-gradient(circle at 12% 16%, rgba(11, 125, 108, 0.07), transparent 42%),
+        linear-gradient(180deg, var(--sir-bg-top) 0%, var(--sir-bg-bottom) 100%);
+    border-radius: 22px;
+    padding: 2rem;
+}
+
+.siradig-hero h1,
+.siradig-card h1,
+.siradig-card h2,
+.siradig-card h3 {
+    font-family: 'Space Grotesk', 'Trebuchet MS', sans-serif;
+    margin: 0;
+}
+
+.siradig-hero {
+    margin-bottom: 1.5rem;
+}
+
+.siradig-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--sir-primary-dark);
+    margin-bottom: 0.45rem;
+}
+
+.siradig-hero h1 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    margin-bottom: 0.65rem;
+}
+
+.siradig-hero p {
+    margin: 0;
+    color: var(--sir-text-soft);
+    max-width: 60ch;
+}
+
+.siradig-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.siradig-card {
+    background: var(--sir-card);
+    border: 1px solid var(--sir-border);
+    border-radius: 18px;
+    box-shadow: var(--sir-shadow);
+    padding: 1.25rem;
+}
+
+.siradig-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.siradig-pill {
+    background: var(--sir-ghost);
+    color: var(--sir-text-soft);
+    border: 1px solid var(--sir-border);
+    border-radius: 999px;
+    padding: 0.2rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.siradig-pill-live {
+    background: #e8f1fb;
+    color: #0d548f;
+}
+
+.siradig-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.siradig-steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    margin-bottom: 0.8rem;
+}
+
+.step-index {
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--sir-primary), #2577bf);
+    color: #fff;
+    text-align: center;
+    line-height: 1.8rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.siradig-steps h3 {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+
+.siradig-steps p {
+    margin: 0;
+    color: var(--sir-text-soft);
+    font-size: 0.92rem;
+}
+
+.siradig-upload-form {
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--sir-border);
+}
+
+.siradig-file-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+.siradig-upload-form input[type="file"] {
+    width: 100%;
+    border: 1px solid var(--sir-border);
+    border-radius: 10px;
+    background: #f9fcfb;
+    padding: 0.45rem;
+    margin-bottom: 0.8rem;
+}
+
+.siradig-file-list,
+.siradig-history-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.siradig-file-list {
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid var(--sir-border);
+    border-radius: 12px;
+}
+
+.siradig-file-list li {
+    border-bottom: 1px solid #eef3f1;
+}
+
+.siradig-file-list li:last-child {
+    border-bottom: 0;
+}
+
+.siradig-file-list a {
+    display: block;
+    padding: 0.58rem 0.72rem;
+    color: var(--sir-primary-dark);
+    text-decoration: none;
+    font-size: 0.92rem;
+}
+
+.siradig-file-list a:hover {
+    background: #f4faf7;
+    text-decoration: none;
+}
+
+.siradig-empty {
+    border: 1px dashed var(--sir-border);
+    border-radius: 12px;
+    background: #f8fbfa;
+    color: var(--sir-text-soft);
+    padding: 1rem;
+}
+
+.siradig-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-bottom: 0.95rem;
+}
+
+.siradig-btn-primary,
+.siradig-btn-success,
+.siradig-btn-ghost {
+    border-radius: 999px;
+    border: 1px solid transparent;
+    padding: 0.45rem 1rem;
+    font-weight: 600;
+}
+
+.siradig-btn-primary {
+    background: var(--sir-accent);
+    color: #fff;
+}
+
+.siradig-btn-primary:hover {
+    background: #09685a;
+    color: #fff;
+}
+
+.siradig-btn-success {
+    background: var(--sir-primary);
+    color: #fff;
+}
+
+.siradig-btn-success:hover {
+    background: var(--sir-primary-dark);
+    color: #fff;
+}
+
+.siradig-btn-ghost {
+    background: var(--sir-ghost);
+    border-color: var(--sir-border);
+    color: var(--sir-text-main);
+}
+
+.siradig-btn-ghost:hover {
+    background: #dfeae5;
+    color: var(--sir-text-main);
+}
+
+.siradig-history-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--sir-border);
+    border-radius: 12px;
+    padding: 0.8rem;
+    margin-bottom: 0.7rem;
+    background: #fbfdfc;
+}
+
+.siradig-history-list p {
+    margin: 0.2rem 0 0;
+    color: var(--sir-text-soft);
+    font-size: 0.9rem;
+}
+
+.siradig-result-card {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: left;
+    animation: fadeInUp 320ms ease-out both;
+}
+
+.siradig-result-copy {
+    margin: 0.85rem 0 1.25rem;
+    color: var(--sir-text-soft);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 991px) {
+    .siradig-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .siradig-shell {
+        padding: 1.1rem;
+        border-radius: 16px;
+    }
+
+    .siradig-card {
+        padding: 1rem;
+    }
+
+    .siradig-actions {
+        flex-direction: column;
+    }
+
+    .siradig-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .siradig-history-list li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

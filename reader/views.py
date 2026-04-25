@@ -7,6 +7,7 @@ from pathlib import Path
 import pytz
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -26,8 +27,8 @@ def get_carpeta(usuario):
 
 @login_required
 def siradig_view(request):
-    listado = {}
-    query_historia = RegAcceso.objects.filter(reg_user=request.user)
+    listado = []
+    query_historia = RegAcceso.objects.filter(reg_user=request.user).order_by('-fecha')
 
     if request.method == 'POST' and request.FILES.get('upload'):
         # TODO: Validar form
@@ -80,9 +81,14 @@ def detalle_presentacion(request, id):
 
 @login_required
 def archivo_solo_view(request, slug):
-    # TODO: Agregar validaciones de archivos
-    xml_path = os.path.join(get_carpeta(request.user), slug)
-    siradig_empleado = leeXML(xml_path)
+    base_folder = get_carpeta(request.user).resolve()
+    xml_path = (base_folder / slug).resolve()
+
+    # Avoid directory traversal and require an existing XML file.
+    if base_folder not in xml_path.parents or not xml_path.is_file() or xml_path.suffix.lower() != '.xml':
+        raise Http404('Archivo XML no encontrado')
+
+    siradig_empleado = leeXML(str(xml_path))
 
     context = {
         'siradig_empleado': siradig_empleado.get_dict_all(),
@@ -146,7 +152,10 @@ def procesa_hist_view(request, id=0):
 
 def lista_zip(arch):
     zf = zipfile.ZipFile(arch, "r")
-    listz = zf.namelist
+    listz = [
+        file_name for file_name in zf.namelist()
+        if not file_name.endswith('/') and file_name.lower().endswith('.xml')
+    ]
 
     return listz
 

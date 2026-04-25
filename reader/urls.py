@@ -14,5 +14,5 @@ urlpatterns = [
     path('presentaciones/<int:id>/', detalle_presentacion, name='presentaciones'),
     path('procesa/', procesa_hist_view, name='procesa-siradig'),
     path('procesa_historico/<int:id>/', procesa_hist_view, name='procesa-siradig-hist'),
-    path('solo/<slug>/', archivo_solo_view, name='archivoxml'),
+    path('solo/<path:slug>/', archivo_solo_view, name='archivoxml'),
 ]
