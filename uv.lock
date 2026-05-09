@@ -56,6 +56,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-crum"
+version = "0.7.9"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/34/1d/c56588f67130aeef8828e47535e8551337d2ae02f91f1414da61bc5e49fb/django-crum-0.7.9.tar.gz", hash = "sha256:65e9bc0f070a663fafc4d9e357f45fd4e6f01838b20a9e2fb7670f5706754288", size = 5168, upload-time = "2020-11-10T17:15:35.124Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cd/f9/8fad70a3bd011a6be7c5c6067278f006a25341eb39d901fbda307e26804c/django_crum-0.7.9-py2.py3-none-any.whl", hash = "sha256:037cc8b822975bb1d41cd24269b59a512cc77448fadc3f34ab9a17b229b4b471", size = 4714, upload-time = "2020-11-10T17:15:33.781Z" },
+]
+
+[[package]]
 name = "django-widget-tweaks"
 version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
@@ -73,6 +85,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "django" },
+    { name = "django-crum" },
     { name = "django-widget-tweaks" },
     { name = "et-xmlfile" },
     { name = "gunicorn" },
@@ -100,6 +113,7 @@ dev = [
 requires-dist = [
     { name = "django", specifier = ">=5.1.15,<6" },
     { name = "django", specifier = ">=5.2.14,<6" },
+    { name = "django-crum", specifier = ">=0.7.9" },
     { name = "django-widget-tweaks", specifier = ">=1.5.0,<2" },
     { name = "et-xmlfile", specifier = ">=2.0.0" },
     { name = "gunicorn", specifier = ">=23.0.0" },

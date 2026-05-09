@@ -5,6 +5,7 @@ requires-python = ">=3.10"
 dependencies = [
     "Django>=5.1.15,<6",
     "django>=5.2.14,<6",
+    "django-crum>=0.7.9",
     "django-widget-tweaks>=1.5.0,<2",
     "et-xmlfile>=2.0.0",
     "numpy>=2.2.3",
