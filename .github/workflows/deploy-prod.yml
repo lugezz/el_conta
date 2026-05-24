@@ -1,0 +1,65 @@
+name: Deploy to Production (elconta.com.ar)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Copy files to EC2
+      - name: Copy files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          source:   "."
+          target:   "/opt/elconta"
+
+      # 3️⃣ Write .env from secrets (values passed as env vars, never interpolated into the script)
+      - name: Write .env on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          POSTGRES_USER:     ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB:       ${{ secrets.POSTGRES_DB }}
+          ALLOW_ORIGINS:     ${{ secrets.ALLOW_ORIGINS }}
+          CSRF_TRUSTED:      ${{ secrets.CSRF_TRUSTED }}
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          envs: DJANGO_SECRET_KEY,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB,ALLOW_ORIGINS,CSRF_TRUSTED
+          script: |
+            cd /opt/elconta
+            {
+              printf 'ENV=production\n'
+              printf 'DEBUG=False\n'
+              printf 'DJANGO_SECRET_KEY=%s\n' "$DJANGO_SECRET_KEY"
+              printf 'POSTGRES_USER=%s\n'     "$POSTGRES_USER"
+              printf 'POSTGRES_PASSWORD=%s\n' "$POSTGRES_PASSWORD"
+              printf 'POSTGRES_DB=%s\n'       "$POSTGRES_DB"
+              printf 'ALLOW_ORIGINS=%s\n'     "$ALLOW_ORIGINS"
+              printf 'CSRF_TRUSTED=%s\n'      "$CSRF_TRUSTED"
+            } > .env
+            chmod 600 .env
+
+      # 4️⃣ Deploy Docker containers
+      - name: Deploy containers
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /opt/elconta
+            docker compose -f docker-compose.prod.yml down
+            docker compose -f docker-compose.prod.yml up -d --build
+            docker system prune -f
