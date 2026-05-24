@@ -16,8 +16,8 @@ services:
       conta_service:
         condition: service_healthy
     networks:
-      - fa_network   # reachable by Caddy
-      - internal     # can reach conta_service
+      - numerillos_fa_network   # reachable by Caddy
+      - internal                # can reach conta_service
 
   # ── Django / Gunicorn ───────────────────────────────────────────────────────
   conta_service:
@@ -81,5 +81,5 @@ networks:
   internal:
     driver: bridge
   # Shared network — Caddy (in /opt/numerillos) can reach app_elconta:80
-  fa_network:
+  numerillos_fa_network:
     external: true

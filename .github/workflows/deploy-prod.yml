@@ -67,6 +67,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key:      ${{ secrets.EC2_KEY }}
           script: |
+            set -e
+            # Ensure the shared Caddy network exists (created by numerillos; safe to run if already present)
+            docker network inspect numerillos_fa_network >/dev/null 2>&1 || docker network create numerillos_fa_network
             cd /opt/elconta
             docker compose -f docker-compose.prod.yml down
             docker compose -f docker-compose.prod.yml up -d --build
