@@ -8,7 +8,7 @@
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="{% if request.resolver_match.namespace == 'export_lsd' %}{{ lsd_home_url }}{% elif request.path|slice:':9' == '/siradig/' %}{{ siradig_home_url }}{% elif request.path|slice:':13' == '/other-tools/' %}{{ pem_home_url }}{% else %}{% url 'homepage' %}{% endif %}" class="logo d-flex align-items-center">
-        <img src="{% if request.resolver_match.namespace == 'export_lsd' %}{% static 'export_lsd/img/logo.png' %}{% elif request.path|slice:':9' == '/siradig/' %}{% static 'img/siradig-logo.png' %}{% elif request.path|slice:':13' == '/other-tools/' %}{% static 'img/8011-logo.png' %}{% else %}{% static 'export_lsd/img/logo.png' %}{% endif %}" alt="Logo">
+        <img src="{% if request.resolver_match.namespace == 'export_lsd' %}{% static 'img/lsd-logo.png' %}{% elif request.path|slice:':9' == '/siradig/' %}{% static 'img/siradig-logo.png' %}{% elif request.path|slice:':13' == '/other-tools/' %}{% static 'img/8011-logo.png' %}{% else %}{% static 'img/lsd-logo.png' %}{% endif %}" alt="Logo">
         <span class="d-none d-lg-block">{% if request.resolver_match.namespace == 'export_lsd' %}Exporta LSD{% elif request.path|slice:':9' == '/siradig/' %}Siradig Reader{% elif request.path|slice:':13' == '/other-tools/' %}Controlador Fiscal{% else %}El Conta{% endif %}</span>
       </a>
       <i class="fas fa-bars toggle-sidebar-btn"></i>
