@@ -20,6 +20,26 @@ la imagen. Los directorios deben permitir lectura y acceso, y los archivos
 lectura al usuario de nginx. Publica aqui solo archivos destinados a descarga
 publica.
 
+[El despliegue de produccion](.github/workflows/deploy-prod.yml) ajusta los
+permisos de esa carpeta antes de iniciar los contenedores: `755` para
+directorios y `644` para archivos. El usuario SSH del despliegue debe poder
+cambiar esos permisos. Para archivos subidos despues del despliegue, aplica
+estos permisos en el servidor:
+
+```sh
+cd /opt/elconta
+find temp/Varios -type d -exec chmod 755 {} +
+find temp/Varios -type f -exec chmod 644 {} +
+```
+
+Usa la URL completa del archivo para descargarlo. Solicitar solamente
+`/temp/Varios/` devuelve `403` porque nginx no publica un listado del directorio.
+Si un archivo sigue devolviendo `403`, consulta el error concreto de nginx:
+
+```sh
+docker compose -f docker-compose.prod.yml logs --tail=50 app_elconta
+```
+
 Para aplicar el montaje por primera vez:
 
 ```sh

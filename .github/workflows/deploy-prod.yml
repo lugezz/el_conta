@@ -71,6 +71,13 @@ jobs:
             # Ensure the shared Caddy network exists (created by numerillos; safe to run if already present)
             docker network inspect numerillos_fa_network >/dev/null 2>&1 || docker network create numerillos_fa_network
             cd /opt/elconta
+            # SSH uploads may have private permissions; nginx reads these public downloads as another user.
+            if [ ! -d temp/Varios ]; then
+              echo "Missing public download directory: /opt/elconta/temp/Varios" >&2
+              exit 1
+            fi
+            find temp/Varios -type d -exec chmod 755 {} +
+            find temp/Varios -type f -exec chmod 644 {} +
             docker compose -f docker-compose.prod.yml down
             docker compose -f docker-compose.prod.yml up -d --build
             docker system prune -f
