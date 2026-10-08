@@ -12,6 +12,12 @@ services:
       - static_files:/app/static:ro
       - media_files:/app/media:ro
       - temp_files:/app/temp:ro
+      - type: bind
+        source: ./temp/Varios
+        target: /app/temp/Varios
+        read_only: true
+        bind:
+          create_host_path: false
     depends_on:
       conta_service:
         condition: service_healthy
@@ -39,6 +45,12 @@ services:
       - static_files:/app/static
       - media_files:/app/media
       - temp_files:/app/temp
+      - type: bind
+        source: ./temp/Varios
+        target: /app/temp/Varios
+        read_only: true
+        bind:
+          create_host_path: false
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import socket; s=socket.socket(); s.connect(('localhost', 8000)); s.close()\""]
       interval: 10s

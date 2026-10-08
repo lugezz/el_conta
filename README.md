@@ -7,6 +7,29 @@ el proceso de lectura masiva de formularios Siradig de AFIP de los empleados.
 
 Para detalles de como iniciar tu entorno local de desarrollo, ingresa [aqui](docs/entorno-local.md)
 
+## Archivos de descarga en produccion
+
+[docker-compose.prod.yml](docker-compose.prod.yml) monta la carpeta del servidor
+`temp/Varios` en `/app/temp/Varios`, en modo solo lectura para Django y nginx.
+La carpeta debe existir junto al archivo Compose antes de iniciar los contenedores;
+si falta, el inicio falla en lugar de crear una carpeta vacia.
+
+Sube los archivos por SSH a esa carpeta del servidor. nginx los sirve en
+`/temp/Varios/<nombre-del-archivo>` y los cambios son visibles sin reconstruir
+la imagen. Los directorios deben permitir lectura y acceso, y los archivos
+lectura al usuario de nginx. Publica aqui solo archivos destinados a descarga
+publica.
+
+Para aplicar el montaje por primera vez:
+
+```sh
+docker compose -f docker-compose.prod.yml up -d --build conta_service app_elconta
+```
+
+El resto de `/app/temp` sigue usando el volumen persistente `temp_files` para
+archivos temporales o generados. No elimines los volumenes para actualizar las
+descargas.
+
 ## SMTP Config
 Para que esta aplicacion sea capaz de enviar emails debes actualizar el archivo `local_settings.py`
 con las referencias a tu servidor SMTP.
